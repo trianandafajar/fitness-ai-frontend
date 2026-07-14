@@ -76,7 +76,7 @@ export default function ForgotPasswordPage() {
             }
             visualSide={
                 <AuthVisual
-                    tag="🔒 Secure & encrypted"
+                    tag="Secure & encrypted"
                     heading="Your data stays yours."
                     sub="All body data and health history are stored securely — you control who can see it."
                 />

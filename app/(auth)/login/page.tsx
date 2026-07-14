@@ -48,8 +48,8 @@ export default function LoginPage() {
                             autoComplete="current-password"
                         />
 
-                        <div className="-mt-1.5 mb-[18px] flex items-center justify-between">
-                            <label className="flex items-center gap-[7px] text-[13px] font-medium text-ink-soft">
+                        <div className="-mt-1.5 mb-4.5 flex items-center justify-between">
+                            <label className="flex items-center gap-1.75 text-[13px] font-medium text-ink-soft">
                                 <input
                                     type="checkbox"
                                     checked={rememberMe}

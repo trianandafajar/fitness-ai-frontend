@@ -60,13 +60,13 @@ export default function RegisterPage() {
                             autoComplete="new-password"
                         />
 
-                        <div className="mb-[22px] flex items-start gap-[9px]">
+                        <div className="mb-5.5 flex items-start gap-2.25">
                             <input
                                 type="checkbox"
                                 id="tos"
                                 checked={agreed}
                                 onChange={(e) => setAgreed(e.target.checked)}
-                                className="mt-[3px] h-[15px] w-[15px] flex-shrink-0 accent-orange"
+                                className="mt-0.75 h-3.75 w-3.75 shrink-0 accent-orange"
                             />
                             <label htmlFor="tos" className="text-[13.5px] leading-relaxed text-ink-soft">
                                 I agree with{" "}

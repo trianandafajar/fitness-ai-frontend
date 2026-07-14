@@ -16,7 +16,7 @@ function PasswordStrengthHint({ password }: { password: string }) {
     ];
 
     return (
-        <ul className="mb-[18px] -mt-2 flex flex-col gap-1">
+        <ul className="mb-4.5 -mt-2 flex flex-col gap-1">
             {checks.map((c) => (
                 <li
                     key={c.label}
@@ -24,7 +24,7 @@ function PasswordStrengthHint({ password }: { password: string }) {
                         }`}
                 >
                     <span
-                        className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${c.pass ? "bg-orange" : "bg-line"
+                        className={`h-1.5 w-1.5 shrink-0 rounded-full ${c.pass ? "bg-orange" : "bg-line"
                             }`}
                     />
                     {c.label}
@@ -61,8 +61,8 @@ function ResetPasswordForm() {
                     Invalid link
                 </h1>
                 <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                        The reset link has expired or is incomplete. Request a new link from the
-                        forgot password page.
+                    The reset link has expired or is incomplete. Request a new link from the
+                    forgot password page.
                 </p>
                 <Link href="/forgot-password">
                     <ButtonPrimary type="button">Request New Link</ButtonPrimary>
@@ -89,10 +89,10 @@ function ResetPasswordForm() {
                     Password changed
                 </h1>
                 <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                        Your new password is active. Log in again with your new password.
+                    Your new password is active. Log in again with your new password.
                 </p>
                 <ButtonPrimary type="button" onClick={() => router.push("/login")}>
-                        Go to Login
+                    Go to Login
                 </ButtonPrimary>
             </div>
         );
@@ -129,7 +129,7 @@ function ResetPasswordForm() {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 {confirmPassword.length > 0 && !passwordsMatch && (
-                    <p className="-mt-3 mb-[18px] text-[12.5px] font-medium text-orange-deep">
+                    <p className="-mt-3 mb-4.5 text-[12.5px] font-medium text-orange-deep">
                         Passwords don't match, please check again.
                     </p>
                 )}
@@ -156,7 +156,7 @@ export default function ResetPasswordPage() {
             }
             visualSide={
                 <AuthVisual
-                    tag="🔒 Secure & encrypted"
+                    tag="Secure & encrypted"
                     heading="One more step to get back to your progress."
                     sub="Your new password is active right after saving — you can log back in immediately."
                 />
