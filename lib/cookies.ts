@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
 
 const TOKEN_KEY = "access_token";
+const PROFILE_KEY = "profile_completed";
 
 export function getToken(): string | undefined {
   return Cookies.get(TOKEN_KEY);
@@ -16,4 +17,17 @@ export function setToken(token: string): void {
 
 export function removeToken(): void {
   Cookies.remove(TOKEN_KEY);
+  Cookies.remove(PROFILE_KEY);
+}
+
+export function getProfileCompleted(): boolean {
+  return Cookies.get(PROFILE_KEY) === "true";
+}
+
+export function setProfileCompleted(): void {
+  Cookies.set(PROFILE_KEY, "true", {
+    expires: 7,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+  });
 }

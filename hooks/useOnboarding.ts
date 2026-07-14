@@ -4,6 +4,7 @@ import { useState } from "react";
 import { isAxiosError } from "axios";
 import { onboardingService } from "@/services/onboarding.service";
 import { useAuth } from "@/hooks/useAuth";
+import { setProfileCompleted } from "@/lib/cookies";
 import type { OnboardingData, Step5Response, AiAnalysis } from "@/components/onboarding/types";
 import { GOAL_MAP } from "@/components/onboarding/types";
 
@@ -125,6 +126,7 @@ export function useOnboarding() {
         setAiResult(result.ai_analysis);
       }
       await fetchUser();
+      setProfileCompleted();
       return result;
     } catch (err) {
       if (isAxiosError(err) && err.response?.data?.message) {

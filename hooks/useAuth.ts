@@ -3,7 +3,7 @@
 import { useSyncExternalStore, useCallback } from "react";
 import { authStore } from "@/stores/auth.store";
 import { authService } from "@/services/auth.service";
-import { setToken, removeToken } from "@/lib/cookies";
+import { setToken, removeToken, setProfileCompleted } from "@/lib/cookies";
 
 export function useAuth() {
   const state = useSyncExternalStore(
@@ -66,6 +66,9 @@ export function useAuth() {
       profile: response.profile,
       isAuthenticated: true,
     });
+    if (response.profile?.profile_completed) {
+      setProfileCompleted();
+    }
     return response;
   }, []);
 
