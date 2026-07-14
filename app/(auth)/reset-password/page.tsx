@@ -113,7 +113,7 @@ function ResetPasswordForm() {
                     id="password"
                     label="New password"
                     type="password"
-                    placeholder="Minimal 8 karakter"
+                    placeholder="Minimum of 8 characters"
                     autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

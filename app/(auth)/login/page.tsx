@@ -35,7 +35,7 @@ export default function LoginPage() {
                     <form onSubmit={handleSubmit}>
                         <Field
                             id="identifier"
-                            label="Email or Phone No."
+                            label="Email "
                             type="text"
                             placeholder="nama@email.com"
                             autoComplete="username"

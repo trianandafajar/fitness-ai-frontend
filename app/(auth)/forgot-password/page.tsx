@@ -34,14 +34,14 @@ export default function ForgotPasswordPage() {
                                 Reset your password
                             </h1>
                             <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                                Enter your registered email or phone number, and we'll send a link to create a new
+                                Enter your registered email, and we'll send a link to create a new
                                 password.
                             </p>
 
                             <form onSubmit={handleSubmit}>
                                 <Field
                                     id="identifier"
-                                    label="Email or Phone No."
+                                    label="Email "
                                     type="text"
                                     placeholder="nama@email.com"
                                     autoComplete="username"

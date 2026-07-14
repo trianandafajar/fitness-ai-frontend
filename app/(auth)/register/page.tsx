@@ -40,7 +40,7 @@ export default function RegisterPage() {
                         <Field id="name" label="Full name" type="text" placeholder="Your name" autoComplete="name" />
                         <Field
                             id="identifier"
-                            label="Email or Phone No."
+                            label="Email "
                             type="text"
                             placeholder="name@email.com"
                             autoComplete="username"
@@ -49,7 +49,7 @@ export default function RegisterPage() {
                             id="password"
                             label="Password"
                             type="password"
-                            placeholder="Minimal 8 karakter"
+                            placeholder="Minimum of 8 characters"
                             autoComplete="new-password"
                         />
                         <Field
