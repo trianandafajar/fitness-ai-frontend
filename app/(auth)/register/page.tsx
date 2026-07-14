@@ -10,7 +10,7 @@ import AuthVisual from "@/components/auth/AuthVisual";
 import Logo from "@/components/auth/Logo";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary } from "@/components/ui/Button";
-import { Divider, SocialRow } from "@/components/auth/SocialAuth";
+// import { Divider, SocialRow } from "@/components/auth/SocialAuth";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -138,11 +138,11 @@ export default function RegisterPage() {
                             {loading ? "Creating account..." : "Create Account"}
                         </ButtonPrimary>
                     </form>
-
+{/* 
                     <Divider text="or sign up with" />
-                    <SocialRow />
+                    <SocialRow /> */}
 
-                    <p className="text-center text-sm text-ink-soft">
+                    <p className="text-center text-sm text-ink-soft pt-6">
                         Already have an account?{" "}
                         <Link href="/login" className="font-semibold text-orange-deep hover:underline">
                             Log in

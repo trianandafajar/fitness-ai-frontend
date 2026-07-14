@@ -10,7 +10,7 @@ import AuthVisual from "@/components/auth/AuthVisual";
 import Logo from "@/components/auth/Logo";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary } from "@/components/ui/Button";
-import { Divider, SocialRow } from "@/components/auth/SocialAuth";
+// import { Divider, SocialRow } from "@/components/auth/SocialAuth";
 
 export default function LoginPage() {
     const router = useRouter();
@@ -112,10 +112,10 @@ export default function LoginPage() {
                         </ButtonPrimary>
                     </form>
 
-                    <Divider text="or log in with" />
-                    <SocialRow />
+                    {/* <Divider text="or log in with" />
+                    <SocialRow /> */}
 
-                    <p className="text-center text-sm text-ink-soft">
+                    <p className="text-center text-sm text-ink-soft pt-6">
                         Don&apos;t have an account?{" "}
                         <Link href="/register" className="font-semibold text-orange-deep hover:underline">
                             Sign up now
