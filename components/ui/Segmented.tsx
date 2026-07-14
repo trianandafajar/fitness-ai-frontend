@@ -15,7 +15,7 @@ export default function Segmented({ options, value, onChange, className = "" }: 
             key={option}
             type="button"
             onClick={() => onChange(option)}
-            className={`flex-1 rounded-[10px] border-[1.5px] px-3 py-3 font-sans text-[13.5px] font-semibold transition-colors ${
+            className={`flex-1 cursor-pointer rounded-[10px] border-[1.5px] px-3 py-3 font-sans text-[13.5px] font-semibold transition-colors ${
               selected
                 ? "border-ink bg-ink text-white"
                 : "border-line bg-white text-ink-soft hover:border-ink-faint"

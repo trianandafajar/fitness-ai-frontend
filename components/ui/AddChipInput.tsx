@@ -31,7 +31,7 @@ export default function AddChipInput({ onAdd, placeholder = "Add custom..." }: A
         type="button"
         onClick={handleAdd}
         disabled={!value.trim()}
-        className="rounded-[10px] bg-orange px-4 text-sm font-semibold text-white transition-colors hover:bg-orange-deep disabled:opacity-50"
+        className="cursor-pointer rounded-[10px] bg-orange px-4 text-sm font-semibold text-white transition-colors hover:bg-orange-deep disabled:cursor-not-allowed disabled:opacity-50"
       >
         + Add
       </button>
