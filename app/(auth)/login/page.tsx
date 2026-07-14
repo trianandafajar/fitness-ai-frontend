@@ -26,16 +26,16 @@ export default function LoginPage() {
                     </div>
 
                     <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                        Masuk ke akun kamu
+                        Log in to your account
                     </h1>
                     <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                        Lanjutkan progres fitness yang sudah kamu bangun bareng AI coach.
+                        Continue the fitness progress you've built with your AI coach.
                     </p>
 
                     <form onSubmit={handleSubmit}>
                         <Field
                             id="identifier"
-                            label="Email atau No. HP"
+                            label="Email or Phone No."
                             type="text"
                             placeholder="nama@email.com"
                             autoComplete="username"
@@ -44,7 +44,7 @@ export default function LoginPage() {
                             id="password"
                             label="Password"
                             type="password"
-                            placeholder="Masukkan password"
+                            placeholder="Enter your password"
                             autoComplete="current-password"
                         />
 
@@ -56,26 +56,26 @@ export default function LoginPage() {
                                     onChange={(e) => setRememberMe(e.target.checked)}
                                     className="h-3.5 w-3.5 accent-orange"
                                 />
-                                Ingat saya
+                                Remember me
                             </label>
                             <Link
                                 href="/forgot-password"
                                 className="text-[13px] font-semibold text-orange-deep hover:underline"
                             >
-                                Lupa password?
+                                Forgot password?
                             </Link>
                         </div>
 
-                        <ButtonPrimary type="submit">Masuk</ButtonPrimary>
+                        <ButtonPrimary type="submit">Log in</ButtonPrimary>
                     </form>
 
-                    <Divider text="atau masuk dengan" />
+                    <Divider text="or log in with" />
                     <SocialRow />
 
                     <p className="text-center text-sm text-ink-soft">
-                        Belum punya akun?{" "}
+                        Don't have an account?{" "}
                         <Link href="/register" className="font-semibold text-orange-deep hover:underline">
-                            Daftar sekarang
+                            Sign up now
                         </Link>
                     </p>
                 </>
@@ -83,11 +83,11 @@ export default function LoginPage() {
             visualSide={
                 <AuthVisual
                     tag="● Live tracking"
-                    heading="Personal AI coach yang belajar dari tubuh kamu."
-                    sub="Setiap detak, langkah, dan porsi makan tercatat — jadi rekomendasi yang kamu dapat benar-benar personal."
+                    heading="A personal AI coach that learns from your body."
+                    sub="Every heartbeat, step, and meal gets logged — so the recommendations you get are truly personal."
                     stats={[
                         { label: "Heart Rate", value: "142 BPM" },
-                        { label: "Streak berjalan", value: "12 hari" },
+                        { label: "Current Streak", value: "12 days" },
                         { label: "Weekly Score", value: "85/100" },
                     ]}
                 />

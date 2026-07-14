@@ -30,19 +30,19 @@ export default function RegisterPage() {
                     </div>
 
                     <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                        Mulai perjalanan fitness kamu
+                        Start your fitness journey
                     </h1>
                     <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                        Satu akun buat nyimpen semua data tubuh dan progresmu, aman dan personal.
+                        One account to store all your body data and progress, safe and personal.
                     </p>
 
                     <form onSubmit={handleSubmit}>
-                        <Field id="name" label="Nama lengkap" type="text" placeholder="Nama kamu" autoComplete="name" />
+                        <Field id="name" label="Full name" type="text" placeholder="Your name" autoComplete="name" />
                         <Field
                             id="identifier"
-                            label="Email atau No. HP"
+                            label="Email or Phone No."
                             type="text"
-                            placeholder="nama@email.com"
+                            placeholder="name@email.com"
                             autoComplete="username"
                         />
                         <Field
@@ -54,9 +54,9 @@ export default function RegisterPage() {
                         />
                         <Field
                             id="confirmPassword"
-                            label="Konfirmasi password"
+                            label="Confirm password"
                             type="password"
-                            placeholder="Ulangi password"
+                            placeholder="Repeat password"
                             autoComplete="new-password"
                         />
 
@@ -69,42 +69,42 @@ export default function RegisterPage() {
                                 className="mt-[3px] h-[15px] w-[15px] flex-shrink-0 accent-orange"
                             />
                             <label htmlFor="tos" className="text-[13.5px] leading-relaxed text-ink-soft">
-                                Saya setuju dengan{" "}
+                                I agree with{" "}
                                 <Link href="/terms" className="font-semibold text-orange-deep hover:underline">
-                                    Syarat &amp; Ketentuan
+                                    Terms &amp; Conditions
                                 </Link>{" "}
-                                dan{" "}
+                                and{" "}
                                 <Link href="/privacy" className="font-semibold text-orange-deep hover:underline">
-                                    Kebijakan Privasi
+                                    Privacy Policy
                                 </Link>{" "}
-                                FitTrack AI.
+                                of FitTrack AI.
                             </label>
                         </div>
 
                         <ButtonPrimary type="submit" disabled={!agreed} className="disabled:cursor-not-allowed disabled:opacity-50">
-                            Buat Akun
+                            Create Account
                         </ButtonPrimary>
                     </form>
 
-                    <Divider text="atau daftar dengan" />
+                    <Divider text="or sign up with" />
                     <SocialRow />
 
                     <p className="text-center text-sm text-ink-soft">
-                        Sudah punya akun?{" "}
+                        Already have an account?{" "}
                         <Link href="/login" className="font-semibold text-orange-deep hover:underline">
-                            Masuk
+                            Log in
                         </Link>
                     </p>
                 </>
             }
             visualSide={
                 <AuthVisual
-                    tag="✦ Gratis mulai"
-                    heading="Seperti punya pelatih pribadi & ahli gizi di saku kamu."
-                    sub="Isi profil sekali, AI langsung susun rencana latihan dan menu yang cocok buat kebiasaan kamu."
+                    tag="✦ Free to start"
+                    heading="Like having a personal trainer & nutritionist in your pocket."
+                    sub="Fill in your profile once, and the AI instantly creates workout plans and meal plans tailored to your habits."
                     stats={[
-                        { label: "Onboarding", value: "~3 menit" },
-                        { label: "Rencana AI", value: "Langsung jadi" },
+                        { label: "Onboarding", value: "~3 min" },
+                        { label: "AI Plan", value: "Ready instantly" },
                     ]}
                 />
             }

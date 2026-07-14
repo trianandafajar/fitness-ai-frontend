@@ -10,9 +10,9 @@ import { ButtonPrimary } from "@/components/ui/Button";
 
 function PasswordStrengthHint({ password }: { password: string }) {
     const checks = [
-        { label: "Minimal 8 karakter", pass: password.length >= 8 },
-        { label: "Ada huruf besar", pass: /[A-Z]/.test(password) },
-        { label: "Ada angka", pass: /[0-9]/.test(password) },
+        { label: "At least 8 characters", pass: password.length >= 8 },
+        { label: "Has uppercase letter", pass: /[A-Z]/.test(password) },
+        { label: "Has a number", pass: /[0-9]/.test(password) },
     ];
 
     return (
@@ -58,14 +58,14 @@ function ResetPasswordForm() {
         return (
             <div className="py-5">
                 <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                    Link tidak valid
+                    Invalid link
                 </h1>
                 <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                    Link reset password sudah kedaluwarsa atau tidak lengkap. Minta link baru lewat
-                    halaman lupa password.
+                        The reset link has expired or is incomplete. Request a new link from the
+                        forgot password page.
                 </p>
                 <Link href="/forgot-password">
-                    <ButtonPrimary type="button">Minta Link Baru</ButtonPrimary>
+                    <ButtonPrimary type="button">Request New Link</ButtonPrimary>
                 </Link>
             </div>
         );
@@ -86,13 +86,13 @@ function ResetPasswordForm() {
                     </svg>
                 </div>
                 <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                    Password berhasil diubah
+                    Password changed
                 </h1>
                 <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                    Password baru kamu sudah aktif. Yuk masuk lagi pakai password itu.
+                        Your new password is active. Log in again with your new password.
                 </p>
                 <ButtonPrimary type="button" onClick={() => router.push("/login")}>
-                    Ke Halaman Login
+                        Go to Login
                 </ButtonPrimary>
             </div>
         );
@@ -101,16 +101,16 @@ function ResetPasswordForm() {
     return (
         <>
             <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                Buat password baru
+                Create new password
             </h1>
             <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                Pastikan password baru kamu beda dari yang lama, dan gampang diinget cuma sama kamu.
+                Make sure your new password is different from your old one, and easy to remember only for you.
             </p>
 
             <form onSubmit={handleSubmit}>
                 <Field
                     id="password"
-                    label="Password baru"
+                    label="New password"
                     type="password"
                     placeholder="Minimal 8 karakter"
                     autoComplete="new-password"
@@ -121,16 +121,16 @@ function ResetPasswordForm() {
 
                 <Field
                     id="confirmPassword"
-                    label="Konfirmasi password baru"
+                    label="Confirm new password"
                     type="password"
-                    placeholder="Ulangi password baru"
+                    placeholder="Repeat new password"
                     autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 {confirmPassword.length > 0 && !passwordsMatch && (
                     <p className="-mt-3 mb-[18px] text-[12.5px] font-medium text-orange-deep">
-                        Password belum sama, coba cek lagi.
+                        Passwords don't match, please check again.
                     </p>
                 )}
 
@@ -139,7 +139,7 @@ function ResetPasswordForm() {
                     disabled={!canSubmit}
                     className="disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    Simpan Password Baru
+                    Save New Password
                 </ButtonPrimary>
             </form>
         </>
@@ -156,9 +156,9 @@ export default function ResetPasswordPage() {
             }
             visualSide={
                 <AuthVisual
-                    tag="🔒 Aman & terenkripsi"
-                    heading="Satu langkah lagi buat balik ke progres kamu."
-                    sub="Password baru langsung aktif setelah disimpan — kamu bisa langsung masuk lagi."
+                    tag="🔒 Secure & encrypted"
+                    heading="One more step to get back to your progress."
+                    sub="Your new password is active right after saving — you can log back in immediately."
                 />
             }
         />

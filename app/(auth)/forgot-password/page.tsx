@@ -21,29 +21,29 @@ export default function ForgotPasswordPage() {
         <AuthLayout
             formSide={
                 <>
-                    <BackLink href="/login">Kembali ke login</BackLink>
+                    <BackLink href="/login">Back to login</BackLink>
 
                     {!sent ? (
                         <>
                             <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                                Reset password kamu
+                                Reset your password
                             </h1>
                             <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                                Masukkan email atau nomor HP yang terdaftar, kami kirim link buat bikin
-                                password baru.
+                                Enter your registered email or phone number, and we'll send a link to create a new
+                                password.
                             </p>
 
                             <form onSubmit={handleSubmit}>
                                 <Field
                                     id="identifier"
-                                    label="Email atau No. HP"
+                                    label="Email or Phone No."
                                     type="text"
                                     placeholder="nama@email.com"
                                     autoComplete="username"
                                     value={identifier}
                                     onChange={(e) => setIdentifier(e.target.value)}
                                 />
-                                <ButtonPrimary type="submit">Kirim Link Reset</ButtonPrimary>
+                                <ButtonPrimary type="submit">Send Reset Link</ButtonPrimary>
                             </form>
                         </>
                     ) : (
@@ -60,15 +60,15 @@ export default function ForgotPasswordPage() {
                                 </svg>
                             </div>
                             <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                                Link sudah dikirim
+                                Link sent
                             </h1>
                             <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
                                 Cek email/SMS di{" "}
-                                <span className="font-semibold text-ink">{identifier || "akun kamu"}</span>,
-                                link reset berlaku selama 30 menit.
+                                <span className="font-semibold text-ink">{identifier || "your account"}</span>,
+                                the reset link is valid for 30 minutes.
                             </p>
                             <ButtonSecondary type="button" onClick={() => setSent(false)}>
-                                Kirim ulang link
+                                Resend link
                             </ButtonSecondary>
                         </div>
                     )}
@@ -76,9 +76,9 @@ export default function ForgotPasswordPage() {
             }
             visualSide={
                 <AuthVisual
-                    tag="🔒 Aman & terenkripsi"
-                    heading="Datamu tetap milik kamu."
-                    sub="Semua data tubuh dan riwayat kesehatan tersimpan aman — kamu yang kontrol siapa yang bisa lihat."
+                    tag="🔒 Secure & encrypted"
+                    heading="Your data stays yours."
+                    sub="All body data and health history are stored securely — you control who can see it."
                 />
             }
         />

@@ -22,7 +22,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   title: "FitTrack AI",
-  description: "Personal AI coach yang belajar dari tubuh kamu.",
+  description: "Your personal AI coach that learns from your body.",
 };
 
 export default function RootLayout({
@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang="en">
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable} font-sans`}
       >
