@@ -6,6 +6,7 @@ import AuthVisual from "@/components/auth/AuthVisual";
 import BackLink from "@/components/auth/BackLink";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
+import Logo from "@/components/auth/Logo";
 
 export default function ForgotPasswordPage() {
     const [sent, setSent] = useState(false);
@@ -21,6 +22,10 @@ export default function ForgotPasswordPage() {
         <AuthLayout
             formSide={
                 <>
+                    <div className="mb-10">
+                        <Logo />
+                    </div>
+
                     <BackLink href="/login">Back to login</BackLink>
 
                     {!sent ? (

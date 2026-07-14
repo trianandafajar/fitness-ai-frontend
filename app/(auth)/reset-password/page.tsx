@@ -7,6 +7,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import AuthVisual from "@/components/auth/AuthVisual";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary } from "@/components/ui/Button";
+import Logo from "@/components/auth/Logo";
 
 function PasswordStrengthHint({ password }: { password: string }) {
     const checks = [
@@ -150,9 +151,14 @@ export default function ResetPasswordPage() {
     return (
         <AuthLayout
             formSide={
-                <Suspense fallback={null}>
-                    <ResetPasswordForm />
-                </Suspense>
+                <>
+                    <div className="mb-10">
+                        <Logo />
+                    </div>
+                    <Suspense fallback={null}>
+                        <ResetPasswordForm />
+                    </Suspense>
+                </>
             }
             visualSide={
                 <AuthVisual
