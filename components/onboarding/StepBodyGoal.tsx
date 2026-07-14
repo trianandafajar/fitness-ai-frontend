@@ -2,7 +2,7 @@ import { Scale, Dumbbell, Heart } from "lucide-react";
 import Field from "@/components/ui/Field";
 import StepShell from "./StepShell";
 import GoalCard from "./GoalCard";
-import { OnboardingData } from "./types";
+import { OnboardingData, ACTIVITY_OPTIONS } from "./types";
 import type { ReactNode } from "react";
 
 interface Props {
@@ -10,6 +10,8 @@ interface Props {
   update: (patch: Partial<OnboardingData>) => void;
   onNext: () => void;
   onBack: () => void;
+  loading?: boolean;
+  error?: string;
 }
 
 const GOALS: { id: OnboardingData["goal"]; icon: ReactNode; title: string; description: string }[] = [
@@ -18,7 +20,7 @@ const GOALS: { id: OnboardingData["goal"]; icon: ReactNode; title: string; descr
   { id: "endurance", icon: <Heart className="h-5 w-5" />, title: "Boost endurance", description: "Focus on cardio & endurance training" },
 ];
 
-export default function StepBodyGoal({ data, update, onNext, onBack }: Props) {
+export default function StepBodyGoal({ data, update, onNext, onBack, loading, error }: Props) {
   const canProceed = data.height.trim().length > 0 && data.weight.trim().length > 0;
 
   return (
@@ -29,7 +31,14 @@ export default function StepBodyGoal({ data, update, onNext, onBack }: Props) {
       onNext={onNext}
       onBack={onBack}
       nextDisabled={!canProceed}
+      nextLoading={loading}
     >
+      {error && (
+        <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">
+          {error}
+        </div>
+      )}
+
       <div className="mb-5 grid grid-cols-2 gap-4">
         <Field
           id="height"
@@ -60,6 +69,33 @@ export default function StepBodyGoal({ data, update, onNext, onBack }: Props) {
           onClick={() => update({ goal: g.id })}
         />
       ))}
+
+      <label className="mb-2.5 mt-5 block text-[13px] font-semibold text-ink">Activity level</label>
+      <div className="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {ACTIVITY_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => update({ activityLevel: opt.value })}
+            className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${
+              data.activityLevel === opt.value
+                ? "border-ink bg-ink text-white"
+                : "border-line bg-white text-ink-soft hover:border-ink-faint"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      <Field
+        id="goalWeight"
+        label="Goal weight (kg) — optional"
+        type="number"
+        placeholder="70"
+        value={data.goalWeight}
+        onChange={(e) => update({ goalWeight: e.target.value })}
+      />
     </StepShell>
   );
 }

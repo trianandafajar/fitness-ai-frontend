@@ -1,33 +1,56 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ButtonPrimary } from "@/components/ui/Button";
-import { AnalysisResult, OnboardingData, computeAnalysis } from "./types";
+import type { AiAnalysis } from "./types";
 
 interface Props {
-  data: OnboardingData;
+  aiResult: AiAnalysis | null;
+  loading: boolean;
+  onRetry: () => void;
 }
 
-export default function StepAnalysis({ data }: Props) {
+export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
   const router = useRouter();
-  const [result, setResult] = useState<AnalysisResult | null>(null);
 
-  useEffect(() => {
-    setResult(null);
-    const timer = setTimeout(() => {
-      setResult(computeAnalysis(data));
-    }, 1800);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  if (!result) {
+  if (loading) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
         <div className="mb-6 h-14 w-14 animate-spin rounded-full border-4 border-orange-tint border-t-orange" />
         <div className="text-[14.5px] font-medium text-ink-soft">
           AI is analyzing your profile...
+        </div>
+      </div>
+    );
+  }
+
+  if (!aiResult) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
+        <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-orange-tint">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              stroke="#FF5A1F"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+        <h1 className="mb-2 font-display text-[22px] font-bold tracking-tight">
+          Analysis unavailable
+        </h1>
+        <p className="mb-8 text-sm leading-relaxed text-ink-soft">
+          The AI analysis is currently unavailable. Your profile has been saved
+          and you can retry later.
+        </p>
+        <div className="flex w-full gap-3">
+          <ButtonPrimary type="button" onClick={onRetry} className="flex-1">
+            Retry Analysis
+          </ButtonPrimary>
+          <ButtonPrimary type="button" onClick={() => router.push("/dashboard")} className="flex-1">
+            Go to Dashboard
+          </ButtonPrimary>
         </div>
       </div>
     );
@@ -40,45 +63,30 @@ export default function StepAnalysis({ data }: Props) {
         Your profile is ready 🎉
       </h1>
       <p className="mb-6 text-sm leading-relaxed text-ink-soft">
-        Here are the initial AI analysis results. Your workout plans &amp; meal plans have been automatically created.
+        Your AI analysis is complete. Based on your profile, here are the
+        personalized insights.
       </p>
 
-      <div className="mb-6 grid grid-cols-2 gap-3">
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <div className="mb-1.5 text-xs font-medium text-ink-soft">BMI</div>
-          <div className="font-mono text-[22px] font-semibold text-ink">{result.bmi}</div>
-          <span className="mt-1.5 inline-block rounded-full bg-orange-tint px-2.25 py-0.5 text-[11px] font-bold text-orange-deep">
-            kcal/day
-          </span>
-        </div>
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <div className="mb-1.5 text-xs font-medium text-ink-soft">Target Calories</div>
-          <div className="font-mono text-[22px] font-semibold text-ink">
-            {result.targetCalories.toLocaleString("en-US")}
-          </div>
-          <span className="mt-1.5 inline-block rounded-full bg-orange-tint px-2.25 py-0.5 text-[11px] font-bold text-orange-deep">
-            kcal/day
-          </span>
-        </div>
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <div className="mb-1.5 text-xs font-medium text-ink-soft">Fitness Level</div>
-          <div className="text-base font-semibold text-ink">{result.fitnessLevel}</div>
-        </div>
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <div className="mb-1.5 text-xs font-medium text-ink-soft">Target Calories</div>
-          <div className="font-mono text-[22px] font-semibold text-ink">
-            {result.targetCalories.toLocaleString("en-US")}
-          </div>
-          <span className="mt-1.5 inline-block rounded-full bg-orange-tint px-2.25 py-0.5 text-[11px] font-bold text-orange-deep">
-            kcal/day
-          </span>
-        </div>
+      <div className="mb-4 rounded-xl bg-orange-tint p-4">
+        <p className="text-[13.5px] leading-relaxed text-ink">
+          {aiResult.summary}
+        </p>
       </div>
 
-      <div className="mb-6 flex items-start gap-2.5 rounded-xl bg-orange-tint p-4 text-[13.5px] leading-relaxed text-ink">
-        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange" />
-        <span>{result.note}</span>
-      </div>
+      <h3 className="mb-2 text-[13px] font-semibold text-ink">Recommendations</h3>
+      <p className="mb-5 text-sm leading-relaxed text-ink-soft">
+        {aiResult.recommendations}
+      </p>
+
+      <h3 className="mb-2 text-[13px] font-semibold text-ink">Meal Suggestions</h3>
+      <p className="mb-5 text-sm leading-relaxed text-ink-soft">
+        {aiResult.meal_suggestions}
+      </p>
+
+      <h3 className="mb-2 text-[13px] font-semibold text-ink">Exercise Suggestions</h3>
+      <p className="mb-5 text-sm leading-relaxed text-ink-soft">
+        {aiResult.exercise_suggestions}
+      </p>
 
       <div className="mt-auto pt-1">
         <ButtonPrimary type="button" onClick={() => router.push("/dashboard")}>

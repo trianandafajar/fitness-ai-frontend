@@ -7,9 +7,11 @@ interface Props {
   data: OnboardingData;
   update: (patch: Partial<OnboardingData>) => void;
   onNext: () => void;
+  loading?: boolean;
+  error?: string;
 }
 
-export default function StepPersonalInfo({ data, update, onNext }: Props) {
+export default function StepPersonalInfo({ data, update, onNext, loading, error }: Props) {
   const canProceed = data.name.trim().length > 0 && data.dob.length > 0;
 
   return (
@@ -19,7 +21,14 @@ export default function StepPersonalInfo({ data, update, onNext }: Props) {
       sub="This basic data helps the AI calculate your body's needs accurately."
       onNext={onNext}
       nextDisabled={!canProceed}
+      nextLoading={loading}
     >
+      {error && (
+        <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">
+          {error}
+        </div>
+      )}
+
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <Field

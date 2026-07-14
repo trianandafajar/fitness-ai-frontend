@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 
 interface StepShellProps {
@@ -10,6 +10,7 @@ interface StepShellProps {
   onNext: () => void;
   nextLabel?: string;
   nextDisabled?: boolean;
+  nextLoading?: boolean;
 }
 
 export default function StepShell({
@@ -21,6 +22,7 @@ export default function StepShell({
   onNext,
   nextLabel = "Continue",
   nextDisabled = false,
+  nextLoading = false,
 }: StepShellProps) {
   return (
     <div className="flex flex-1 flex-col">
@@ -48,10 +50,10 @@ export default function StepShell({
         <ButtonPrimary
           type="button"
           onClick={onNext}
-          disabled={nextDisabled}
+          disabled={nextDisabled || nextLoading}
           className="flex-1 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {nextLabel}
+          {nextLoading ? "Saving..." : nextLabel}
         </ButtonPrimary>
       </div>
     </div>
