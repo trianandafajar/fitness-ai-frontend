@@ -9,6 +9,7 @@ export function useAuth() {
   const state = useSyncExternalStore(
     authStore.subscribe,
     authStore.getState,
+    authStore.getState,
   );
 
   const login = useCallback(async (email: string, password: string) => {

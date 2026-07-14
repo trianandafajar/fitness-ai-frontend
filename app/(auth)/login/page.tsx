@@ -1,7 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { isAxiosError } from "axios";
+import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthVisual from "@/components/auth/AuthVisual";
 import Logo from "@/components/auth/Logo";
@@ -10,11 +13,37 @@ import { ButtonPrimary } from "@/components/ui/Button";
 import { Divider, SocialRow } from "@/components/auth/SocialAuth";
 
 export default function LoginPage() {
+    const router = useRouter();
+    const { login } = useAuth();
+    const [identifier, setIdentifier] = useState("");
+    const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        // TODO: wire up to auth logic
+        setError("");
+        setLoading(true);
+        try {
+            await login(identifier, password);
+            router.push("/onboarding");
+        } catch (err) {
+            if (isAxiosError(err) && err.response) {
+                const data = err.response.data;
+                if (data.email) {
+                    setError(Array.isArray(data.email) ? data.email[0] : data.email);
+                } else if (data.message) {
+                    setError(data.message);
+                } else {
+                    setError("Invalid credentials. Please try again.");
+                }
+            } else {
+                setError("Connection error. Please check your network.");
+            }
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -29,16 +58,25 @@ export default function LoginPage() {
                         Log in to your account
                     </h1>
                     <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                        Continue the fitness progress you've built with your AI coach.
+                        Continue the fitness progress you&apos;ve built with your AI coach.
                     </p>
 
                     <form onSubmit={handleSubmit}>
+                        {error && (
+                            <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">
+                                {error}
+                            </div>
+                        )}
+
                         <Field
                             id="identifier"
                             label="Email "
                             type="text"
-                            placeholder="nama@email.com"
+                            placeholder="name@email.com"
                             autoComplete="username"
+                            value={identifier}
+                            onChange={(e) => setIdentifier(e.target.value)}
+                            required
                         />
                         <Field
                             id="password"
@@ -46,6 +84,9 @@ export default function LoginPage() {
                             type="password"
                             placeholder="Enter your password"
                             autoComplete="current-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
 
                         <div className="-mt-1.5 mb-4.5 flex items-center justify-between">
@@ -66,14 +107,16 @@ export default function LoginPage() {
                             </Link>
                         </div>
 
-                        <ButtonPrimary type="submit">Log in</ButtonPrimary>
+                        <ButtonPrimary type="submit" disabled={loading}>
+                            {loading ? "Signing in..." : "Log in"}
+                        </ButtonPrimary>
                     </form>
 
                     <Divider text="or log in with" />
                     <SocialRow />
 
                     <p className="text-center text-sm text-ink-soft">
-                        Don't have an account?{" "}
+                        Don&apos;t have an account?{" "}
                         <Link href="/register" className="font-semibold text-orange-deep hover:underline">
                             Sign up now
                         </Link>

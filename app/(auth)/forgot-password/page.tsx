@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { isAxiosError } from "axios";
+import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthVisual from "@/components/auth/AuthVisual";
 import BackLink from "@/components/auth/BackLink";
@@ -9,13 +11,39 @@ import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import Logo from "@/components/auth/Logo";
 
 export default function ForgotPasswordPage() {
+    const { forgotPassword } = useAuth();
     const [sent, setSent] = useState(false);
     const [identifier, setIdentifier] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        // TODO: call API to send reset link
-        setSent(true);
+        setError("");
+        setLoading(true);
+        try {
+            await forgotPassword(identifier);
+            setSent(true);
+        } catch (err) {
+            if (isAxiosError(err) && err.response) {
+                const data = err.response.data;
+                if (data.message) {
+                    setError(data.message);
+                } else {
+                    setError("Failed to send reset link. Try again.");
+                }
+            } else {
+                setError("Connection error. Please check your network.");
+            }
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleResend() {
+        setSent(false);
+        setError("");
+        // Re-trigger submit on next form submission
     }
 
     return (
@@ -34,21 +62,30 @@ export default function ForgotPasswordPage() {
                                 Reset your password
                             </h1>
                             <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                                Enter your registered email, and we'll send a link to create a new
+                                Enter your registered email, and we&apos;ll send a link to create a new
                                 password.
                             </p>
 
                             <form onSubmit={handleSubmit}>
+                                {error && (
+                                    <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">
+                                        {error}
+                                    </div>
+                                )}
+
                                 <Field
                                     id="identifier"
                                     label="Email "
                                     type="text"
-                                    placeholder="nama@email.com"
+                                    placeholder="name@email.com"
                                     autoComplete="username"
                                     value={identifier}
                                     onChange={(e) => setIdentifier(e.target.value)}
+                                    required
                                 />
-                                <ButtonPrimary type="submit">Send Reset Link</ButtonPrimary>
+                                <ButtonPrimary type="submit" disabled={loading}>
+                                    {loading ? "Sending..." : "Send Reset Link"}
+                                </ButtonPrimary>
                             </form>
                         </>
                     ) : (
@@ -68,11 +105,11 @@ export default function ForgotPasswordPage() {
                                 Link sent
                             </h1>
                             <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                                Cek email/SMS di{" "}
-                                <span className="font-semibold text-ink">{identifier || "your account"}</span>,
+                                Check your email at{" "}
+                                <span className="font-semibold text-ink">{identifier}</span>,
                                 the reset link is valid for 30 minutes.
                             </p>
-                            <ButtonSecondary type="button" onClick={() => setSent(false)}>
+                            <ButtonSecondary type="button" onClick={handleResend}>
                                 Resend link
                             </ButtonSecondary>
                         </div>

@@ -3,6 +3,8 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { isAxiosError } from "axios";
+import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthVisual from "@/components/auth/AuthVisual";
 import Field from "@/components/ui/Field";
@@ -22,11 +24,11 @@ function PasswordStrengthHint({ password }: { password: string }) {
                 <li
                     key={c.label}
                     className={`flex items-center gap-1.5 text-[12.5px] ${c.pass ? "text-orange-deep" : "text-ink-faint"
-                        }`}
+                    }`}
                 >
                     <span
                         className={`h-1.5 w-1.5 shrink-0 rounded-full ${c.pass ? "bg-orange" : "bg-line"
-                            }`}
+                        }`}
                     />
                     {c.label}
                 </li>
@@ -37,32 +39,53 @@ function PasswordStrengthHint({ password }: { password: string }) {
 
 function ResetPasswordForm() {
     const router = useRouter();
+    const { resetPassword } = useAuth();
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
+    const email = searchParams.get("email");
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [done, setDone] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
     const passwordValid = password.length >= 8;
     const canSubmit = passwordValid && passwordsMatch;
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        if (!canSubmit) return;
-        // TODO: call API to set new password using `token`
-        setDone(true);
+        if (!canSubmit || !token || !email) return;
+        setError("");
+        setLoading(true);
+        try {
+            await resetPassword(token, email, password, confirmPassword);
+            setDone(true);
+        } catch (err) {
+            if (isAxiosError(err) && err.response) {
+                const data = err.response.data;
+                if (data.message) {
+                    setError(data.message);
+                } else {
+                    setError("Failed to reset password. The link may have expired.");
+                }
+            } else {
+                setError("Connection error. Please check your network.");
+            }
+        } finally {
+            setLoading(false);
+        }
     }
 
-    if (!token) {
+    if (!token || !email) {
         return (
             <div className="py-5">
                 <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
                     Invalid link
                 </h1>
                 <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                    The reset link has expired or is incomplete. Request a new link from the
+                    The reset link is incomplete. Request a new link from the
                     forgot password page.
                 </p>
                 <Link href="/forgot-password">
@@ -109,6 +132,12 @@ function ResetPasswordForm() {
             </p>
 
             <form onSubmit={handleSubmit}>
+                {error && (
+                    <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">
+                        {error}
+                    </div>
+                )}
+
                 <Field
                     id="password"
                     label="New password"
@@ -117,6 +146,7 @@ function ResetPasswordForm() {
                     autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
+                    required
                 />
                 <PasswordStrengthHint password={password} />
 
@@ -128,19 +158,20 @@ function ResetPasswordForm() {
                     autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    required
                 />
                 {confirmPassword.length > 0 && !passwordsMatch && (
                     <p className="-mt-3 mb-4.5 text-[12.5px] font-medium text-orange-deep">
-                        Passwords don't match, please check again.
+                        Passwords don&apos;t match, please check again.
                     </p>
                 )}
 
                 <ButtonPrimary
                     type="submit"
-                    disabled={!canSubmit}
+                    disabled={!canSubmit || loading}
                     className="disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                    Save New Password
+                    {loading ? "Saving..." : "Save New Password"}
                 </ButtonPrimary>
             </form>
         </>

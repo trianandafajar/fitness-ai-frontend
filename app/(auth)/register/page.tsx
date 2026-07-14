@@ -1,8 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { isAxiosError } from "axios";
+import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthVisual from "@/components/auth/AuthVisual";
 import Logo from "@/components/auth/Logo";
@@ -12,13 +14,40 @@ import { Divider, SocialRow } from "@/components/auth/SocialAuth";
 
 export default function RegisterPage() {
     const router = useRouter();
+    const { register } = useAuth();
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [agreed, setAgreed] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
-    function handleSubmit(e: React.FormEvent) {
+    async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         if (!agreed) return;
-        // TODO: wire up to auth logic, then send the person into onboarding
-        router.push("/onboarding");
+        setError("");
+        setLoading(true);
+        try {
+            await register(name, email, password, confirmPassword);
+            router.push("/login");
+        } catch (err) {
+            if (isAxiosError(err) && err.response) {
+                const data = err.response.data;
+                if (data.errors) {
+                    const firstError = Object.values(data.errors).flat();
+                    setError(firstError[0] as string);
+                } else if (data.message) {
+                    setError(data.message);
+                } else {
+                    setError("Registration failed. Please try again.");
+                }
+            } else {
+                setError("Connection error. Please check your network.");
+            }
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -37,13 +66,31 @@ export default function RegisterPage() {
                     </p>
 
                     <form onSubmit={handleSubmit}>
-                        <Field id="name" label="Full name" type="text" placeholder="Your name" autoComplete="name" />
+                        {error && (
+                            <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">
+                                {error}
+                            </div>
+                        )}
+
+                        <Field
+                            id="name"
+                            label="Full name"
+                            type="text"
+                            placeholder="Your name"
+                            autoComplete="name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
+                        />
                         <Field
                             id="identifier"
                             label="Email "
                             type="text"
                             placeholder="name@email.com"
                             autoComplete="username"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
                         />
                         <Field
                             id="password"
@@ -51,6 +98,9 @@ export default function RegisterPage() {
                             type="password"
                             placeholder="Minimum of 8 characters"
                             autoComplete="new-password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
                         />
                         <Field
                             id="confirmPassword"
@@ -58,6 +108,9 @@ export default function RegisterPage() {
                             type="password"
                             placeholder="Repeat password"
                             autoComplete="new-password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
                         />
 
                         <div className="mb-5.5 flex items-start gap-2.25">
@@ -81,8 +134,8 @@ export default function RegisterPage() {
                             </label>
                         </div>
 
-                        <ButtonPrimary type="submit" disabled={!agreed} className="disabled:cursor-not-allowed disabled:opacity-50">
-                            Create Account
+                        <ButtonPrimary type="submit" disabled={!agreed || loading} className="disabled:cursor-not-allowed disabled:opacity-50">
+                            {loading ? "Creating account..." : "Create Account"}
                         </ButtonPrimary>
                     </form>
 
