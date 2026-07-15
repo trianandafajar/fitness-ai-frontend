@@ -36,8 +36,8 @@ export interface MealLogTodayResponse {
 }
 
 export interface KpiCurrentResponse {
-  today: KpiData | null;
-  this_week: KpiData | null;
+  today: { data: KpiRecord; status: string } | null;
+  this_week: { data: KpiRecord; status: string } | null;
 }
 
 export interface KpiRecord {

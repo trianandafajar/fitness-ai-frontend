@@ -62,9 +62,9 @@ export default function DashboardPage() {
   const checkedIn = attendance?.has_attended === true;
   const hasTodaySchedule = attendance?.has_schedule;
 
-  const kpiScore = kpi?.today?.overall_score ?? null;
+  const kpiScore = kpi?.today?.data?.overall_score ?? null;
   const kpiStatus = kpiScore != null ? computeStatus(kpiScore) : null;
-  const kpiNote = kpi?.today?.ai_summary ?? "Start tracking your workouts and meals to see your KPI score.";
+  const kpiNote = kpi?.today?.data?.ai_summary ?? "Start tracking your workouts and meals to see your KPI score.";
 
   const calorieValue = hasMealsToday ? String(meals!.totals.total_calories) : "—";
   const caloriePercent = hasMealsToday ? Math.min(Math.round((meals!.totals.total_calories / 2000) * 100), 100) : 0;
@@ -74,7 +74,7 @@ export default function DashboardPage() {
       <DashboardHeader
         name={user?.name ?? "User"}
         dateLabel={now.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
-        streakDays={hasKpi ? kpi!.today!.consistency_score : 0}
+        streakDays={hasKpi ? kpi!.today!.data!.consistency_score : 0}
       />
 
       {loading ? (
@@ -101,23 +101,23 @@ export default function DashboardPage() {
               <StatMini
                 label="Weight"
                 icon={<Droplet className="h-4 w-4" />}
-                value={kpi?.today?.current_weight_kg ? `${kpi.today.current_weight_kg}kg` : "—"}
+                value={kpi?.today?.data?.current_weight_kg ? `${kpi.today.data.current_weight_kg}kg` : "—"}
                 secondaryText={
-                  kpi?.today?.weight_change_kg != null
-                    ? `${kpi.today.weight_change_kg > 0 ? "+" : ""}${kpi.today.weight_change_kg}kg this week`
+                  kpi?.today?.data?.weight_change_kg != null
+                    ? `${kpi.today.data.weight_change_kg > 0 ? "+" : ""}${kpi.today.data.weight_change_kg}kg this week`
                     : "Log weight to track"
                 }
               />
               <StatMini
                 label="Compliance"
                 icon={<Footprints className="h-4 w-4" />}
-                value={hasKpi ? `${kpi!.today!.workout_compliance_pct}%` : "—"}
+                value={hasKpi ? `${kpi!.today!.data!.workout_compliance_pct}%` : "—"}
                 secondaryText={hasKpi ? "This week" : "No data yet"}
               />
             </div>
           </div>
 
-          {kpi?.today?.ai_summary && <AICheckin message={kpi.today.ai_summary} />}
+          {kpi?.today?.data?.ai_summary && <AICheckin message={kpi.today.data.ai_summary} />}
 
           <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.1fr_1fr]">
             <TodayPlanCard
@@ -131,11 +131,11 @@ export default function DashboardPage() {
               rows={
                 hasKpi
                   ? [
-                      { label: "Workout Compliance", value: `${kpi!.today!.workout_compliance_pct}%`, percent: kpi!.today!.workout_compliance_pct, color: "bg-green-500" },
-                      { label: "Nutrition Score", value: `${kpi!.today!.nutrition_score}`, percent: kpi!.today!.nutrition_score, color: "bg-orange" },
-                      { label: "Weight Trend", value: `${kpi!.today!.weight_trend_score}`, percent: kpi!.today!.weight_trend_score, color: "bg-orange" },
-                      { label: "Consistency", value: `${kpi!.today!.consistency_score}%`, percent: kpi!.today!.consistency_score, color: "bg-green-500" },
-                      { label: "Engagement", value: `${kpi!.today!.engagement_score}%`, percent: kpi!.today!.engagement_score, color: "bg-amber-500" },
+                      { label: "Workout Compliance", value: `${kpi!.today!.data!.workout_compliance_pct}%`, percent: kpi!.today!.data!.workout_compliance_pct, color: "bg-green-500" },
+                      { label: "Nutrition Score", value: `${kpi!.today!.data!.nutrition_score}`, percent: kpi!.today!.data!.nutrition_score, color: "bg-orange" },
+                      { label: "Weight Trend", value: `${kpi!.today!.data!.weight_trend_score}`, percent: kpi!.today!.data!.weight_trend_score, color: "bg-orange" },
+                      { label: "Consistency", value: `${kpi!.today!.data!.consistency_score}%`, percent: kpi!.today!.data!.consistency_score, color: "bg-green-500" },
+                      { label: "Engagement", value: `${kpi!.today!.data!.engagement_score}%`, percent: kpi!.today!.data!.engagement_score, color: "bg-amber-500" },
                     ]
                   : []
               }
