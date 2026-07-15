@@ -18,7 +18,7 @@ export const sidebarNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
   { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
-  { href: "/nutrisi", label: "Nutrition", icon: IconNutrition },
+  { href: "/dashboard/meal-logs", label: "Nutrition", icon: IconNutrition },
   { href: "/progress", label: "Progress", icon: IconProgress },
   { href: "/settings", label: "Settings", icon: IconSettings },
 ];
@@ -31,6 +31,6 @@ export const bottomNavLeft: NavItem[] = [
 ];
 
 export const bottomNavRight: NavItem[] = [
-  { href: "/nutrisi", label: "Nutrition", icon: IconNutrition },
+  { href: "/dashboard/meal-logs", label: "Nutrition", icon: IconNutrition },
   { href: "/progress", label: "Progress", icon: IconProgress },
 ];
