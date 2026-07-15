@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Flame, Footprints, Droplet, CheckCircle } from "lucide-react";
-import Sidebar from "@/components/dashboard/Sidebar";
-import BottomNav from "@/components/dashboard/BottomNav";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import ScoreGauge from "@/components/dashboard/ScoreGauge";
 import StatMini from "@/components/dashboard/StatMini";
@@ -90,11 +88,8 @@ export default function DashboardPage() {
   const caloriePercent = hasMealsToday ? Math.min(Math.round((meals!.totals.total_calories / 2000) * 100), 100) : 0;
 
   return (
-    <div className="md:flex">
-      <Sidebar />
-
-      <main className="min-h-screen flex-1 px-5 pb-28 pt-6 sm:px-6 md:px-10 md:pb-10 md:pt-8">
-        <DashboardHeader
+    <>
+      <DashboardHeader
           name={user?.name ?? "User"}
           dateLabel={now.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
           streakDays={hasKpi ? kpi!.today!.consistency_score : 0}
@@ -169,10 +164,7 @@ export default function DashboardPage() {
             </div>
           </>
         )}
-      </main>
-
-      <BottomNav />
-    </div>
+    </>
   );
 }
 

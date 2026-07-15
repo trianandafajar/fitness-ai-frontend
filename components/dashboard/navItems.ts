@@ -15,7 +15,7 @@ export interface NavItem {
 
 export const sidebarNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
-  { href: "/workout", label: "Workout", icon: IconWorkout },
+  { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
   { href: "/nutrisi", label: "Nutrition", icon: IconNutrition },
   { href: "/progress", label: "Progress", icon: IconProgress },
   { href: "/settings", label: "Settings", icon: IconSettings },
@@ -24,7 +24,7 @@ export const sidebarNavItems: NavItem[] = [
 // Bottom nav mirrors the sidebar but splits around the center action button.
 export const bottomNavLeft: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
-  { href: "/workout", label: "Workout", icon: IconWorkout },
+  { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
 ];
 
 export const bottomNavRight: NavItem[] = [
