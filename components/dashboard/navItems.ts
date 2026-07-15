@@ -5,6 +5,7 @@ import {
   IconNutrition,
   IconProgress,
   IconSettings,
+  IconCheckin,
 } from "./icons";
 
 export interface NavItem {
@@ -16,6 +17,7 @@ export interface NavItem {
 export const sidebarNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
+  { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
   { href: "/nutrisi", label: "Nutrition", icon: IconNutrition },
   { href: "/progress", label: "Progress", icon: IconProgress },
   { href: "/settings", label: "Settings", icon: IconSettings },
@@ -25,6 +27,7 @@ export const sidebarNavItems: NavItem[] = [
 export const bottomNavLeft: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
+  { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
 ];
 
 export const bottomNavRight: NavItem[] = [

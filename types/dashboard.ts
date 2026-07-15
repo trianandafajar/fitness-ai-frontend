@@ -55,6 +55,23 @@ export interface KpiData {
 }
 
 export interface AttendanceToday {
+  has_schedule: boolean;
+  schedule: WorkoutSchedule | null;
+  has_attended: boolean;
+  attendance: {
+    id: number;
+    user_id: number;
+    workout_schedule_id: number;
+    checked_in_at: string;
+    status: string;
+    photo_url: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    address: string | null;
+  } | null;
+}
+
+export interface AttendanceRecord {
   id: number;
   user_id: number;
   workout_schedule_id: number;
@@ -63,4 +80,6 @@ export interface AttendanceToday {
   photo_url: string | null;
   latitude: string | null;
   longitude: string | null;
+  address: string | null;
+  workout_schedule: WorkoutSchedule | null;
 }
