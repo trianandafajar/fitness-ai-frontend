@@ -71,6 +71,23 @@ export interface AttendanceToday {
   } | null;
 }
 
+export interface MealItem {
+  food: string;
+  portion: string | null;
+  notes: string | null;
+}
+
+export interface MealSchedule {
+  id: number;
+  user_id: number;
+  day_of_week: string;
+  meal_time: string;
+  time: string | null;
+  items: MealItem[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface WeightLog {
   id: number;
   user_id: number;

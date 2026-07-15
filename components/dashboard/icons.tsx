@@ -81,6 +81,16 @@ export function IconCheckin({ className = "h-4.5 w-4.5" }: IconProps) {
   );
 }
 
+export function IconMealPlan({ className = "h-4.5 w-4.5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M6 2v6a2 2 0 01-2 2H3v5a4 4 0 004 4h10a4 4 0 004-4v-5h-1a2 2 0 01-2-2V2" />
+      <path d="M10 14h4" />
+      <path d="M12 12v4" />
+    </svg>
+  );
+}
+
 export function IconPlus({ className = "h-6 w-6" }: IconProps) {
   return (
     <svg

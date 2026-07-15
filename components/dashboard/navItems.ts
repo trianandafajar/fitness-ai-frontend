@@ -6,6 +6,7 @@ import {
   IconProgress,
   IconSettings,
   IconCheckin,
+  IconMealPlan,
 } from "./icons";
 
 export interface NavItem {
@@ -17,8 +18,9 @@ export interface NavItem {
 export const sidebarNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
+  { href: "/dashboard/meal-schedules", label: "Meal Plan", icon: IconMealPlan },
   { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
-  { href: "/dashboard/meal-logs", label: "Nutrition", icon: IconNutrition },
+  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
   { href: "/settings", label: "Settings", icon: IconSettings },
 ];
@@ -27,10 +29,10 @@ export const sidebarNavItems: NavItem[] = [
 export const bottomNavLeft: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
-  { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
+  { href: "/dashboard/meal-schedules", label: "Meal Plan", icon: IconMealPlan },
 ];
 
 export const bottomNavRight: NavItem[] = [
-  { href: "/dashboard/meal-logs", label: "Nutrition", icon: IconNutrition },
+  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
 ];
