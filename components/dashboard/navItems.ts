@@ -7,6 +7,7 @@ import {
   IconSettings,
   IconCheckin,
   IconMealPlan,
+  IconKpi,
 } from "./icons";
 
 export interface NavItem {
@@ -17,6 +18,7 @@ export interface NavItem {
 
 export const sidebarNavItems: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
+  { href: "/dashboard/kpi-history", label: "KPI", icon: IconKpi },
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
   { href: "/dashboard/meal-schedules", label: "Meal Plan", icon: IconMealPlan },
   { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
@@ -35,4 +37,5 @@ export const bottomNavLeft: NavItem[] = [
 export const bottomNavRight: NavItem[] = [
   { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
+  { href: "/dashboard/kpi-history", label: "KPI", icon: IconKpi },
 ];

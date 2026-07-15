@@ -40,6 +40,25 @@ export interface KpiCurrentResponse {
   this_week: KpiData | null;
 }
 
+export interface KpiRecord {
+  id: number;
+  period_type: string;
+  period_start: string;
+  period_end: string;
+  workouts_completed: number;
+  workouts_target: number;
+  workout_compliance_pct: number;
+  current_weight_kg: number | null;
+  weight_change_kg: number | null;
+  weight_trend_score: number;
+  nutrition_score: number;
+  consistency_score: number;
+  engagement_score: number;
+  overall_score: number;
+  ai_summary: string | null;
+  status: string;
+}
+
 export interface KpiData {
   id: number;
   overall_score: number;
