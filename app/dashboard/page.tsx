@@ -87,20 +87,20 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-3.5 xl:grid-cols-4">
               <StatMini
                 label="Calories"
-                icon={<Flame className="h-[16px] w-[16px]" />}
+                icon={<Flame className="h-4 w-4" />}
                 value={calorieValue}
                 total={hasMealsToday ? "2,000" : undefined}
                 percent={hasMealsToday ? caloriePercent : undefined}
               />
               <StatMini
                 label="Workout"
-                icon={<CheckCircle className="h-[16px] w-[16px]" />}
+                icon={<CheckCircle className="h-4 w-4" />}
                 value={checkedIn ? "Checked in" : todaySchedule ? "Not yet" : "No schedule"}
                 secondaryText={checkedIn ? "Done" : todaySchedule ? "Ready to go" : "Set a schedule"}
               />
               <StatMini
                 label="Weight"
-                icon={<Droplet className="h-[16px] w-[16px]" />}
+                icon={<Droplet className="h-4 w-4" />}
                 value={kpi?.today?.current_weight_kg ? `${kpi.today.current_weight_kg}kg` : "—"}
                 secondaryText={
                   kpi?.today?.weight_change_kg != null
@@ -110,7 +110,7 @@ export default function DashboardPage() {
               />
               <StatMini
                 label="Compliance"
-                icon={<Footprints className="h-[16px] w-[16px]" />}
+                icon={<Footprints className="h-4 w-4" />}
                 value={hasKpi ? `${kpi!.today!.workout_compliance_pct}%` : "—"}
                 secondaryText={hasKpi ? "This week" : "No data yet"}
               />

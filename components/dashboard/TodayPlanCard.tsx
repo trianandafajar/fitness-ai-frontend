@@ -21,6 +21,8 @@ function formatExerciseMeta(ex: WorkoutSchedule["exercises"][0]): string {
 }
 
 export default function TodayPlanCard({ schedule, attendanceToday, loading, onCheckinSuccess }: TodayPlanCardProps) {
+  const [showCheckin, setShowCheckin] = useState(false);
+
   if (loading) {
     return (
       <div className="animate-pulse rounded-2xl border border-line bg-white p-5.5">
@@ -53,7 +55,6 @@ export default function TodayPlanCard({ schedule, attendanceToday, loading, onCh
   }
 
   const hasAttended = attendanceToday?.has_attended && attendanceToday?.attendance?.id != null;
-  const [showCheckin, setShowCheckin] = useState(false);
 
   return (
     <>

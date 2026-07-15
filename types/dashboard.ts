@@ -71,6 +71,16 @@ export interface AttendanceToday {
   } | null;
 }
 
+export interface WeightLog {
+  id: number;
+  user_id: number;
+  week_start: string;
+  weight_kg: number;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface AttendanceRecord {
   id: number;
   user_id: number;

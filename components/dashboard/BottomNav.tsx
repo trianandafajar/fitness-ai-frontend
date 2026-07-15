@@ -35,7 +35,7 @@ export default function BottomNav() {
         ))}
 
         <Link
-          href="/log"
+          href="/dashboard/meal-logs"
           aria-label="Add log"
           className="-mt-7.5 flex h-13.5 w-13.5 shrink-0 items-center justify-center rounded-full bg-orange shadow-[0_8px_16px_rgba(255,90,31,0.35),0_0_0_6px_#fff] transition-transform hover:scale-105"
         >
