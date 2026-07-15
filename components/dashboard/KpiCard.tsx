@@ -2,7 +2,7 @@ interface KpiRow {
   label: string;
   value: string;
   percent: number;
-  color: string; // tailwind bg-* class
+  color: string;
 }
 
 interface KpiCardProps {
@@ -11,10 +11,23 @@ interface KpiCardProps {
 }
 
 export default function KpiCard({ rows, streak }: KpiCardProps) {
+  if (rows.length === 0) {
+    return (
+      <div className="rounded-2xl border border-line bg-white p-[22px]">
+        <div className="mb-1 text-[13px] font-bold uppercase tracking-wide text-ink-soft">
+          This Week&apos;s KPIs
+        </div>
+        <p className="text-sm leading-relaxed text-ink-soft">
+          No KPI data yet. Start tracking your workouts and meals to see your score.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-2xl border border-line bg-white p-[22px]">
       <div className="mb-4 text-[13px] font-bold uppercase tracking-wide text-ink-soft">
-        This Week's KPIs
+        This Week&apos;s KPIs
       </div>
 
       <div className="flex flex-col gap-3.5">

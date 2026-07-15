@@ -14,7 +14,7 @@ export default function StatMini({ label, icon, value, total, percent, secondary
     <div className="rounded-[14px] border border-line bg-white p-4">
       <div className="mb-2.5 flex items-center justify-between">
         <span className="text-[12.5px] font-medium text-ink-soft">{label}</span>
-        <span className="flex h-[30px] w-[30px] items-center justify-center rounded-lg bg-orange-tint text-[15px] text-orange-deep">
+        <span className="flex h-7.5 w-7.5 items-center justify-center rounded-lg bg-orange-tint text-[15px] text-orange-deep">
           {icon}
         </span>
       </div>

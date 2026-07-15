@@ -2,7 +2,7 @@ interface IconProps {
   className?: string;
 }
 
-export function IconDashboard({ className = "h-[18px] w-[18px]" }: IconProps) {
+export function IconDashboard({ className = "h-4.5 w-4.5" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
       <rect x="3" y="3" width="7" height="9" rx="1.5" />
@@ -13,7 +13,7 @@ export function IconDashboard({ className = "h-[18px] w-[18px]" }: IconProps) {
   );
 }
 
-export function IconWorkout({ className = "h-[18px] w-[18px]" }: IconProps) {
+export function IconWorkout({ className = "h-4.5 w-4.5" }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -29,7 +29,7 @@ export function IconWorkout({ className = "h-[18px] w-[18px]" }: IconProps) {
   );
 }
 
-export function IconNutrition({ className = "h-[18px] w-[18px]" }: IconProps) {
+export function IconNutrition({ className = "h-4.5 w-4.5" }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -46,7 +46,7 @@ export function IconNutrition({ className = "h-[18px] w-[18px]" }: IconProps) {
   );
 }
 
-export function IconProgress({ className = "h-[18px] w-[18px]" }: IconProps) {
+export function IconProgress({ className = "h-4.5 w-4.5" }: IconProps) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -63,7 +63,7 @@ export function IconProgress({ className = "h-[18px] w-[18px]" }: IconProps) {
   );
 }
 
-export function IconSettings({ className = "h-[18px] w-[18px]" }: IconProps) {
+export function IconSettings({ className = "h-4.5 w-4.5" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
       <circle cx="12" cy="12" r="3" />

@@ -23,8 +23,8 @@ export default function DashboardHeader({ name, dateLabel, streakDays }: Dashboa
         </div>
         <div className="text-[13.5px] text-ink-soft">{dateLabel}</div>
       </div>
-      <div className="flex h-fit items-center gap-[7px] rounded-full bg-orange-tint px-4 py-2.5 text-[13.5px] font-bold text-orange-deep">
-        <Flame className="h-[15px] w-[15px]" /> {streakDays}-day streak
+      <div className="flex h-fit items-center gap-1.75 rounded-full bg-orange-tint px-4 py-2.5 text-[13.5px] font-bold text-orange-deep">
+        <Flame className="h-3.75] w-3.75" /> {streakDays}-day streak
       </div>
     </div>
   );
