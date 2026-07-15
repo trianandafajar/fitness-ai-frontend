@@ -138,7 +138,7 @@ export default function MealSchedulesPage() {
       </div>
 
       {/* Day Tabs */}
-      <div className="mb-5 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="mb-5 flex gap-1.5 overflow-x-auto py-1">
         {DAYS.map((day) => {
           const isToday = day === todayDay();
           const isActive = day === selectedDay;

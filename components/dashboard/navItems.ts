@@ -8,6 +8,7 @@ import {
   IconCheckin,
   IconMealPlan,
   IconKpi,
+  IconNotification,
 } from "./icons";
 
 export interface NavItem {
@@ -24,6 +25,7 @@ export const sidebarNavItems: NavItem[] = [
   { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
   { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
+  { href: "/dashboard/notifications", label: "Notifications", icon: IconNotification },
   { href: "/settings", label: "Settings", icon: IconSettings },
 ];
 
