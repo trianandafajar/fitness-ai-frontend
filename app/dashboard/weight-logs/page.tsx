@@ -217,7 +217,7 @@ export default function WeightLogsPage() {
       {/* Modal Form */}
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center">
-          <div className="flex w-full flex-col rounded-t-2xl bg-white p-5 sm:w-[460px] sm:rounded-2xl">
+          <div className="flex w-full flex-col rounded-t-2xl bg-white p-5 sm:w-115 sm:rounded-2xl">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-display text-lg font-bold">
                 {editingId ? "Edit Weight" : "Log Weight"}
