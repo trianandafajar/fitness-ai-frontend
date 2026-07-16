@@ -3,6 +3,10 @@ export interface Exercise {
   sets: number | null;
   reps: number | null;
   notes?: string | null;
+  description?: string | null;
+  category?: string | null;
+  rest_seconds?: number | null;
+  estimated_calories?: number | null;
 }
 
 export interface WorkoutSchedule {

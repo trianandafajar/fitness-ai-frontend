@@ -94,7 +94,7 @@ export default function DashboardPage() {
             <div className="font-display text-base font-bold">Workout Plan</div>
             <a href="/dashboard/workout-schedules" className="text-xs font-bold text-orange-deep">See All</a>
           </div>
-          <ExerciseList exercises={todaySchedule?.exercises ?? []} />
+          <ExerciseList exercises={todaySchedule?.exercises ?? []} scheduleId={todaySchedule?.id} />
         </div>
 
         {kpi?.today?.data?.ai_summary && (

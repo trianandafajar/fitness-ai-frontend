@@ -4,6 +4,7 @@ import type { Exercise } from "@/types/dashboard";
 
 interface ExerciseListProps {
   exercises: Exercise[];
+  scheduleId?: number;
 }
 
 function formatMeta(ex: Exercise): string {
@@ -13,7 +14,7 @@ function formatMeta(ex: Exercise): string {
   return parts.join("") || "—";
 }
 
-export default function ExerciseList({ exercises }: ExerciseListProps) {
+export default function ExerciseList({ exercises, scheduleId }: ExerciseListProps) {
   if (exercises.length === 0) {
     return (
       <div className="rounded-2xl border border-line bg-white p-5">
@@ -27,7 +28,7 @@ export default function ExerciseList({ exercises }: ExerciseListProps) {
       {exercises.map((ex, i) => (
         <Link
           key={i}
-          href="/dashboard/workout-schedules"
+          href={scheduleId != null ? `/dashboard/exercises/${scheduleId}/${i}` : "/dashboard/workout-schedules"}
           className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3 transition-colors hover:border-orange"
         >
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-tint">

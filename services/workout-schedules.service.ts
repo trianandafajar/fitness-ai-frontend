@@ -7,6 +7,12 @@ export interface ExerciseInput {
   notes?: string | null;
 }
 
+export interface EnrichExercisePayload {
+  name: string;
+  sets?: number | null;
+  reps?: number | null;
+}
+
 export interface CreateSchedulePayload {
   day_of_week: string;
   scheduled_time?: string | null;
@@ -23,4 +29,7 @@ export const workoutScheduleService = {
     api.put(`/workout-schedules/${id}`, payload),
 
   remove: (id: number) => api.delete(`/workout-schedules/${id}`),
+
+  enrichExercise: (payload: EnrichExercisePayload) =>
+    api.post("/workout-schedules/enrich-exercise", payload),
 };
