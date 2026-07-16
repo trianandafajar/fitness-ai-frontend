@@ -41,3 +41,12 @@ export const bottomNavRight: NavItem[] = [
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
   { href: "/dashboard/kpi-history", label: "KPI", icon: IconKpi },
 ];
+
+export const bottomNavAll: NavItem[] = [
+  { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
+  { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
+  { href: "/dashboard/meal-schedules", label: "Meal Plan", icon: IconMealPlan },
+  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
+  { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
+  { href: "/dashboard/kpi-history", label: "KPI", icon: IconKpi },
+];

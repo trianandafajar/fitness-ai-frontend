@@ -126,3 +126,19 @@ export function IconPlus({ className = "h-6 w-6" }: IconProps) {
     </svg>
   );
 }
+
+export function IconChevronRight({ className = "h-4 w-4" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M9 6l6 6-6 6" />
+    </svg>
+  );
+}
+
+export function IconPlay({ className = "h-5 w-5" }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M8 5v14l11-7z" />
+    </svg>
+  );
+}
