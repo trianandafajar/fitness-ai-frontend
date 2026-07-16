@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { PartyPopper, AlertCircle } from "lucide-react";
 import { ButtonPrimary } from "@/components/ui/Button";
 import type { AiAnalysis } from "./types";
 
@@ -28,14 +29,7 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center py-16 text-center">
         <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-orange-tint">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              stroke="#FF5A1F"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
+          <AlertCircle className="h-7 w-7 text-orange" />
         </div>
         <h1 className="mb-2 font-display text-[22px] font-bold tracking-tight">
           Analysis unavailable
@@ -60,7 +54,7 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
     <div className="flex flex-1 flex-col">
       <div className="mb-2 text-[12.5px] font-semibold tracking-wide text-orange-deep">DONE</div>
       <h1 className="mb-1.5 font-display text-[22px] font-bold tracking-tight sm:text-2xl">
-        Your profile is ready 🎉
+        Your profile is ready <PartyPopper className="inline h-5 w-5 text-orange" />
       </h1>
       <p className="mb-6 text-sm leading-relaxed text-ink-soft">
         Your AI analysis is complete. Based on your profile, here are the

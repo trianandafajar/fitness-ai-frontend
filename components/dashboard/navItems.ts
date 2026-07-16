@@ -2,7 +2,7 @@ import { ComponentType } from "react";
 import {
   IconDashboard,
   IconWorkout,
-  IconNutrition,
+  IconMealLog,
   IconProgress,
   IconSettings,
   IconCheckin,
@@ -23,7 +23,7 @@ export const sidebarNavItems: NavItem[] = [
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
   { href: "/dashboard/meal-schedules", label: "Meal Plan", icon: IconMealPlan },
   { href: "/dashboard/attendances", label: "Check-in", icon: IconCheckin },
-  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
+  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconMealLog },
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
   { href: "/dashboard/notifications", label: "Notifications", icon: IconNotification },
   { href: "/settings", label: "Settings", icon: IconSettings },
@@ -37,7 +37,7 @@ export const bottomNavLeft: NavItem[] = [
 ];
 
 export const bottomNavRight: NavItem[] = [
-  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
+  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconMealLog },
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
   { href: "/dashboard/kpi-history", label: "KPI", icon: IconKpi },
 ];
@@ -46,7 +46,7 @@ export const bottomNavAll: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconDashboard },
   { href: "/dashboard/workout-schedules", label: "Workout", icon: IconWorkout },
   { href: "/dashboard/meal-schedules", label: "Meal Plan", icon: IconMealPlan },
-  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconNutrition },
+  { href: "/dashboard/meal-logs", label: "Meal Log", icon: IconMealLog },
   { href: "/dashboard/weight-logs", label: "Weight", icon: IconProgress },
   { href: "/dashboard/kpi-history", label: "KPI", icon: IconKpi },
 ];

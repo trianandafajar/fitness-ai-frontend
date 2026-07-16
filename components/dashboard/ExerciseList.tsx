@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Dumbbell } from "lucide-react";
 import { IconChevronRight } from "./icons";
 import type { Exercise } from "@/types/dashboard";
 
@@ -32,9 +33,7 @@ export default function ExerciseList({ exercises, scheduleId }: ExerciseListProp
           className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3 transition-colors hover:border-orange"
         >
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-orange-tint">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5 text-orange-deep">
-              <path d="M6.5 6.5l11 11M4 9l3-3M17 20l3-3M2 11l2-2 3 3-2 2-3-3zM16 5l2-2 3 3-2 2-3-3z" />
-            </svg>
+            <Dumbbell className="h-5 w-5 text-orange-deep" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-[13.5px] font-semibold text-ink">{ex.name}</div>

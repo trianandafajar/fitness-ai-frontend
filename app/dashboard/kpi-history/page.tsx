@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { TrendingUp, TrendingDown, Minus, Trophy, BarChart3 } from "lucide-react";
+import { BarChart3 } from "lucide-react";
 import { kpiService } from "@/services/kpi.service";
 import type { KpiRecord } from "@/types/dashboard";
 

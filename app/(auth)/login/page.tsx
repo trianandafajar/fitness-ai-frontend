@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { CircleDot } from "lucide-react";
 import { isAxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -125,7 +126,7 @@ export default function LoginPage() {
             }
             visualSide={
                 <AuthVisual
-                    tag="● Live tracking"
+                    tag={<><CircleDot className="inline h-2.5 w-2.5 fill-current" /> Live tracking</>}
                     heading="A personal AI coach that learns from your body."
                     sub="Every heartbeat, step, and meal gets logged — so the recommendations you get are truly personal."
                     stats={[

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Sparkles } from "lucide-react";
 import { isAxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -152,7 +153,7 @@ export default function RegisterPage() {
             }
             visualSide={
                 <AuthVisual
-                    tag="✦ Free to start"
+                    tag={<><Sparkles className="inline h-3 w-3" /> Free to start</>}
                     heading="Like having a personal trainer & nutritionist in your pocket."
                     sub="Fill in your profile once, and the AI instantly creates workout plans and meal plans tailored to your habits."
                     stats={[

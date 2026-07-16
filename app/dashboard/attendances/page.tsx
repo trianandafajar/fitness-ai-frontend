@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MapPin } from "lucide-react";
 import { attendanceService } from "@/services/attendances.service";
 import type { AttendanceRecord } from "@/types/dashboard";
 
@@ -104,8 +105,8 @@ export default function AttendancesPage() {
                       </a>
                     )}
                     {att.latitude && att.longitude && (
-                      <span>
-                        📍 {att.latitude}, {att.longitude}
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="h-3 w-3" /> {att.latitude}, {att.longitude}
                       </span>
                     )}
                   </div>

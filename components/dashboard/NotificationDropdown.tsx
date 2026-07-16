@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, X, Clock, Dumbbell } from "lucide-react";
+import { Bell, Clock, Dumbbell } from "lucide-react";
 import type { NotificationData } from "./useNotifications";
 
 interface NotificationDropdownProps {

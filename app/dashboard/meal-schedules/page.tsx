@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Plus, Pencil, Trash2, X, Clock } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { mealScheduleService } from "@/services/meal-schedules.service";
-import type { MealSchedule, MealItem } from "@/types/dashboard";
+import type { MealSchedule } from "@/types/dashboard";
 
 const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 const DAY_LABELS: Record<string, string> = {

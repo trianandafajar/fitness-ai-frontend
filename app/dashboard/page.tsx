@@ -28,7 +28,7 @@ function computeStatus(score: number): string {
 }
 
 export default function DashboardPage() {
-  const { user, fetchUser } = useAuth();
+  const { fetchUser } = useAuth();
   const [loading, setLoading] = useState(true);
   const [kpi, setKpi] = useState<KpiCurrentResponse | null>(null);
   const [meals, setMeals] = useState<MealLogTodayResponse | null>(null);

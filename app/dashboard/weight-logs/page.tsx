@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Pencil, Trash2, X, TrendingUp, TrendingDown, Minus, Weight } from "lucide-react";
+import { Plus, Pencil, Trash2, X, TrendingUp, TrendingDown, Minus, Weight, Check } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { weightLogService } from "@/services/weight-logs.service";
 import type { WeightLog } from "@/types/dashboard";
@@ -166,7 +166,7 @@ export default function WeightLogsPage() {
                   Goal: <span className="font-semibold text-ink">{WEIGHT_GOAL} kg</span>
                   {latest && (
                     <span className={latest.weight_kg <= WEIGHT_GOAL ? "ml-1 text-success" : "ml-1 text-ink-faint"}>
-                      ({latest.weight_kg <= WEIGHT_GOAL ? "✓" : `${(latest.weight_kg - WEIGHT_GOAL).toFixed(1)} kg left`})
+                      {latest.weight_kg <= WEIGHT_GOAL ? <Check className="inline h-4 w-4" /> : `${(latest.weight_kg - WEIGHT_GOAL).toFixed(1)} kg left`}
                     </span>
                   )}
                 </span>

@@ -1,10 +1,12 @@
+import { ReactNode } from "react";
+
 interface StatCard {
     label: string;
     value: string;
 }
 
 interface AuthVisualProps {
-    tag: string;
+    tag: ReactNode;
     heading: string;
     sub: string;
     stats?: StatCard[];

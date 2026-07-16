@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Bookmark, Play } from "lucide-react";
+import { ArrowLeft, Bookmark, Flame, Dumbbell } from "lucide-react";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import type { WorkoutSchedule, Exercise } from "@/types/dashboard";
 
@@ -96,30 +96,20 @@ export default function ExerciseDetailPage({
 
         {/* Exercise icon */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-19 w-19 opacity-90"
-          >
-            <path d="M6.5 6.5l11 11M4 9l3-3M17 20l3-3M2 11l2-2 3 3-2 2-3-3zM16 5l2-2 3 3-2 2-3-3z" />
-          </svg>
+          <Dumbbell className="h-19 w-19 text-white opacity-90" strokeWidth={1.8} />
         </div>
 
         {/* Kcal badge */}
-        <div className="absolute bottom-3.5 right-3.5 z-10 rounded-full bg-white/92 px-3 py-1.5 font-mono text-xs font-semibold text-orange-deep">
-          🔥 {kcalDisplay}
+        <div className="absolute bottom-3.5 right-3.5 z-10 flex items-center gap-1 rounded-full bg-white/92 px-3 py-1.5 font-mono text-xs font-semibold text-orange-deep">
+          <Flame className="h-3.5 w-3.5 fill-orange-deep" /> {kcalDisplay}
         </div>
       </div>
 
       {/* Body */}
       <div className="mx-auto max-w-105 px-4.5 pt-5">
         {/* Category tag */}
-        <div className="mb-3 inline-block rounded-full bg-orange-tint px-3 py-1.25 text-[11.5px] font-bold text-orange-deep">
-          💪 {category}
+        <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-orange-tint px-3 py-1.25 text-[11.5px] font-bold text-orange-deep">
+          <Dumbbell className="h-3.5 w-3.5" /> {category}
         </div>
 
         {/* Title */}

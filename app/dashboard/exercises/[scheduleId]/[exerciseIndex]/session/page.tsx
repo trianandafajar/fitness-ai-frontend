@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { X, SkipBack, SkipForward, Check, Flame, Clock, Trophy } from "lucide-react";
+import { X, SkipBack, SkipForward, Check, Flame, Clock, Trophy, Play, Pause } from "lucide-react";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import CheckinModal from "@/components/dashboard/CheckinModal";
 import type { WorkoutSchedule, Exercise } from "@/types/dashboard";
@@ -376,14 +376,9 @@ export default function ActiveSessionPage({
             className="flex h-17.5 w-17.5 items-center justify-center rounded-full bg-orange shadow-[0_8px_20px_rgba(255,90,31,0.35)] transition-colors hover:bg-orange-deep disabled:opacity-40"
           >
             {running ? (
-              <svg viewBox="0 0 24 24" className="h-6.5 w-6.5">
-                <rect x="6" y="4" width="4" height="16" rx="1" fill="white" />
-                <rect x="14" y="4" width="4" height="16" rx="1" fill="white" />
-              </svg>
+              <Pause className="h-6.5 w-6.5 text-white" fill="white" />
             ) : (
-              <svg viewBox="0 0 24 24" className="h-6.5 w-6.5">
-                <path d="M6 4l14 8-14 8V4z" fill="white" />
-              </svg>
+              <Play className="h-6.5 w-6.5 text-white" fill="white" />
             )}
           </button>
 

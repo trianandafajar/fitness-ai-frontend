@@ -1,6 +1,5 @@
 import StepShell from "./StepShell";
 import { Chip, ChipGroup } from "@/components/ui/Chip";
-import Field from "@/components/ui/Field";
 import AddChipInput from "@/components/ui/AddChipInput";
 import { OnboardingData } from "./types";
 

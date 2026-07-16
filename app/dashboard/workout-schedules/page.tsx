@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Pencil, Trash2, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import type { WorkoutSchedule } from "@/types/dashboard";
@@ -179,7 +179,6 @@ export default function WorkoutSchedulesPage() {
             return (
               <DayCard
                 key={day}
-                day={day}
                 label={DAY_LABELS[day]}
                 date={date}
                 isToday={isToday}
@@ -302,7 +301,6 @@ export default function WorkoutSchedulesPage() {
 }
 
 function DayCard({
-  day,
   label,
   date,
   isToday,
@@ -311,7 +309,6 @@ function DayCard({
   onEdit,
   onDelete,
 }: {
-  day: string;
   label: string;
   date: Date;
   isToday: boolean;
