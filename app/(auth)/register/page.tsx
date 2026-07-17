@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import { isAxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
+import { APP_NAME } from "@/lib/app-config";
 import AuthLayout from "@/components/auth/AuthLayout";
 import AuthVisual from "@/components/auth/AuthVisual";
 import Logo from "@/components/auth/Logo";
