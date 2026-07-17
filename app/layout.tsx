@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
+import { APP_NAME, APP_TAGLINE } from "@/lib/app-config";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -21,8 +22,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "FitTrack AI",
-  description: "Your personal AI coach that learns from your body.",
+  title: APP_NAME,
+  description: APP_TAGLINE,
 };
 
 export default function RootLayout({

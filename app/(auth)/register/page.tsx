@@ -131,7 +131,7 @@ export default function RegisterPage() {
                                 <Link href="/privacy" className="font-semibold text-orange-deep hover:underline">
                                     Privacy Policy
                                 </Link>{" "}
-                                of FitTrack AI.
+                                of {APP_NAME}.
                             </label>
                         </div>
 

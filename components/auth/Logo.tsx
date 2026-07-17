@@ -1,4 +1,9 @@
+import { APP_BRAND } from "@/lib/app-config";
+
 export default function Logo() {
+    const prefix = "Fitness"
+    const suffix = APP_BRAND.startsWith(prefix) ? APP_BRAND.slice(prefix.length) : ""
+
     return (
         <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-orange">
@@ -13,7 +18,7 @@ export default function Logo() {
                 </svg>
             </div>
             <div className="font-display text-lg font-bold tracking-tight">
-                Fit<span className="text-orange">Track</span>
+                {prefix}<span className="text-orange">{suffix}</span>
             </div>
         </div>
     );
