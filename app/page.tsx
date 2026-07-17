@@ -1,5 +1,122 @@
-import { redirect } from "next/navigation";
+// app/get-started/page.tsx (atau path onboarding kamu)
+"use client";
 
-export default function RootPage() {
-  redirect("/login");
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const Player = dynamic(
+  () => import("@lottiefiles/react-lottie-player").then((m) => m.Player),
+  { ssr: false },
+);
+
+type Slide = {
+  id: number;
+  lottieSrc: string;
+  title: string;
+  highlight: string;
+  description: string;
+};
+
+const slides: Slide[] = [
+  {
+    id: 1,
+    lottieSrc: "https://lottie.host/2d7305b6-49e2-4e25-839f-e1fd4b90d4dd/3c4OMUZXnG.json",
+    title: "Welcome",
+    highlight: "Fitcare",
+    description:
+      "Track every workout and meal in one place, built around your body's real progress.",
+  },
+  {
+    id: 2,
+    lottieSrc: "https://lottie.host/60dcda2e-a5ca-44bc-aa10-a9bc791c5d48/Ab1enRnQ6u.json",
+    title: "Train with",
+    highlight: "your coach",
+    description:
+      "Get a plan that adjusts to how you're actually doing, not a generic routine.",
+  },
+  {
+    id: 3,
+    lottieSrc: "https://lottie.host/28ad9df4-a069-4908-81d7-515045bbae9a/dv3aGv7AlB.json",
+    title: "See your",
+    highlight: "progress",
+    description:
+      "Watch your strength, weight, and habits change over weeks, not just days.",
+  },
+];
+
+export default function GetStartedPage() {
+  const router = useRouter();
+  const [index, setIndex] = useState(0);
+  const isLast = index === slides.length - 1;
+  const current = slides[index];
+
+  function handleNext() {
+    if (isLast) {
+      router.push("/login");
+      return;
+    }
+    setIndex((i) => Math.min(i + 1, slides.length - 1));
+  }
+
+  return (
+    <div className="mx-auto flex min-h-screen max-w-100 flex-col">
+      <section className="relative flex h-[58vh] items-center justify-center overflow-hidden rounded-br-[100px] bg-orange-100">
+        <Player
+          key={current.id}
+          autoplay
+          loop
+          src={current.lottieSrc}
+          style={{
+            width: 320,
+            height: 320,
+          }}
+        />
+
+      </section>
+
+      <div className=" px-6 py-8 sm:py-10">
+        {/* Dots */}
+        <div className="mb-6 flex items-center justify-center gap-1.5">
+          {slides.map((slide, i) => (
+            <button
+              key={slide.id}
+              onClick={() => setIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-2 rounded-full transition-all ${i === index ? "w-6 bg-orange" : "w-2 bg-orange/25"
+                }`}
+            />
+          ))}
+        </div>
+
+        <h1 className="mb-2 text-center font-display text-[24px] font-bold leading-tight tracking-tight sm:text-[26px]">
+          {current.title} <span className="text-orange-deep">{current.highlight}</span>
+        </h1>
+        <p className="mb-8 text-center text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
+          {current.description}
+        </p>
+
+        <div className="flex flex-col items-center gap-2 pb-4">
+          <button
+            onClick={handleNext}
+            aria-label={isLast ? "Get started" : "Next slide"}
+            className="flex h-14 w-14 items-center justify-center rounded-full bg-orange text-white shadow-md transition hover:bg-orange-deep"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path
+                d="M5 12h14M13 6l6 6-6 6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+          <span className="text-[13px] font-semibold text-ink-soft">
+            {isLast ? "Get Started" : "Next"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 }
