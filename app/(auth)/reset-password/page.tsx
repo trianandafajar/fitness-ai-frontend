@@ -6,7 +6,6 @@ import Link from "next/link";
 import { isAxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
-import AuthVisual from "@/components/auth/AuthVisual";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary } from "@/components/ui/Button";
 import Logo from "@/components/auth/Logo";
@@ -180,24 +179,13 @@ function ResetPasswordForm() {
 
 export default function ResetPasswordPage() {
     return (
-        <AuthLayout
-            formSide={
-                <>
-                    <div className="mb-10">
-                        <Logo />
-                    </div>
-                    <Suspense fallback={null}>
-                        <ResetPasswordForm />
-                    </Suspense>
-                </>
-            }
-            visualSide={
-                <AuthVisual
-                    tag="Secure & encrypted"
-                    heading="One more step to get back to your progress."
-                    sub="Your new password is active right after saving — you can log back in immediately."
-                />
-            }
-        />
+        <AuthLayout>
+            <div className="mb-10">
+                <Logo />
+            </div>
+            <Suspense fallback={null}>
+                <ResetPasswordForm />
+            </Suspense>
+        </AuthLayout>
     );
 }
