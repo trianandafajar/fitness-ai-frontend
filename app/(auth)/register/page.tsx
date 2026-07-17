@@ -7,10 +7,9 @@ import { isAxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_NAME } from "@/lib/app-config";
 import AuthLayout from "@/components/auth/AuthLayout";
-import Logo from "@/components/auth/Logo";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary } from "@/components/ui/Button";
-// import { Divider, SocialRow } from "@/components/auth/SocialAuth";
+// import { Divider, SocialRow } from "@/components/auth/SocialAuth
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -52,15 +51,11 @@ export default function RegisterPage() {
 
     return (
         <AuthLayout>
-            <div className="mb-10">
-                <Logo />
-            </div>
-
-            <h1 className="mb-2 font-display text-[26px] font-bold leading-tight tracking-tight sm:text-[28px]">
-                Start your fitness journey
+            <h1 className="mb-1 text-center font-display text-[24px] font-bold leading-tight tracking-tight sm:text-[26px]">
+                Sign Up
             </h1>
-            <p className="mb-8 text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
-                One account to store all your body data and progress, safe and personal.
+            <p className="mb-8 text-center text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
+                Create your account here
             </p>
 
             <form onSubmit={handleSubmit}>
@@ -82,7 +77,7 @@ export default function RegisterPage() {
                 />
                 <Field
                     id="identifier"
-                    label="Email "
+                    label="Email"
                     type="text"
                     placeholder="name@email.com"
                     autoComplete="username"
@@ -133,11 +128,11 @@ export default function RegisterPage() {
                 </div>
 
                 <ButtonPrimary type="submit" disabled={!agreed || loading} className="disabled:cursor-not-allowed disabled:opacity-50">
-                    {loading ? "Creating account..." : "Create Account"}
+                    {loading ? "Creating account..." : "Sign Up"}
                 </ButtonPrimary>
             </form>
-{/* 
-            <Divider text="or sign up with" />
+            {/* 
+            <Divider text="or continue with" />
             <SocialRow /> */}
 
             <p className="text-center text-sm text-ink-soft pt-6">
