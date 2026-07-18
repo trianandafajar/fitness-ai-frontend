@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import OnboardingHeader from "@/components/onboarding/OnboardingHeader";
 import StepPersonalInfo from "@/components/onboarding/StepPersonalInfo";
 import StepBodyGoal from "@/components/onboarding/StepBodyGoal";
@@ -17,6 +17,14 @@ export default function OnboardingPage() {
   const [data, setData] = useState<OnboardingData>(initialOnboardingData);
   const { submitStep1, submitStep2, submitStep3, submitStep4, submitStep5, aiResult, loading, error, clearError } = useOnboarding();
   const [analyzing, setAnalyzing] = useState(false);
+  const analysisTriggered = useRef(false);
+
+  useEffect(() => {
+    if (step === 5 && !aiResult && !analysisTriggered.current) {
+      analysisTriggered.current = true;
+      handleStep5();
+    }
+  }, [step]);
 
   function update(patch: Partial<OnboardingData>) {
     setData((prev) => ({ ...prev, ...patch }));
