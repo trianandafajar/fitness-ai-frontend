@@ -6,10 +6,9 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { User, LogOut, Flame, Bell } from "lucide-react";
 import { kpiService } from "@/services/kpi.service";
-import { notificationService } from "@/services/notification.service";
-import { getEcho } from "@/lib/echo";
 import NotificationDropdown from "./NotificationDropdown";
-import type { NotificationData } from "./useNotifications";
+import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
+import { dashboardNotificationsStore } from "@/stores/dashboard-notifications.store";
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -30,19 +29,21 @@ function getInitials(name: string) {
 
 export default function DashboardHeader() {
   const { user, logout } = useAuth();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } =
+    useDashboardNotifications();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [streakDays, setStreakDays] = useState(0);
-  const [notifications, setNotifications] = useState<NotificationData[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
   const [showNotif, setShowNotif] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (profileRef.current && !profileRef.current.contains(e.target as Node)) setOpen(false);
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setShowNotif(false);
+      if (profileRef.current && !profileRef.current.contains(e.target as Node))
+        setOpen(false);
+      if (notifRef.current && !notifRef.current.contains(e.target as Node))
+        setShowNotif(false);
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
@@ -53,60 +54,15 @@ export default function DashboardHeader() {
       const res = await kpiService.getCurrent();
       const score = res.data?.today?.data?.consistency_score;
       if (score != null) setStreakDays(score);
-    } catch { }
-  }, []);
-
-  const fetchNotifCount = useCallback(async () => {
-    try {
-      const res = await notificationService.getUnreadCount();
-      setUnreadCount(res.data.count ?? 0);
-    } catch { }
-  }, []);
-
-  const fetchAllNotif = useCallback(async () => {
-    try {
-      const res = await notificationService.getAll();
-      setNotifications(res.data.data ?? []);
-    } catch { }
+    } catch {}
   }, []);
 
   useEffect(() => {
     fetchStreak();
-    fetchNotifCount();
-    fetchAllNotif();
-  }, [fetchStreak, fetchNotifCount, fetchAllNotif]);
-
-  useEffect(() => {
-    if (!user?.id) return;
-    const echo = getEcho();
-    if (!echo) return;
-    const channel = echo.private(`user.${user.id}`);
-    channel.notification((notif: NotificationData) => {
-      setNotifications((prev) => [notif, ...prev]);
-      setUnreadCount((c) => c + 1);
-    });
-    return () => { echo.leave(`user.${user.id}`); };
-  }, [user?.id]);
-
-  const markAsRead = useCallback(async (id: string) => {
-    try {
-      await notificationService.markAsRead(id);
-      setNotifications((prev) =>
-        prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n)),
-      );
-      setUnreadCount((c) => Math.max(0, c - 1));
-    } catch { }
-  }, []);
-
-  const markAllAsRead = useCallback(async () => {
-    try {
-      await notificationService.markAllAsRead();
-      setNotifications((prev) => prev.map((n) => ({ ...n, read_at: new Date().toISOString() })));
-      setUnreadCount(0);
-    } catch { }
-  }, []);
+  }, [fetchStreak]);
 
   async function handleLogout() {
+    dashboardNotificationsStore.reset();
     await logout();
     router.push("/login");
   }
@@ -115,7 +71,9 @@ export default function DashboardHeader() {
     <div className="my-5 flex items-center justify-between">
       <div>
         <div className="text-[13px] text-ink-soft">{getGreeting()}</div>
-        <div className="font-display text-xl font-bold text-ink">{user?.name ?? "User"}</div>
+        <div className="font-display text-xl font-bold text-ink">
+          {user?.name ?? "User"}
+        </div>
       </div>
 
       <div className="flex items-center gap-2.5">
@@ -124,7 +82,9 @@ export default function DashboardHeader() {
             className={`h-5 w-5 ${streakDays > 0 ? "text-orange" : "text-ink-faint"}`}
             fill={streakDays > 0 ? "currentColor" : "none"}
           />
-          <span className={`text-sm font-bold ${streakDays > 0 ? "text-ink" : "text-ink-faint"}`}>
+          <span
+            className={`text-sm font-bold ${streakDays > 0 ? "text-ink" : "text-ink-faint"}`}
+          >
             {streakDays}
           </span>
         </div>
