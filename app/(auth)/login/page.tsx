@@ -9,6 +9,7 @@ import AuthLayout from "@/components/auth/AuthLayout";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary } from "@/components/ui/Button";
 import { Divider, SocialRow } from "@/components/auth/SocialAuth";
+import { Eye, EyeOff } from "lucide-react";
 import dynamic from "next/dynamic";
 
 export default function LoginPage() {
@@ -24,6 +25,8 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    const [showPassword, setShowPassword] = useState(false);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -87,13 +90,23 @@ export default function LoginPage() {
                 />
                 <Field
                     id="password"
-                    label="Password"
-                    type="password"
-                    placeholder="Enter your password"
-                    autoComplete="current-password"
+                    label="Confirm password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Repeat password"
+                    autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    rightElement={
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="flex items-center"
+                            tabIndex={-1}
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    }
                 />
 
                 <div className="-mt-1.5 mb-4.5 flex items-center justify-between">

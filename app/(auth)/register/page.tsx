@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { isAxiosError } from "axios";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_NAME } from "@/lib/app-config";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -18,9 +19,26 @@ export default function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [agreed, setAgreed] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+    function getPasswordStrength(pw: string): { label: string; level: number; bar: string; text: string } | null {
+        if (!pw) return null;
+        const hasUpper = /[A-Z]/.test(pw);
+        const hasLower = /[a-z]/.test(pw);
+        const hasDigit = /\d/.test(pw);
+        const hasSpecial = /[^A-Za-z0-9]/.test(pw);
+        const types = [hasUpper, hasLower, hasDigit, hasSpecial].filter(Boolean).length;
+
+        if (pw.length < 6) return { label: "Weak", level: 1, bar: "bg-red-500", text: "text-red-500" };
+        if (pw.length >= 8 && types >= 3) return { label: "Strong", level: 3, bar: "bg-green-500", text: "text-green-600" };
+        return { label: "Medium", level: 2, bar: "bg-orange-500", text: "text-orange-600" };
+    }
+
+    const strength = getPasswordStrength(password);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -88,22 +106,54 @@ export default function RegisterPage() {
                 <Field
                     id="password"
                     label="Password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Minimum of 8 characters"
                     autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    rightElement={
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="flex items-center"
+                            tabIndex={-1}
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    }
                 />
+                {strength && (
+                    <div className="-mt-2.5 mb-4.5">
+                        <div className="flex h-1 gap-1">
+                            <div className={`h-full flex-1 rounded-full transition-colors ${strength.level >= 1 ? strength.bar : "bg-line"}`} />
+                            <div className={`h-full flex-1 rounded-full transition-colors ${strength.level >= 2 ? strength.bar : "bg-line"}`} />
+                            <div className={`h-full flex-1 rounded-full transition-colors ${strength.level >= 3 ? strength.bar : "bg-line"}`} />
+                        </div>
+                        <p className={`mt-1 text-[12px] font-medium ${strength.text}`}>
+                            {strength.label}
+                        </p>
+                    </div>
+                )}
                 <Field
                     id="confirmPassword"
                     label="Confirm password"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Repeat password"
                     autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
+                    rightElement={
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="flex items-center"
+                            tabIndex={-1}
+                        >
+                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    }
                 />
 
                 <div className="mb-5.5 flex items-start gap-2.25">
