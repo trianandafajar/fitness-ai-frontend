@@ -12,13 +12,13 @@ interface Props {
 }
 
 export default function StepPersonalInfo({ data, update, onNext, loading, error }: Props) {
-  const canProceed = data.name.trim().length > 0 && data.dob.length > 0;
+  const canProceed = data.name.trim().length > 0 && data.dob.length > 0 && data.height.trim().length > 0 && data.weight.trim().length > 0;
 
   return (
     <StepShell
       stepTag="STEP 1 OF 5"
-      title="Let's get to know you"
-      sub="This basic data helps the AI calculate your body's needs accurately."
+      title="Input Postur Tubuh"
+      sub="Nama, tanggal lahir, gender, tinggi, dan berat badanmu."
       onNext={onNext}
       nextDisabled={!canProceed}
       nextLoading={loading}
@@ -55,6 +55,22 @@ export default function StepPersonalInfo({ data, update, onNext, loading, error 
             onChange={(v) => update({ gender: v as OnboardingData["gender"] })}
           />
         </div>
+        <Field
+          id="height"
+          label="Height (cm)"
+          type="number"
+          placeholder="170"
+          value={data.height}
+          onChange={(e) => update({ height: e.target.value })}
+        />
+        <Field
+          id="weight"
+          label="Weight (kg)"
+          type="number"
+          placeholder="65"
+          value={data.weight}
+          onChange={(e) => update({ weight: e.target.value })}
+        />
       </div>
     </StepShell>
   );

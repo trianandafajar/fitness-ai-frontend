@@ -82,13 +82,13 @@ export default function OnboardingPage() {
         <StepPersonalInfo data={data} update={update} onNext={handleStep1} loading={loading} error={error} />
       )}
       {step === 2 && (
-        <StepBodyGoal data={data} update={update} onNext={handleStep2} onBack={back} loading={loading} error={error} />
+        <StepFoodPreference data={data} update={update} onNext={handleStep2} onBack={back} loading={loading} error={error} />
       )}
       {step === 3 && (
-        <StepFoodPreference data={data} update={update} onNext={handleStep3} onBack={back} loading={loading} error={error} />
+        <StepExerciseHabit data={data} update={update} onNext={handleStep3} onBack={back} loading={loading} error={error} />
       )}
       {step === 4 && (
-        <StepExerciseHabit data={data} update={update} onNext={handleStep4} onBack={back} loading={loading} error={error} />
+        <StepBodyGoal data={data} update={update} onNext={handleStep4} onBack={back} loading={loading} error={error} />
       )}
       {step === 5 && (
         <StepAnalysis aiResult={aiResult} loading={analyzing} onRetry={handleStep5} />

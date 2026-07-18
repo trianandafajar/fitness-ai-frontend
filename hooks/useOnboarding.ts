@@ -23,8 +23,11 @@ export function useOnboarding() {
     setError("");
     try {
       await onboardingService.step1({
+        name: data.name,
         date_of_birth: data.dob,
         gender: data.gender.toLowerCase(),
+        height_cm: Number(data.height),
+        weight_kg: Number(data.weight),
       });
     } catch (err) {
       if (isAxiosError(err) && err.response?.data?.message) {
@@ -46,11 +49,10 @@ export function useOnboarding() {
     setError("");
     try {
       await onboardingService.step2({
-        height_cm: Number(data.height),
-        weight_kg: Number(data.weight),
-        fitness_goal: GOAL_MAP[data.goal],
-        activity_level: data.activityLevel,
-        goal_weight_kg: data.goalWeight ? Number(data.goalWeight) : undefined,
+        dietary_preferences: data.favoriteFoods,
+        dietary_restrictions: data.restrictions,
+        allergies: data.allergies,
+        medical_conditions: data.medicalConditions || undefined,
       });
     } catch (err) {
       if (isAxiosError(err) && err.response?.data?.message) {
@@ -72,10 +74,9 @@ export function useOnboarding() {
     setError("");
     try {
       await onboardingService.step3({
-        dietary_preferences: data.favoriteFoods,
-        dietary_restrictions: data.restrictions,
-        allergies: data.allergies,
-        medical_conditions: data.medicalConditions || undefined,
+        exercise_frequency: data.daysPerWeek,
+        exercise_types: data.sportTypes,
+        injuries: data.injuries || undefined,
       });
     } catch (err) {
       if (isAxiosError(err) && err.response?.data?.message) {
@@ -97,9 +98,9 @@ export function useOnboarding() {
     setError("");
     try {
       await onboardingService.step4({
-        exercise_frequency: data.daysPerWeek,
-        exercise_types: data.sportTypes,
-        injuries: data.injuries || undefined,
+        fitness_goal: GOAL_MAP[data.goal],
+        activity_level: data.activityLevel,
+        goal_weight_kg: data.goalWeight ? Number(data.goalWeight) : undefined,
       });
     } catch (err) {
       if (isAxiosError(err) && err.response?.data?.message) {

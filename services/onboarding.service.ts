@@ -1,29 +1,30 @@
 import { api } from "@/lib/axios";
 
 export interface Step1Payload {
+  name: string;
   date_of_birth: string;
   gender: string;
+  height_cm: number;
+  weight_kg: number;
 }
 
 export interface Step2Payload {
-  height_cm: number;
-  weight_kg: number;
-  fitness_goal: string;
-  activity_level: string;
-  goal_weight_kg?: number;
-}
-
-export interface Step3Payload {
   dietary_preferences?: string[];
   dietary_restrictions?: string[];
   allergies?: string[];
   medical_conditions?: string;
 }
 
-export interface Step4Payload {
+export interface Step3Payload {
   exercise_frequency: string;
   exercise_types: string[];
   injuries?: string;
+}
+
+export interface Step4Payload {
+  fitness_goal: string;
+  activity_level: string;
+  goal_weight_kg?: number;
 }
 
 export const onboardingService = {

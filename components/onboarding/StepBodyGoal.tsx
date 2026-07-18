@@ -21,16 +21,13 @@ const GOALS: { id: OnboardingData["goal"]; icon: ReactNode; title: string; descr
 ];
 
 export default function StepBodyGoal({ data, update, onNext, onBack, loading, error }: Props) {
-  const canProceed = data.height.trim().length > 0 && data.weight.trim().length > 0;
-
   return (
     <StepShell
-      stepTag="STEP 2 OF 5"
-      title="Your body & goal"
-      sub="Used to calculate your BMI, BMR, and create a realistic plan."
+      stepTag="STEP 4 OF 5"
+      title="Goal Setting"
+      sub="Target: turun berat, naik otot, atau endurance."
       onNext={onNext}
       onBack={onBack}
-      nextDisabled={!canProceed}
       nextLoading={loading}
     >
       {error && (
@@ -38,25 +35,6 @@ export default function StepBodyGoal({ data, update, onNext, onBack, loading, er
           {error}
         </div>
       )}
-
-      <div className="mb-5 grid grid-cols-2 gap-4">
-        <Field
-          id="height"
-          label="Height (cm)"
-          type="number"
-          placeholder="170"
-          value={data.height}
-          onChange={(e) => update({ height: e.target.value })}
-        />
-        <Field
-          id="weight"
-          label="Weight (kg)"
-          type="number"
-          placeholder="65"
-          value={data.weight}
-          onChange={(e) => update({ weight: e.target.value })}
-        />
-      </div>
 
       <label className="mb-2.5 block text-[13px] font-semibold text-ink">Your main goal</label>
       {GOALS.map((g) => (
