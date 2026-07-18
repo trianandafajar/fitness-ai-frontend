@@ -71,15 +71,15 @@ export default function StepBodyGoal({ data, update, onNext, onBack, loading, er
       ))}
 
       <label className="mb-2.5 mt-5 block text-[13px] font-semibold text-ink">Activity level</label>
-      <div className="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+      <div className="mb-5 grid grid-cols-3 gap-2">
         {ACTIVITY_OPTIONS.map((opt) => (
           <button
             key={opt.value}
             type="button"
             onClick={() => update({ activityLevel: opt.value })}
             className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${data.activityLevel === opt.value
-                ? "border-ink bg-ink text-white"
-                : "border-line bg-white text-ink-soft hover:border-ink-faint"
+              ? "border-orange bg-orange text-white"
+              : "border-line bg-white text-ink-soft hover:border-ink-faint"
               }`}
           >
             {opt.label}

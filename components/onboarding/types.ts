@@ -1,6 +1,6 @@
 export type Gender = "Male" | "Female";
 export type Goal = "weight-loss" | "muscle-gain" | "endurance";
-export type ActivityLevel = "sedentary" | "light" | "moderate" | "active" | "very_active";
+export type ActivityLevel = "low" | "medium" | "high";
 export type DaysPerWeek = "1-2" | "3-4" | "5+";
 export type TimeOfDay = "Morning" | "Afternoon" | "Evening";
 
@@ -30,7 +30,7 @@ export const initialOnboardingData: OnboardingData = {
   height: "",
   weight: "",
   goal: "weight-loss",
-  activityLevel: "moderate",
+  activityLevel: "medium",
   goalWeight: "",
   favoriteFoods: ["Nasi Padang", "Sate"],
   restrictions: [],
@@ -62,9 +62,7 @@ export const GOAL_MAP: Record<Goal, string> = {
 };
 
 export const ACTIVITY_OPTIONS: { value: ActivityLevel; label: string }[] = [
-  { value: "sedentary", label: "Sedentary" },
-  { value: "light", label: "Light" },
-  { value: "moderate", label: "Moderate" },
-  { value: "active", label: "Active" },
-  { value: "very_active", label: "Very Active" },
+  { value: "low", label: "Low Intensity" },
+  { value: "medium", label: "Medium Intensity" },
+  { value: "high", label: "High Intensity" },
 ];
