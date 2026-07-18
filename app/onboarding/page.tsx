@@ -75,7 +75,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-140 flex-col px-6 py-8 sm:py-10">
+    <div className="mx-auto flex min-h-screen max-w-140 flex-col px-6 pt-8 sm:pt-10">
       <OnboardingHeader step={step} total={TOTAL_STEPS} />
 
       {step === 1 && (

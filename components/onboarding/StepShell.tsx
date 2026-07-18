@@ -25,7 +25,7 @@ export default function StepShell({
   nextLoading = false,
 }: StepShellProps) {
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col pb-28">
       <div className="mb-2 text-[12.5px] font-semibold tracking-wide text-orange-deep">
         {stepTag}
       </div>
@@ -36,25 +36,27 @@ export default function StepShell({
 
       <div className="flex-1">{children}</div>
 
-      <div className="mt-auto flex gap-3 pt-7">
-        {onBack && (
-          <ButtonSecondary
-            type="button"
-            onClick={onBack}
-            className="flex-1"
-          >
-            Back
-          </ButtonSecondary>
-        )}
+      <div className="fixed inset-x-0 bottom-0 z-30 rounded-t-2xl border-t border-line bg-white">
+        <div className="mx-auto flex w-full max-w-140 gap-3 px-6 py-3">
+          {onBack && (
+            <ButtonSecondary
+              type="button"
+              onClick={onBack}
+              className="flex-1"
+            >
+              Back
+            </ButtonSecondary>
+          )}
 
-        <ButtonPrimary
-          type="button"
-          onClick={onNext}
-          disabled={nextDisabled || nextLoading}
-          className="flex-1 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {nextLoading ? "Saving..." : nextLabel}
-        </ButtonPrimary>
+          <ButtonPrimary
+            type="button"
+            onClick={onNext}
+            disabled={nextDisabled || nextLoading}
+            className="flex-1 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {nextLoading ? "Saving..." : nextLabel}
+          </ButtonPrimary>
+        </div>
       </div>
     </div>
   );
