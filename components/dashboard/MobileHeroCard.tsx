@@ -1,18 +1,18 @@
 import Link from "next/link";
-import { IconPlay } from "./icons";
 import type { WorkoutSchedule } from "@/types/dashboard";
-import { Timer, Check } from "lucide-react";
+import { Timer, Check, ClipboardCheck } from "lucide-react";
 
 interface MobileHeroCardProps {
   schedule: WorkoutSchedule | null;
   checkedIn: boolean;
+  onCheckin?: (schedule: WorkoutSchedule) => void;
 }
 
 function formatDayName(day: string): string {
   return day.charAt(0).toUpperCase() + day.slice(1);
 }
 
-export default function MobileHeroCard({ schedule, checkedIn }: MobileHeroCardProps) {
+export default function MobileHeroCard({ schedule, checkedIn, onCheckin }: MobileHeroCardProps) {
   if (!schedule) {
     return (
       <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-orange to-orange-deep p-6 text-white">
@@ -72,12 +72,13 @@ export default function MobileHeroCard({ schedule, checkedIn }: MobileHeroCardPr
           )}
         </div>
         {!checkedIn && (
-          <Link
-            href="/dashboard/workout-schedules"
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg transition-transform hover:scale-105"
+          <button
+            onClick={() => onCheckin?.(schedule)}
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white text-orange px-3 py-1 text-[11.5px] font-semibold backdrop-blur-sm"
           >
-            <IconPlay className="h-4 w-4 text-orange" />
-          </Link>
+            <ClipboardCheck className="h-3.5 w-3.5" />
+            <span>Checked in</span>
+          </button>
         )}
       </div>
     </div>

@@ -2,7 +2,8 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Bookmark, Flame, Dumbbell } from "lucide-react";
+import Link from "next/link";
+import { ArrowLeft, Flame, Dumbbell } from "lucide-react";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import type { WorkoutSchedule, Exercise } from "@/types/dashboard";
 
@@ -89,11 +90,6 @@ export default function ExerciseDetailPage({
           <ArrowLeft className="h-4 w-4 text-ink" strokeWidth={2.4} />
         </button>
 
-        {/* Bookmark button */}
-        <button className="absolute right-3.5 top-3.5 z-10 flex h-9.5 w-9.5 items-center justify-center rounded-full bg-white/90">
-          <Bookmark className="h-4 w-4 text-ink" strokeWidth={2.2} />
-        </button>
-
         {/* Exercise icon */}
         <div className="absolute inset-0 flex items-center justify-center">
           <Dumbbell className="h-19 w-19 text-white opacity-90" strokeWidth={1.8} />
@@ -156,19 +152,15 @@ export default function ExerciseDetailPage({
         )}
       </div>
 
-      {/* CTA */}
+      {/* Back to Dashboard */}
       <div className="pointer-events-none fixed bottom-12 left-0 right-0 z-20 bg-linear-to-t from-white from-60% to-transparent pb-5 pt-8 md:static md:bg-none md:pt-5">
         <div className="mx-auto max-w-105 px-4.5">
-          <button
-            onClick={() =>
-              router.push(
-                `/dashboard/exercises/${scheduleId}/${exerciseIndex}/session`,
-              )
-            }
-            className="pointer-events-auto w-full rounded-[14px] bg-orange py-3.75 text-[15px] font-bold text-white shadow-[0_6px_16px_rgba(255,90,31,0.3)] transition-colors hover:bg-orange-deep"
+          <Link
+            href="/dashboard"
+            className="pointer-events-auto block w-full rounded-[14px] border border-line bg-white py-3.75 text-center text-[15px] font-bold text-ink transition-colors hover:border-ink-faint"
           >
-            Start Workout
-          </button>
+            Back to Dashboard
+          </Link>
         </div>
       </div>
     </div>

@@ -7,6 +7,7 @@ import ExerciseList from "@/components/dashboard/ExerciseList";
 import AIRecommendation from "@/components/dashboard/AIRecommendation";
 import AiExerciseCard from "@/components/dashboard/AiExerciseCard";
 import AiMealCard from "@/components/dashboard/AiMealCard";
+import CheckinModal from "@/components/dashboard/CheckinModal";
 import { kpiService } from "@/services/kpi.service";
 import { mealLogService } from "@/services/meal-logs.service";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
@@ -33,6 +34,8 @@ export default function DashboardPage() {
   const [schedules, setSchedules] = useState<WorkoutSchedule[]>([]);
   const [attendance, setAttendance] = useState<AttendanceToday | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<AiAnalysis | null>(null);
+  const [showCheckin, setShowCheckin] = useState(false);
+  const [selectedSchedule, setSelectedSchedule] = useState<WorkoutSchedule | null>(null);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
@@ -57,6 +60,17 @@ export default function DashboardPage() {
 
   useEffect(() => { loadAll(); }, [loadAll]);
 
+  const handleCheckin = useCallback((schedule: WorkoutSchedule) => {
+    setSelectedSchedule(schedule);
+    setShowCheckin(true);
+  }, []);
+
+  const handleCheckinSuccess = useCallback(() => {
+    setShowCheckin(false);
+    setSelectedSchedule(null);
+    loadAll();
+  }, [loadAll]);
+
   const now = new Date();
   const todayDay = DAYS[now.getDay()];
   const todaySchedule = schedules.find((s) => s.day_of_week === todayDay) ?? null;
@@ -74,7 +88,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-5">
-      <MobileHeroCard schedule={todaySchedule} checkedIn={checkedIn} />
+      <MobileHeroCard schedule={todaySchedule} checkedIn={checkedIn} onCheckin={handleCheckin} />
 
       <QuickStatsPills
         items={[
@@ -121,6 +135,14 @@ export default function DashboardPage() {
             ))}
           </div>
         </div>
+      )}
+
+      {showCheckin && selectedSchedule && (
+        <CheckinModal
+          schedule={selectedSchedule}
+          onClose={() => { setShowCheckin(false); setSelectedSchedule(null); }}
+          onSuccess={handleCheckinSuccess}
+        />
       )}
     </div>
   );
