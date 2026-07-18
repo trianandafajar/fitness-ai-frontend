@@ -99,7 +99,7 @@ export default function GetStartedPage() {
           <button
             onClick={handleNext}
             aria-label={isLast ? "Get started" : "Next slide"}
-            className="flex h-14 w-14 items-center justify-center rounded-full bg-orange text-white shadow-md transition hover:bg-orange-deep"
+            className="flex h-14 w-14 cursor-pointer items-center justify-center rounded-full bg-orange text-white shadow-md transition hover:bg-orange-deep"
           >
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path
