@@ -1,5 +1,5 @@
 export type Gender = "Male" | "Female";
-export type Goal = "weight-loss" | "muscle-gain" | "endurance";
+export type Goal = "weight-loss" | "muscle-gain" | "endurance" | "general-fitness" | "strength" | "flexibility" | "toning";
 export type ActivityLevel = "low" | "medium" | "high";
 export type DaysPerWeek = "1-2" | "3-4" | "5+";
 export type TimeOfDay = "Morning" | "Afternoon" | "Evening";
@@ -59,6 +59,10 @@ export const GOAL_MAP: Record<Goal, string> = {
   "weight-loss": "Lose weight",
   "muscle-gain": "Build muscle",
   "endurance": "Boost endurance",
+  "general-fitness": "General Fitness",
+  "strength": "Strength Training",
+  "flexibility": "Flexibility & Mobility",
+  "toning": "Toning / Body Recomp",
 };
 
 export const ACTIVITY_OPTIONS: { value: ActivityLevel; label: string }[] = [

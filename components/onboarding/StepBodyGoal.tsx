@@ -1,4 +1,4 @@
-import { Scale, Dumbbell, Heart } from "lucide-react";
+import { Scale, Dumbbell, Heart, Activity, Zap, Feather, Target } from "lucide-react";
 import Field from "@/components/ui/Field";
 import StepShell from "./StepShell";
 import GoalCard from "./GoalCard";
@@ -18,16 +18,27 @@ const GOALS: { id: OnboardingData["goal"]; icon: ReactNode; title: string; descr
   { id: "weight-loss", icon: <Scale className="h-5 w-5" />, title: "Lose weight", description: "Focus on calorie deficit & cardio" },
   { id: "muscle-gain", icon: <Dumbbell className="h-5 w-5" />, title: "Build muscle", description: "Focus on weight training & protein surplus" },
   { id: "endurance", icon: <Heart className="h-5 w-5" />, title: "Boost endurance", description: "Focus on cardio & endurance training" },
+  { id: "general-fitness", icon: <Activity className="h-5 w-5" />, title: "General Fitness", description: "Stay healthy and active every day" },
+  { id: "strength", icon: <Zap className="h-5 w-5" />, title: "Strength Training", description: "Increase raw strength and power" },
+  { id: "flexibility", icon: <Feather className="h-5 w-5" />, title: "Flexibility & Mobility", description: "Improve range of motion and posture" },
+  { id: "toning", icon: <Target className="h-5 w-5" />, title: "Toning / Body Recomp", description: "Sculpt your body and reduce body fat" },
 ];
 
+const GOALS_WITH_WEIGHT: OnboardingData["goal"][] = ["weight-loss", "muscle-gain", "toning"];
+
 export default function StepBodyGoal({ data, update, onNext, onBack, loading, error }: Props) {
+  const needsWeight = GOALS_WITH_WEIGHT.includes(data.goal);
+  const canProceed = !needsWeight || data.goalWeight.trim().length > 0;
+
   return (
     <StepShell
       stepTag="STEP 4 OF 5"
       title="Goal Setting"
-      sub="Target: turun berat, naik otot, atau endurance."
+      sub="Set your fitness goal — lose weight, build muscle, or boost endurance."
       onNext={onNext}
       onBack={onBack}
+      nextLabel="Analyze"
+      nextDisabled={!canProceed}
       nextLoading={loading}
     >
       {error && (
@@ -65,14 +76,16 @@ export default function StepBodyGoal({ data, update, onNext, onBack, loading, er
         ))}
       </div>
 
-      <Field
-        id="goalWeight"
-        label="Goal weight (kg) — optional"
-        type="number"
-        placeholder="70"
-        value={data.goalWeight}
-        onChange={(e) => update({ goalWeight: e.target.value })}
-      />
+      {needsWeight && (
+        <Field
+          id="goalWeight"
+          label="Goal weight (kg)"
+          type="number"
+          placeholder="70"
+          value={data.goalWeight}
+          onChange={(e) => update({ goalWeight: e.target.value })}
+        />
+      )}
     </StepShell>
   );
 }

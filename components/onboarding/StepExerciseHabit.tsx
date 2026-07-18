@@ -22,12 +22,12 @@ function toggle(list: string[], value: string) {
 export default function StepExerciseHabit({ data, update, onNext, onBack, loading, error }: Props) {
   return (
     <StepShell
-      stepTag="STEP 4 OF 5"
+      stepTag="STEP 3 OF 5"
       title="Your exercise habits"
       sub="So the AI workout schedule fits your daily routine."
       onNext={onNext}
       onBack={onBack}
-      nextLabel="Analyze"
+      nextLabel="Continue"
       nextLoading={loading}
     >
       {error && (

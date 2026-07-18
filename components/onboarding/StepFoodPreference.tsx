@@ -1,4 +1,3 @@
-import { X } from "lucide-react";
 import StepShell from "./StepShell";
 import { Chip, ChipGroup } from "@/components/ui/Chip";
 import AddChipInput from "@/components/ui/AddChipInput";
@@ -16,7 +15,7 @@ interface Props {
 export default function StepFoodPreference({ data, update, onNext, onBack, loading, error }: Props) {
   return (
     <StepShell
-      stepTag="STEP 3 OF 5"
+      stepTag="STEP 2 OF 5"
       title="Food preferences"
       sub="The AI will prioritize your favorite foods when suggesting meal plans."
       onNext={onNext}

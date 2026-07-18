@@ -17,8 +17,8 @@ export default function StepPersonalInfo({ data, update, onNext, loading, error 
   return (
     <StepShell
       stepTag="STEP 1 OF 5"
-      title="Input Postur Tubuh"
-      sub="Nama, tanggal lahir, gender, tinggi, dan berat badanmu."
+      title="Body Input"
+      sub="Your name, date of birth, gender, height, and weight."
       onNext={onNext}
       nextDisabled={!canProceed}
       nextLoading={loading}
