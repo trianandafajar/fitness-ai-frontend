@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import PageContainer from "@/components/ui/PageContainer";
 import OnboardingHeader from "@/components/onboarding/OnboardingHeader";
 import StepPersonalInfo from "@/components/onboarding/StepPersonalInfo";
 import StepBodyGoal from "@/components/onboarding/StepBodyGoal";
@@ -83,7 +84,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-140 flex-col px-6 pt-8 sm:pt-10">
+    <PageContainer className="pt-8 sm:pt-10">
       <OnboardingHeader step={step} total={TOTAL_STEPS} />
 
       {step === 1 && (
@@ -101,6 +102,6 @@ export default function OnboardingPage() {
       {step === 5 && (
         <StepAnalysis aiResult={aiResult} loading={analyzing} onRetry={handleStep5} />
       )}
-    </div>
+    </PageContainer>
   );
 }

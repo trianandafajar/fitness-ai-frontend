@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import PageContainer from "@/components/ui/PageContainer";
 
 interface AuthLayoutProps {
     children: ReactNode;
@@ -6,8 +7,8 @@ interface AuthLayoutProps {
 
 export default function AuthLayout({ children }: AuthLayoutProps) {
     return (
-        <div className="mx-auto flex min-h-screen max-w-100 flex-col justify-center px-6 py-8 sm:py-10">
+        <PageContainer className="justify-center py-8 sm:py-10">
             {children}
-        </div>
+        </PageContainer>
     );
 }

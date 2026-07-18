@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import PageContainer from "@/components/ui/PageContainer";
 
 const Player = dynamic(
   () => import("@lottiefiles/react-lottie-player").then((m) => m.Player),
@@ -60,7 +61,7 @@ export default function GetStartedPage() {
   }
 
   return (
-    <div className="mx-auto flex h-dvh max-w-100 flex-col overflow-hidden">
+    <PageContainer className="min-h-0 h-dvh overflow-hidden">
       <section className="relative flex h-[58vh] shrink-0 items-center justify-center overflow-hidden rounded-br-[100px] bg-orange-100">
         <Player
           key={current.id}
@@ -116,6 +117,6 @@ export default function GetStartedPage() {
           </span>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

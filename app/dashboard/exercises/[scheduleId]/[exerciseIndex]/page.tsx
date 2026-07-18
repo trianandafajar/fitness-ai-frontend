@@ -67,7 +67,7 @@ export default function ExerciseDetailPage({
   return (
     <div className="pb-24 md:pb-10">
       {/* Visual Header */}
-      <div className="relative mx-auto mt-2 h-55 max-w-105 overflow-hidden rounded-3xl bg-linear-to-br from-orange to-orange-deep md:mt-0">
+      <div className="relative mx-auto mt-2 h-55 max-w-100 overflow-hidden rounded-3xl bg-linear-to-br from-orange to-orange-deep md:mt-0">
         {/* Pulse line */}
         <svg
           className="absolute inset-0 h-full w-full opacity-30"
@@ -102,7 +102,7 @@ export default function ExerciseDetailPage({
       </div>
 
       {/* Body */}
-      <div className="mx-auto max-w-105 px-4.5 pt-5">
+      <div className="mx-auto max-w-100 px-4.5 pt-5">
         {/* Category tag */}
         <div className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-orange-tint px-3 py-1.25 text-[11.5px] font-bold text-orange-deep">
           <Dumbbell className="h-3.5 w-3.5" /> {category}
@@ -154,7 +154,7 @@ export default function ExerciseDetailPage({
 
       {/* Back to Dashboard */}
       <div className="pointer-events-none fixed bottom-12 left-0 right-0 z-20 bg-linear-to-t from-white from-60% to-transparent pb-5 pt-8 md:static md:bg-none md:pt-5">
-        <div className="mx-auto max-w-105 px-4.5">
+        <div className="mx-auto max-w-100 px-4.5">
           <Link
             href="/dashboard"
             className="pointer-events-auto block w-full rounded-[14px] border border-line bg-white py-3.75 text-center text-[15px] font-bold text-ink transition-colors hover:border-ink-faint"

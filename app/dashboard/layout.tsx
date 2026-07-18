@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import BottomNav from "@/components/dashboard/BottomNav";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import PageContainer from "@/components/ui/PageContainer";
 import { useAuth } from "@/hooks/useAuth";
 import { getEcho } from "@/lib/echo";
 import { notificationService } from "@/services/notification.service";
@@ -84,10 +85,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [user?.id]);
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-140 flex-col px-6 pb-28 sm:pb-28">
+    <PageContainer className="pb-28 sm:pb-28">
       <DashboardHeader />
       <div className="flex-1">{children}</div>
       <BottomNav />
-    </div>
+    </PageContainer>
   );
 }

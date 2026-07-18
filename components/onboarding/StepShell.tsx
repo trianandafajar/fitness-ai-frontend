@@ -1,5 +1,4 @@
 import { type ReactNode } from "react";
-import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 
 interface StepShellProps {
   stepTag: string;
@@ -37,25 +36,25 @@ export default function StepShell({
       <div className="flex-1">{children}</div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 rounded-t-2xl border-t border-line bg-white">
-        <div className="mx-auto flex w-full max-w-140 gap-3 px-6 py-3">
+        <div className="mx-auto flex w-full max-w-100 items-center gap-3 px-5 py-2.5">
           {onBack && (
-            <ButtonSecondary
+            <button
               type="button"
               onClick={onBack}
-              className="flex-1"
+              className="flex h-10 flex-1 cursor-pointer items-center justify-center rounded-[10px] border-[1.5px] border-line bg-white px-3.25 text-[14px] font-semibold text-ink transition-colors hover:border-ink-faint"
             >
               Back
-            </ButtonSecondary>
+            </button>
           )}
 
-          <ButtonPrimary
+          <button
             type="button"
             onClick={onNext}
             disabled={nextDisabled || nextLoading}
-            className="flex-1 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-orange px-3.5 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(217,68,10,0.15)] transition-all hover:bg-orange-deep active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {nextLoading ? "Saving..." : nextLabel}
-          </ButtonPrimary>
+          </button>
         </div>
       </div>
     </div>
