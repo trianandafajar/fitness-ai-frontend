@@ -5,12 +5,16 @@ import MobileHeroCard from "@/components/dashboard/MobileHeroCard";
 import QuickStatsPills from "@/components/dashboard/QuickStatsPills";
 import ExerciseList from "@/components/dashboard/ExerciseList";
 import AIRecommendation from "@/components/dashboard/AIRecommendation";
+import AiExerciseCard from "@/components/dashboard/AiExerciseCard";
+import AiMealCard from "@/components/dashboard/AiMealCard";
 import { kpiService } from "@/services/kpi.service";
 import { mealLogService } from "@/services/meal-logs.service";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import { attendanceService } from "@/services/attendances.service";
+import { aiAnalysisService } from "@/services/ai-analysis.service";
 import { useAuth } from "@/hooks/useAuth";
 import type { KpiCurrentResponse, MealLogTodayResponse, WorkoutSchedule, AttendanceToday } from "@/types/dashboard";
+import type { AiAnalysis } from "@/services/ai-analysis.service";
 
 const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
 
@@ -28,22 +32,25 @@ export default function DashboardPage() {
   const [meals, setMeals] = useState<MealLogTodayResponse | null>(null);
   const [schedules, setSchedules] = useState<WorkoutSchedule[]>([]);
   const [attendance, setAttendance] = useState<AttendanceToday | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<AiAnalysis | null>(null);
 
   const loadAll = useCallback(async () => {
     setLoading(true);
     await fetchUser();
 
-    const [kpiRes, mealsRes, schedRes, attRes] = await Promise.allSettled([
+    const [kpiRes, mealsRes, schedRes, attRes, aiRes] = await Promise.allSettled([
       kpiService.getCurrent(),
       mealLogService.getToday(),
       workoutScheduleService.getAll(),
       attendanceService.getToday(),
+      aiAnalysisService.getMyAnalysis(),
     ]);
 
     if (kpiRes.status === "fulfilled") setKpi(kpiRes.value.data);
     if (mealsRes.status === "fulfilled") setMeals(mealsRes.value.data);
     if (schedRes.status === "fulfilled") setSchedules(schedRes.value.data);
     if (attRes.status === "fulfilled") setAttendance(attRes.value.data);
+    if (aiRes.status === "fulfilled") setAiAnalysis(aiRes.value.data?.data ?? null);
 
     setLoading(false);
   }, [fetchUser]);
@@ -88,6 +95,32 @@ export default function DashboardPage() {
 
       {kpi?.today?.data?.ai_summary && (
         <AIRecommendation message={kpi.today.data.ai_summary} />
+      )}
+
+      {aiAnalysis?.exercise_suggestions && aiAnalysis.exercise_suggestions.length > 0 && (
+        <div>
+          <div className="mb-3 flex items-center justify-between">
+            <div className="font-display text-base font-bold">AI Exercise Recommendations</div>
+          </div>
+          <div className="space-y-2">
+            {aiAnalysis.exercise_suggestions.map((item, i) => (
+              <AiExerciseCard key={i} item={item} />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {aiAnalysis?.meal_suggestions && aiAnalysis.meal_suggestions.length > 0 && (
+        <div>
+          <div className="mb-3 flex items-center justify-between">
+            <div className="font-display text-base font-bold">AI Meal Recommendations</div>
+          </div>
+          <div className="space-y-2">
+            {aiAnalysis.meal_suggestions.map((item, i) => (
+              <AiMealCard key={i} item={item} />
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

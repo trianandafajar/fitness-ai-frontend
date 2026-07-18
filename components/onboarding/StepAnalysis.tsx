@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { PartyPopper, AlertCircle } from "lucide-react";
+import { PartyPopper, AlertCircle, Dumbbell, Utensils } from "lucide-react";
 import { ButtonPrimary } from "@/components/ui/Button";
 import type { AiAnalysis } from "./types";
 
@@ -73,14 +73,68 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
       </p>
 
       <h3 className="mb-2 text-[13px] font-semibold text-ink">Meal Suggestions</h3>
-      <p className="mb-5 text-sm leading-relaxed text-ink-soft">
-        {aiResult.meal_suggestions}
-      </p>
+      {Array.isArray(aiResult.meal_suggestions) ? (
+        <div className="mb-5 space-y-2">
+          {aiResult.meal_suggestions.map((item, i) => {
+            const fd = item.food;
+            return (
+              <div key={i} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                {fd?.image ? (
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-surface">
+                    <img src={fd.image} alt={fd.name} className="h-full w-full object-cover" loading="lazy" />
+                  </div>
+                ) : (
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
+                    <Utensils className="h-5 w-5 text-orange-deep" />
+                  </div>
+                )}
+                <div>
+                  <div className="text-[13px] font-semibold text-ink">{fd?.name ?? item.text}</div>
+                  {fd?.calories_per_100g && (
+                    <div className="text-[12px] text-ink-soft">{fd.calories_per_100g} kcal/100g</div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="mb-5 text-sm leading-relaxed text-ink-soft">{aiResult.meal_suggestions}</p>
+      )}
 
       <h3 className="mb-2 text-[13px] font-semibold text-ink">Exercise Suggestions</h3>
-      <p className="mb-5 text-sm leading-relaxed text-ink-soft">
-        {aiResult.exercise_suggestions}
-      </p>
+      {Array.isArray(aiResult.exercise_suggestions) ? (
+        <div className="mb-5 space-y-2">
+          {aiResult.exercise_suggestions.map((item, i) => {
+            const ex = item.exercise;
+            return (
+              <div key={i} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                {ex?.image ? (
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-surface">
+                    <img src={ex.image} alt={ex.name} className="h-full w-full object-cover" loading="lazy" />
+                  </div>
+                ) : (
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
+                    <Dumbbell className="h-5 w-5 text-orange-deep" />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="text-[13px] font-semibold text-ink">{ex?.name ?? item.text}</div>
+                  {ex?.target_muscles && (
+                    <div className="mt-0.5 flex flex-wrap gap-1">
+                      {ex.target_muscles.map((m) => (
+                        <span key={m} className="rounded-md bg-orange-tint px-1.5 py-0.5 text-[10px] font-medium text-orange-deep">{m}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="mb-5 text-sm leading-relaxed text-ink-soft">{aiResult.exercise_suggestions}</p>
+      )}
 
       <div className="mt-auto pt-1">
         <ButtonPrimary type="button" onClick={() => router.push("/dashboard")}>

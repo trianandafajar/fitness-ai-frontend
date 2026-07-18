@@ -45,8 +45,34 @@ export const initialOnboardingData: OnboardingData = {
 export interface AiAnalysis {
   summary: string;
   recommendations: string;
-  meal_suggestions: string;
-  exercise_suggestions: string;
+  meal_suggestions: EnrichedFood[] | string;
+  exercise_suggestions: EnrichedExercise[] | string;
+}
+
+export interface EnrichedExercise {
+  text: string;
+  exercise: {
+    id: number;
+    name: string;
+    equipment: string;
+    image: string;
+    target_muscles: string[];
+    category: string;
+  } | null;
+}
+
+export interface EnrichedFood {
+  text: string;
+  food: {
+    id: number;
+    name: string;
+    image: string;
+    calories_per_100g: number;
+    protein_per_100g: number;
+    carbs_per_100g: number;
+    fat_per_100g: number;
+    category: string;
+  } | null;
 }
 
 export interface Step5Response {
