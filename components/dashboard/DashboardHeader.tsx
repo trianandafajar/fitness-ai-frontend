@@ -112,7 +112,7 @@ export default function DashboardHeader() {
   }
 
   return (
-    <div className="mt-6 flex items-center justify-between">
+    <div className="my-5 flex items-center justify-between">
       <div>
         <div className="text-[13px] text-ink-soft">{getGreeting()}</div>
         <div className="font-display text-xl font-bold text-ink">{user?.name ?? "User"}</div>
