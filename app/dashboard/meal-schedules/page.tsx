@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Plus, Pencil, Trash2, X, Clock } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { mealScheduleService } from "@/services/meal-schedules.service";
@@ -32,6 +32,41 @@ export default function MealSchedulesPage() {
     time: "",
     items: [] as { food: string; portion: string; notes: string }[],
   });
+
+  // --- Draggable tabs state/refs ---
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragState = useRef({ startX: 0, scrollLeft: 0, moved: false });
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    if (!scrollRef.current) return;
+    setIsDragging(true);
+    dragState.current = {
+      startX: e.pageX - scrollRef.current.offsetLeft,
+      scrollLeft: scrollRef.current.scrollLeft,
+      moved: false,
+    };
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !scrollRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - scrollRef.current.offsetLeft;
+    const walk = x - dragState.current.startX;
+    if (Math.abs(walk) > 5) dragState.current.moved = true;
+    scrollRef.current.scrollLeft = dragState.current.scrollLeft - walk;
+  };
+
+  const stopDragging = () => setIsDragging(false);
+
+  const handleDayClick = (day: string) => {
+    if (dragState.current.moved) {
+      dragState.current.moved = false;
+      return;
+    }
+    setSelectedDay(day);
+  };
+  // --- end draggable tabs logic ---
 
   const fetchSchedules = useCallback(async () => {
     try {
@@ -137,15 +172,23 @@ export default function MealSchedulesPage() {
         </div>
       </div>
 
-      {/* Day Tabs */}
-      <div className="mb-5 flex gap-1.5 overflow-x-auto py-1">
+      {/* Day Tabs — draggable with mouse */}
+      <div
+        ref={scrollRef}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={stopDragging}
+        onMouseLeave={stopDragging}
+        className={`no-scrollbar mb-5 flex gap-1.5 overflow-x-auto py-1 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"
+          }`}
+      >
         {DAYS.map((day) => {
           const isToday = day === todayDay();
           const isActive = day === selectedDay;
           return (
             <button
               key={day}
-              onClick={() => setSelectedDay(day)}
+              onClick={() => handleDayClick(day)}
               className={`shrink-0 rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors ${isActive
                 ? "bg-orange text-white"
                 : "border border-line bg-white text-ink-soft hover:border-orange/50"
