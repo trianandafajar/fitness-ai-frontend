@@ -60,8 +60,8 @@ export default function GetStartedPage() {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-100 flex-col">
-      <section className="relative flex h-[58vh] items-center justify-center overflow-hidden rounded-br-[100px] bg-orange-100">
+    <div className="mx-auto flex h-dvh max-w-100 flex-col overflow-hidden">
+      <section className="relative flex h-[58vh] shrink-0 items-center justify-center overflow-hidden rounded-br-[100px] bg-orange-100">
         <Player
           key={current.id}
           autoplay
@@ -72,12 +72,11 @@ export default function GetStartedPage() {
             height: 320,
           }}
         />
-
       </section>
 
-      <div className=" px-6 py-8 sm:py-10">
+      <div className="flex flex-1 flex-col justify-center px-6 pb-6 pt-2">
         {/* Dots */}
-        <div className="mb-6 flex items-center justify-center gap-1.5">
+        <div className="mb-5 flex items-center justify-center gap-1.5">
           {slides.map((slide, i) => (
             <button
               key={slide.id}
@@ -89,14 +88,14 @@ export default function GetStartedPage() {
           ))}
         </div>
 
-        <h1 className="mb-2 text-center font-display text-[24px] font-bold leading-tight tracking-tight sm:text-[26px]">
+        <h1 className="mb-1.5 text-center font-display text-[24px] font-bold leading-tight tracking-tight sm:text-[26px]">
           {current.title} <span className="text-orange-deep">{current.highlight}</span>
         </h1>
-        <p className="mb-8 text-center text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
+        <p className="mb-6 text-center text-sm leading-relaxed text-ink-soft sm:text-[14.5px]">
           {current.description}
         </p>
 
-        <div className="flex flex-col items-center gap-2 pb-4">
+        <div className="flex flex-col items-center gap-2">
           <button
             onClick={handleNext}
             aria-label={isLast ? "Get started" : "Next slide"}
