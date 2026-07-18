@@ -32,7 +32,7 @@ export const initialOnboardingData: OnboardingData = {
   goal: "weight-loss",
   activityLevel: "medium",
   goalWeight: "",
-  favoriteFoods: ["Nasi Padang", "Sate"],
+  favoriteFoods: [],
   restrictions: [],
   allergies: [],
   medicalConditions: "",
