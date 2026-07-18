@@ -12,12 +12,12 @@ import { Divider, SocialRow } from "@/components/auth/SocialAuth";
 import { Eye, EyeOff } from "lucide-react";
 import dynamic from "next/dynamic";
 
-export default function LoginPage() {
-    const Player = dynamic(
-        () => import("@lottiefiles/react-lottie-player").then((m) => m.Player),
-        { ssr: false },
-    );
+const Player = dynamic(
+    () => import("@lottiefiles/react-lottie-player").then((m) => m.Player),
+    { ssr: false },
+);
 
+export default function LoginPage() {
     const router = useRouter();
     const { login } = useAuth();
     const [identifier, setIdentifier] = useState("");
