@@ -22,7 +22,7 @@ type Slide = {
 const slides: Slide[] = [
   {
     id: 1,
-    lottieSrc: "https://lottie.host/2d7305b6-49e2-4e25-839f-e1fd4b90d4dd/3c4OMUZXnG.json",
+    lottieSrc: "/lottie/slide1.json",
     title: "Welcome",
     highlight: "Fitcare",
     description:
@@ -30,7 +30,7 @@ const slides: Slide[] = [
   },
   {
     id: 2,
-    lottieSrc: "https://lottie.host/60dcda2e-a5ca-44bc-aa10-a9bc791c5d48/Ab1enRnQ6u.json",
+    lottieSrc: "/lottie/slide2.json",
     title: "Train with",
     highlight: "your coach",
     description:
@@ -38,7 +38,7 @@ const slides: Slide[] = [
   },
   {
     id: 3,
-    lottieSrc: "https://lottie.host/28ad9df4-a069-4908-81d7-515045bbae9a/dv3aGv7AlB.json",
+    lottieSrc: "/lottie/slide3.json",
     title: "See your",
     highlight: "progress",
     description:

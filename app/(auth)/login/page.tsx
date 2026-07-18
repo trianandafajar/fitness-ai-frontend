@@ -57,7 +57,7 @@ export default function LoginPage() {
         <AuthLayout>
             <div className="mb-2 flex justify-center">
                 <Player
-                    src="https://lottie.host/790bfc47-7ec9-4c3f-a39c-1eb369b4e21a/U4sLnngJOC.json"
+                    src="/lottie/login.json"
                     loop
                     autoplay
                     style={{ width: "100%", height: "100%", display: "block" }}
