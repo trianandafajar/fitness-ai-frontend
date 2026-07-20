@@ -51,8 +51,6 @@ function toggle(list: string[], value: string) {
 
 function toFormData(profile: Record<string, unknown>): FormData {
   return {
-    name: (profile.name as string) ?? "",
-    email: (profile.email as string) ?? "",
     date_of_birth: (profile.date_of_birth as string) ?? "",
     gender: (profile.gender as string) ?? "",
     height_cm: profile.height_cm != null ? String(profile.height_cm) : "",

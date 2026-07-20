@@ -11,7 +11,7 @@ const Field = forwardRef<HTMLInputElement, FieldProps>(
             <div className="mb-4.5">
                 <label
                     htmlFor={id}
-                    className="mb-1.75 block text-[13px] font-semibold text-ink"
+                    className="mb-1.75 block whitespace-nowrap text-[13px] font-semibold text-ink"
                 >
                     {label}
                 </label>
