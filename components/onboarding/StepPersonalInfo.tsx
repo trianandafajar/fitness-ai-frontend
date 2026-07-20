@@ -12,7 +12,9 @@ interface Props {
 }
 
 export default function StepPersonalInfo({ data, update, onNext, loading, error }: Props) {
-  const canProceed = data.name.trim().length > 0 && data.dob.length > 0 && data.height.trim().length > 0 && data.weight.trim().length > 0;
+  const today = new Date().toISOString().split("T")[0];
+  const dobError = data.dob.length > 0 && data.dob > today ? "Date of birth cannot be in the future." : "";
+  const canProceed = data.name.trim().length > 0 && data.dob.length > 0 && !dobError && data.height.trim().length > 0 && data.weight.trim().length > 0;
 
   return (
     <StepShell
@@ -40,13 +42,21 @@ export default function StepPersonalInfo({ data, update, onNext, loading, error 
             onChange={(e) => update({ name: e.target.value })}
           />
         </div>
-        <Field
-          id="dob"
-          label="Date of birth"
-          type="date"
-          value={data.dob}
-          onChange={(e) => update({ dob: e.target.value })}
-        />
+        <div>
+          <Field
+            id="dob"
+            label="Date of birth"
+            type="date"
+            max={today}
+            value={data.dob}
+            onChange={(e) => update({ dob: e.target.value })}
+          />
+          {dobError && (
+            <p className="-mt-3 mb-4.5 text-[12.5px] font-medium text-orange-deep">
+              {dobError}
+            </p>
+          )}
+        </div>
         <div>
           <label className="mb-1.75 block text-[13px] font-semibold text-ink">Gender</label>
           <Segmented
