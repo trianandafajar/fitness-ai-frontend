@@ -174,7 +174,7 @@ export default function SettingsPage() {
             <User className="h-5 w-5 text-ink-soft" />
             <h2 className="font-display text-base font-bold text-ink">Account</h2>
           </div>
-          <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-x-4">
             <Field id="name" label="Full name" type="text" value={form.name} onChange={(e) => update({ name: e.target.value })} />
             <Field id="email" label="Email" type="email" value={form.email} onChange={(e) => update({ email: e.target.value })} />
           </div>
@@ -251,7 +251,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Save */}
-        <div className="flex items-center gap-3 pb-6">
+        <div className="flex items-center gap-3">
           <ButtonSecondary onClick={() => router.push("/dashboard")}>Cancel</ButtonSecondary>
           <ButtonPrimary onClick={handleSave} disabled={saving}>
             {saving ? (

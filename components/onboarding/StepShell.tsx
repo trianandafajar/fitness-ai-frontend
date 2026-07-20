@@ -41,7 +41,7 @@ export default function StepShell({
             <button
               type="button"
               onClick={onBack}
-              className="flex h-10 flex-1 cursor-pointer items-center justify-center rounded-[10px] border-[1.5px] border-line bg-white px-3.25 text-[14px] font-semibold text-ink transition-colors hover:border-ink-faint"
+              className="flex h-10 flex-1 items-center justify-center rounded-[10px] border-[1.5px] border-line bg-white px-3.25 text-[14px] font-semibold text-ink transition-colors hover:border-ink-faint"
             >
               Back
             </button>
@@ -51,7 +51,7 @@ export default function StepShell({
             type="button"
             onClick={onNext}
             disabled={nextDisabled || nextLoading}
-            className="flex h-10 flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-orange px-3.5 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(217,68,10,0.15)] transition-all hover:bg-orange-deep active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 flex-1 items-center justify-center rounded-[10px] bg-orange px-3.5 text-[15px] font-semibold text-white shadow-[0_1px_2px_rgba(217,68,10,0.15)] transition-all hover:bg-orange-deep active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {nextLoading ? "Saving..." : nextLabel}
           </button>

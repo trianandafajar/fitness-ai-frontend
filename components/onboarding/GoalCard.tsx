@@ -13,7 +13,7 @@ export default function GoalCard({ icon, title, description, selected, onClick }
     <button
       type="button"
       onClick={onClick}
-      className={`mb-2.5 flex w-full cursor-pointer items-center gap-3 rounded-xl border-[1.5px] p-4 text-left transition-colors 
+      className={`mb-2.5 flex w-full items-center gap-3 rounded-xl border-[1.5px] p-4 text-left transition-colors 
         ${selected ? "border-orange text-white bg-orange-tint" : "border-line bg-white hover:border-orange"}`}
     >
       <div

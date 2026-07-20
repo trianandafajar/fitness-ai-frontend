@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import PageContainer from "@/components/ui/PageContainer";
 import OnboardingHeader from "@/components/onboarding/OnboardingHeader";
 import StepPersonalInfo from "@/components/onboarding/StepPersonalInfo";
@@ -12,10 +13,28 @@ import { useOnboarding } from "@/hooks/useOnboarding";
 import { OnboardingData, initialOnboardingData } from "@/components/onboarding/types";
 
 const TOTAL_STEPS = 5;
+const STORAGE_KEY = "onboarding_data";
 
-export default function OnboardingPage() {
-  const [step, setStep] = useState(1);
-  const [data, setData] = useState<OnboardingData>(initialOnboardingData);
+function restoreData(): OnboardingData {
+  if (typeof window === "undefined") return initialOnboardingData;
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      return { ...initialOnboardingData, ...JSON.parse(saved) };
+    }
+  } catch { }
+  return initialOnboardingData;
+}
+
+function OnboardingContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const raw = parseInt(searchParams.get("step") || "1", 10);
+  const step = Math.min(Math.max(raw || 1, 1), TOTAL_STEPS);
+
+  const [data, setData] = useState<OnboardingData>(restoreData);
   const { submitStep1, submitStep2, submitStep3, submitStep4, submitStep5, aiResult, loading, error, clearError } = useOnboarding();
   const [analyzing, setAnalyzing] = useState(false);
   const analysisTriggered = useRef(false);
@@ -27,16 +46,28 @@ export default function OnboardingPage() {
     }
   }, [step]);
 
+  useEffect(() => {
+    if (aiResult) {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+  }, [aiResult]);
+
   function update(patch: Partial<OnboardingData>) {
-    setData((prev) => ({ ...prev, ...patch }));
+    setData((prev) => {
+      const next = { ...prev, ...patch };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      return next;
+    });
   }
 
   function next() {
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
+    const s = Math.min(step + 1, TOTAL_STEPS);
+    router.replace(`${pathname}?step=${s}`, { scroll: false });
   }
 
   function back() {
-    setStep((s) => Math.max(s - 1, 1));
+    const s = Math.max(step - 1, 1);
+    router.replace(`${pathname}?step=${s}`, { scroll: false });
   }
 
   async function handleStep1() {
@@ -103,5 +134,13 @@ export default function OnboardingPage() {
         <StepAnalysis aiResult={aiResult} loading={analyzing} onRetry={handleStep5} />
       )}
     </PageContainer>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={null}>
+      <OnboardingContent />
+    </Suspense>
   );
 }
