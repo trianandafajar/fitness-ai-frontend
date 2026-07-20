@@ -10,6 +10,7 @@ import StepFoodPreference from "@/components/onboarding/StepFoodPreference";
 import StepExerciseHabit from "@/components/onboarding/StepExerciseHabit";
 import StepAnalysis from "@/components/onboarding/StepAnalysis";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import { useAuth } from "@/hooks/useAuth";
 import { OnboardingData, initialOnboardingData } from "@/components/onboarding/types";
 
 const TOTAL_STEPS = 5;
@@ -36,8 +37,15 @@ function OnboardingContent() {
 
   const [data, setData] = useState<OnboardingData>(restoreData);
   const { submitStep1, submitStep2, submitStep3, submitStep4, submitStep5, aiResult, loading, error, clearError } = useOnboarding();
+  const { user } = useAuth();
   const [analyzing, setAnalyzing] = useState(false);
   const analysisTriggered = useRef(false);
+
+  useEffect(() => {
+    if (user?.name && data.name !== user.name) {
+      update({ name: user.name });
+    }
+  }, [user?.name]);
 
   useEffect(() => {
     if (step === 5 && !aiResult && !analysisTriggered.current) {
