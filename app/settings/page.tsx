@@ -49,7 +49,7 @@ function toggle(list: string[], value: string) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
-function toFormData(profile: Record<string, unknown>): FormData {
+function toFormData(profile: Record<string, unknown>): Record<string, unknown> {
   return {
     date_of_birth: (profile.date_of_birth as string) ?? "",
     gender: (profile.gender as string) ?? "",

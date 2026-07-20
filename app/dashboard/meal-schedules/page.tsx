@@ -20,12 +20,12 @@ function todayDay() {
   return DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
 }
 
-const orderedDaysFromToday = (DAYS: string[]): string[] => {
-  const todayIndex = DAYS.indexOf(todayDay(DAYS));
+const orderedDaysFromToday = (days: string[]): string[] => {
+  const todayIndex = days.indexOf(todayDay());
 
   return Array.from(
-    { length: DAYS.length },
-    (_, index) => DAYS[(todayIndex - index + DAYS.length) % DAYS.length]
+    { length: days.length },
+    (_, index) => days[(todayIndex - index + days.length) % days.length]
   );
 }
 

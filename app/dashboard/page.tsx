@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import MobileHeroCard from "@/components/dashboard/MobileHeroCard";
 import QuickStatsPills from "@/components/dashboard/QuickStatsPills";
-import ExerciseList from "@/components/dashboard/ExerciseList";
+import CalendarView from "@/components/dashboard/Calendar";
 import AIRecommendation from "@/components/dashboard/AIRecommendation";
 import AiExerciseCard from "@/components/dashboard/AiExerciseCard";
 import AiMealCard from "@/components/dashboard/AiMealCard";
@@ -101,10 +101,9 @@ export default function DashboardPage() {
 
       <div>
         <div className="mb-3 flex items-center justify-between">
-          <div className="font-display text-base font-bold">Workout Plan</div>
-          <a href="/dashboard/workout-schedules" className="text-xs font-bold text-orange-deep">See All</a>
+          <div className="font-display text-base font-bold">Calendar</div>
         </div>
-        <ExerciseList exercises={todaySchedule?.exercises ?? []} scheduleId={todaySchedule?.id} />
+        <CalendarView />
       </div>
 
       {kpi?.today?.data?.ai_summary && (
