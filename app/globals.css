@@ -14,6 +14,12 @@
   --font-mono: var(--font-ibm-plex-mono);
 }
 
+@layer base {
+  button {
+    @apply cursor-pointer disabled:cursor-not-allowed;
+  }
+}
+
 html {
   -webkit-font-smoothing: antialiased;
 }
