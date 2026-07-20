@@ -51,8 +51,6 @@ const GOAL_OPTIONS = [
 
 function toFormData(profile: Record<string, unknown>): FormData {
   return {
-    name: "",
-    email: "",
     date_of_birth: (profile.date_of_birth as string) ?? "",
     gender: (profile.gender as string) ?? "",
     height_cm: profile.height_cm != null ? String(profile.height_cm) : "",
@@ -119,7 +117,6 @@ export default function SettingsPage() {
     const body: Record<string, unknown> = {};
 
     if (form.name !== user?.name) body.name = form.name;
-    if (form.email !== user?.email) body.email = form.email;
     if (form.date_of_birth) body.date_of_birth = form.date_of_birth;
     if (form.gender) body.gender = form.gender;
     if (form.height_cm) body.height_cm = parseFloat(form.height_cm);
@@ -176,7 +173,7 @@ export default function SettingsPage() {
           </div>
           <div className="grid grid-cols-1 gap-x-4">
             <Field id="name" label="Full name" type="text" value={form.name} onChange={(e) => update({ name: e.target.value })} />
-            <Field id="email" label="Email" type="email" value={form.email} onChange={(e) => update({ email: e.target.value })} />
+            <Field id="email" label="Email" type="email" value={form.email} readOnly />
           </div>
         </section>
 
