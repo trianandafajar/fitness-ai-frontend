@@ -181,7 +181,7 @@ export default function KpiHistoryPage() {
                   </div>
                 </div>
 
-                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-xs sm:grid-cols-5">
+                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-center text-xs sm:grid-cols-3">
                   {[
                     { label: "Compliance", value: `${r.workout_compliance_pct}%` },
                     { label: "Nutrition", value: `${r.nutrition_score}` },
