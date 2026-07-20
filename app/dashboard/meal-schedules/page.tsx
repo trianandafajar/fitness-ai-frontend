@@ -20,6 +20,15 @@ function todayDay() {
   return DAYS[new Date().getDay() === 0 ? 6 : new Date().getDay() - 1];
 }
 
+const orderedDaysFromToday = (DAYS: string[]): string[] => {
+  const todayIndex = DAYS.indexOf(todayDay(DAYS));
+
+  return Array.from(
+    { length: DAYS.length },
+    (_, index) => DAYS[(todayIndex - index + DAYS.length) % DAYS.length]
+  );
+}
+
 export default function MealSchedulesPage() {
   const [schedules, setSchedules] = useState<MealSchedule[]>([]);
   const [loading, setLoading] = useState(true);
@@ -182,7 +191,7 @@ export default function MealSchedulesPage() {
         className={`no-scrollbar mb-5 flex gap-1.5 overflow-x-auto py-1 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"
           }`}
       >
-        {DAYS.map((day) => {
+        {orderedDaysFromToday(DAYS).map((day) => {
           const isToday = day === todayDay();
           const isActive = day === selectedDay;
           return (
