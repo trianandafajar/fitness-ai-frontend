@@ -92,7 +92,7 @@ export default function LoginPage() {
                     id="password"
                     label="Confirm password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Repeat password"
+                    placeholder="Enter password"
                     autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}

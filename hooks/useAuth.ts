@@ -12,6 +12,19 @@ export function useAuth() {
     authStore.getState,
   );
 
+  const fetchUser = useCallback(async () => {
+    const response = await authService.me();
+    authStore.setState({
+      user: response.user,
+      profile: response.profile,
+      isAuthenticated: true,
+    });
+    if (response.profile?.profile_completed) {
+      setProfileCompleted();
+    }
+    return response;
+  }, []);
+
   const login = useCallback(async (email: string, password: string) => {
     const response = await authService.login({ email, password });
     setToken(response.token);
@@ -19,8 +32,9 @@ export function useAuth() {
       user: response.user,
       isAuthenticated: true,
     });
+    await fetchUser();
     return response;
-  }, []);
+  }, [fetchUser]);
 
   const register = useCallback(
     async (name: string, email: string, password: string, passwordConfirmation: string) => {
@@ -57,19 +71,6 @@ export function useAuth() {
     await authService.logout();
     removeToken();
     authStore.reset();
-  }, []);
-
-  const fetchUser = useCallback(async () => {
-    const response = await authService.me();
-    authStore.setState({
-      user: response.user,
-      profile: response.profile,
-      isAuthenticated: true,
-    });
-    if (response.profile?.profile_completed) {
-      setProfileCompleted();
-    }
-    return response;
   }, []);
 
   return { ...state, login, register, forgotPassword, resetPassword, logout, fetchUser } as const;
