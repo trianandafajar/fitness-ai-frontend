@@ -44,7 +44,8 @@ export const initialOnboardingData: OnboardingData = {
 
 export interface AiAnalysis {
   summary: string;
-  recommendations: string;
+  recommendations: string[] | string;
+  workout_plan?: string;
   meal_suggestions: EnrichedFood[] | string;
   exercise_suggestions: EnrichedExercise[] | string;
 }
@@ -59,6 +60,8 @@ export interface EnrichedExercise {
     target_muscles: string[];
     category: string;
   } | null;
+  scheduled_day: string | null;
+  scheduled_time: string | null;
 }
 
 export interface EnrichedFood {
@@ -73,12 +76,15 @@ export interface EnrichedFood {
     fat_per_100g: number;
     category: string;
   } | null;
+  meal_time: string | null;
+  time: string | null;
 }
 
 export interface Step5Response {
   message: string;
   profile_completed: boolean;
   ai_analysis: AiAnalysis | null;
+  workout_plan?: string;
 }
 
 export const GOAL_MAP: Record<Goal, string> = {

@@ -115,7 +115,6 @@ function OnboardingContent() {
     setAnalyzing(true);
     try {
       await submitStep5();
-      next();
     } catch { }
     finally {
       setAnalyzing(false);
