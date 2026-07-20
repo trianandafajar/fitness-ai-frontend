@@ -2,12 +2,15 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, User, Ruler, Dumbbell, Heart } from "lucide-react";
+import { Save, ArrowLeft, User, Ruler, Dumbbell, Heart, Scale, Activity, Zap, Feather, Target } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { profileService } from "@/services/profile.service";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import Segmented from "@/components/ui/Segmented";
+import { Chip, ChipGroup } from "@/components/ui/Chip";
+import AddChipInput from "@/components/ui/AddChipInput";
+import GoalCard from "@/components/onboarding/GoalCard";
 
 type FormData = {
   name: string;
@@ -29,28 +32,27 @@ type FormData = {
 };
 
 const ACTIVITY_OPTIONS = [
-  { value: "sedentary", label: "Sedentary" },
-  { value: "light", label: "Light" },
-  { value: "moderate", label: "Moderate" },
-  { value: "active", label: "Active" },
-  { value: "very_active", label: "Very Active" },
+  { value: "low", label: "Low Intensity" },
+  { value: "medium", label: "Medium Intensity" },
+  { value: "high", label: "High Intensity" },
 ];
 
 const FREQ_OPTIONS = [
-  { value: "never", label: "Never" },
   { value: "1-2", label: "1-2 /week" },
   { value: "3-4", label: "3-4 /week" },
   { value: "5+", label: "5+ /week" },
 ];
 
-const GOAL_OPTIONS = [
-  { value: "weight-loss", label: "Lose Weight" },
-  { value: "muscle-gain", label: "Build Muscle" },
-  { value: "endurance", label: "Boost Endurance" },
-];
+const SPORT_TYPES = ["Gym / Weight lifting", "Running", "Yoga", "Swimming", "Cycling"];
+
+function toggle(list: string[], value: string) {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+}
 
 function toFormData(profile: Record<string, unknown>): FormData {
   return {
+    name: (profile.name as string) ?? "",
+    email: (profile.email as string) ?? "",
     date_of_birth: (profile.date_of_birth as string) ?? "",
     gender: (profile.gender as string) ?? "",
     height_cm: profile.height_cm != null ? String(profile.height_cm) : "",
@@ -68,21 +70,6 @@ function toFormData(profile: Record<string, unknown>): FormData {
   };
 }
 
-function arrayInput(label: string, value: string[], onChange: (v: string[]) => void) {
-  return (
-    <div key={label} className="mb-4.5">
-      <label className="mb-1.75 block text-[13px] font-semibold text-ink">{label}</label>
-      <input
-        type="text"
-        placeholder="Separate items with commas"
-        value={value.join(", ")}
-        onChange={(e) => onChange(e.target.value.split(",").map((s) => s.trim()).filter(Boolean))}
-        className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white"
-      />
-    </div>
-  );
-}
-
 export default function SettingsPage() {
   const router = useRouter();
   const { user, profile, fetchUser } = useAuth();
@@ -95,6 +82,12 @@ export default function SettingsPage() {
     dietary_restrictions: [], allergies: [], medical_conditions: "", exercise_frequency: "",
     exercise_types: [], injuries: "",
   });
+
+  useEffect(() => {
+    if (!user) {
+      fetchUser().catch(() => {});
+    }
+  }, [fetchUser, user]);
 
   useEffect(() => {
     if (user) {
@@ -205,34 +198,54 @@ export default function SettingsPage() {
             <Dumbbell className="h-5 w-5 text-ink-soft" />
             <h2 className="font-display text-base font-bold text-ink">Fitness</h2>
           </div>
-          <div className="mb-4">
-            <label className="mb-1.75 block text-[13px] font-semibold text-ink">Main Goal</label>
-            <Segmented options={GOAL_OPTIONS.map((o) => o.value)} value={form.fitness_goal} onChange={(v) => update({ fitness_goal: v })} />
+
+          <label className="mb-2.5 block text-[13px] font-semibold text-ink">Main Goal</label>
+          {([
+            { id: "weight-loss", icon: <Scale className="h-5 w-5" />, title: "Lose weight", description: "Focus on calorie deficit & cardio" },
+            { id: "muscle-gain", icon: <Dumbbell className="h-5 w-5" />, title: "Build muscle", description: "Focus on weight training & protein surplus" },
+            { id: "endurance", icon: <Heart className="h-5 w-5" />, title: "Boost endurance", description: "Focus on cardio & endurance training" },
+            { id: "general-fitness", icon: <Activity className="h-5 w-5" />, title: "General Fitness", description: "Stay healthy and active every day" },
+            { id: "strength", icon: <Zap className="h-5 w-5" />, title: "Strength Training", description: "Increase raw strength and power" },
+            { id: "flexibility", icon: <Feather className="h-5 w-5" />, title: "Flexibility & Mobility", description: "Improve range of motion and posture" },
+            { id: "toning", icon: <Target className="h-5 w-5" />, title: "Toning / Body Recomp", description: "Sculpt your body and reduce body fat" },
+          ] as const).map((g) => (
+            <GoalCard key={g.id} icon={g.icon} title={g.title} description={g.description}
+              selected={form.fitness_goal === g.id} onClick={() => update({ fitness_goal: g.id })} />
+          ))}
+
+          <label className="mb-2.5 mt-5 block text-[13px] font-semibold text-ink">Activity Level</label>
+          <div className="mb-5 grid grid-cols-3 gap-2">
+            {ACTIVITY_OPTIONS.map((opt) => (
+              <button key={opt.value} type="button" onClick={() => update({ activity_level: opt.value })}
+                className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${form.activity_level === opt.value ? "border-orange bg-orange text-white" : "border-line bg-white text-ink-soft hover:border-ink-faint"}`}>
+                {opt.label}
+              </button>
+            ))}
           </div>
-          <div className="mb-4">
-            <label className="mb-1.75 block text-[13px] font-semibold text-ink">Activity Level</label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {ACTIVITY_OPTIONS.map((opt) => (
-                <button key={opt.value} type="button" onClick={() => update({ activity_level: opt.value })}
-                  className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${form.activity_level === opt.value ? "border-ink bg-ink text-white" : "border-line bg-white text-ink-soft hover:border-ink-faint"}`}>
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="mb-4">
-            <label className="mb-1.75 block text-[13px] font-semibold text-ink">Exercise Frequency</label>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {FREQ_OPTIONS.map((opt) => (
-                <button key={opt.value} type="button" onClick={() => update({ exercise_frequency: opt.value })}
-                  className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${form.exercise_frequency === opt.value ? "border-ink bg-ink text-white" : "border-line bg-white text-ink-soft hover:border-ink-faint"}`}>
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {arrayInput("Exercise Types", form.exercise_types, (v) => update({ exercise_types: v }))}
-          {arrayInput("Injuries", form.injuries ? [form.injuries] : [], (v) => update({ injuries: v[0] ?? "" }))}
+
+          <label className="mb-2.5 block text-[13px] font-semibold text-ink">Days per week</label>
+          <Segmented className="mb-5" options={FREQ_OPTIONS.map((o) => o.value)}
+            value={form.exercise_frequency} onChange={(v) => update({ exercise_frequency: v })} />
+
+          <label className="mb-2.5 block text-[13px] font-semibold text-ink">Exercise Types</label>
+          <ChipGroup>
+            {SPORT_TYPES.map((sport) => (
+              <Chip key={sport} label={sport} selected={form.exercise_types.includes(sport)}
+                onClick={() => update({ exercise_types: toggle(form.exercise_types, sport) })} />
+            ))}
+            {form.exercise_types.filter((item) => !SPORT_TYPES.includes(item)).map((item) => (
+              <Chip key={item} label={item} selected={true}
+                onClick={() => update({ exercise_types: form.exercise_types.filter((v) => v !== item) })} />
+            ))}
+          </ChipGroup>
+          <AddChipInput onAdd={(v) => update({ exercise_types: [...form.exercise_types, v] })}
+            placeholder="Type an exercise and press Enter..." />
+
+          <label className="mb-1.75 mt-5 block text-[13px] font-semibold text-ink">Injuries (optional)</label>
+          <textarea id="injuries" placeholder="e.g. lower back pain, knee injury, shoulder issues"
+            value={form.injuries} onChange={(e) => update({ injuries: e.target.value })}
+            rows={3}
+            className="mb-4.5 w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white resize-none" />
         </section>
 
         {/* Health & Diet */}
@@ -241,9 +254,37 @@ export default function SettingsPage() {
             <Heart className="h-5 w-5 text-ink-soft" />
             <h2 className="font-display text-base font-bold text-ink">Health & Diet</h2>
           </div>
-          {arrayInput("Dietary Preferences", form.dietary_preferences, (v) => update({ dietary_preferences: v }))}
-          {arrayInput("Dietary Restrictions", form.dietary_restrictions, (v) => update({ dietary_restrictions: v }))}
-          {arrayInput("Allergies", form.allergies, (v) => update({ allergies: v }))}
+
+          <label className="mb-2.5 block text-[13px] font-semibold text-ink">Dietary Preferences</label>
+          <ChipGroup>
+            {form.dietary_preferences.map((item) => (
+              <Chip key={item} label={item} selected={true}
+                onClick={() => update({ dietary_preferences: form.dietary_preferences.filter((v) => v !== item) })} />
+            ))}
+          </ChipGroup>
+          <AddChipInput onAdd={(v) => update({ dietary_preferences: [...form.dietary_preferences, v] })}
+            placeholder="Type a food preference and press Enter..." />
+
+          <label className="mb-2.5 mt-5 block text-[13px] font-semibold text-ink">Dietary Restrictions</label>
+          <ChipGroup>
+            {form.dietary_restrictions.map((item) => (
+              <Chip key={item} label={item} selected={true}
+                onClick={() => update({ dietary_restrictions: form.dietary_restrictions.filter((v) => v !== item) })} />
+            ))}
+          </ChipGroup>
+          <AddChipInput onAdd={(v) => update({ dietary_restrictions: [...form.dietary_restrictions, v] })}
+            placeholder="Type a restriction and press Enter..." />
+
+          <label className="mb-2.5 mt-5 block text-[13px] font-semibold text-ink">Allergies</label>
+          <ChipGroup>
+            {form.allergies.map((item) => (
+              <Chip key={item} label={item} selected={true}
+                onClick={() => update({ allergies: form.allergies.filter((v) => v !== item) })} />
+            ))}
+          </ChipGroup>
+          <AddChipInput onAdd={(v) => update({ allergies: [...form.allergies, v] })}
+            placeholder="Type an allergy and press Enter..." />
+
           <Field id="medicalConditions" label="Medical Conditions" type="text" placeholder="Optional" value={form.medical_conditions} onChange={(e) => update({ medical_conditions: e.target.value })} />
         </section>
 
