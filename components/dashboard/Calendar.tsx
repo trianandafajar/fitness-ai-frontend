@@ -225,7 +225,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
         </div>
         {loading && (
           <div
-            className="pointer-events-none absolute inset-x-0 top-21 z-10 h-0.75 overflow-hidden rounded-full bg-orange/15"
+            className="pointer-events-none absolute inset-x-0 top-17 z-10 h-0.75 overflow-hidden rounded-full bg-orange/15"
             aria-live="polite"
             aria-label="Updating streak"
             role="status"
