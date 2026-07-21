@@ -42,6 +42,7 @@ export default function DashboardPage() {
   const [aiAnalysis, setAiAnalysis] = useState<AiAnalysis | null>(null);
   const [showCheckin, setShowCheckin] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<WorkoutSchedule | null>(null);
+  const [calendarRefreshKey, setCalendarRefreshKey] = useState(0);
 
   const loadOverview = useCallback(async (showLoading = true) => {
     if (showLoading) setOverviewLoading(true);
@@ -98,6 +99,7 @@ export default function DashboardPage() {
   const handleCheckinSuccess = useCallback(() => {
     setShowCheckin(false);
     setSelectedSchedule(null);
+    setCalendarRefreshKey((current) => current + 1);
     void loadOverview();
     void loadSummary();
   }, [loadOverview, loadSummary]);
@@ -136,7 +138,7 @@ export default function DashboardPage() {
         <div className="mb-3 flex items-center justify-between">
           <div className="font-display text-base font-bold">Calendar</div>
         </div>
-        <CalendarView />
+        <CalendarView refreshKey={calendarRefreshKey} />
       </div>
 
       {summaryLoading ? (

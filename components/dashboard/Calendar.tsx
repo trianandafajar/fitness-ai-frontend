@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { streakService } from "@/services/streak.service";
+import type { StreakCalendarResponse } from "@/types/dashboard";
 
 function fmt(date: Date): string {
   const y = date.getFullYear();
@@ -12,8 +14,58 @@ function fmt(date: Date): string {
   return `${y}-${m}-${d}`;
 }
 
-export default function CalendarView() {
+function monthKey(date: Date): string {
+  return fmt(date).slice(0, 7);
+}
+
+function CalendarSkeleton() {
+  return (
+    <div className="animate-pulse rounded-xl border border-line bg-white p-3" aria-label="Loading calendar" role="status">
+      <div className="mb-5 h-10 rounded-lg bg-surface" />
+      <div className="mb-3 grid grid-cols-7 gap-2">
+        {[1, 2, 3, 4, 5, 6, 7].map((item) => (
+          <div key={item} className="h-3 rounded bg-surface" />
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-2">
+        {Array.from({ length: 35 }, (_, index) => (
+          <div key={index} className="h-8 rounded-full bg-surface" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface CalendarViewProps {
+  refreshKey?: number;
+}
+
+export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
   const router = useRouter();
+  const [activeMonth, setActiveMonth] = useState(() => new Date());
+  const [calendarData, setCalendarData] = useState<StreakCalendarResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const selectedMonth = monthKey(activeMonth);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    streakService.getCalendar(selectedMonth)
+      .then((response) => {
+        if (!cancelled) setCalendarData(response.data);
+      })
+      .catch(() => {
+        if (!cancelled) setCalendarData(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [refreshKey, selectedMonth]);
 
   const handleClick = useCallback(
     (date: Date) => {
@@ -22,20 +74,46 @@ export default function CalendarView() {
     [router],
   );
 
+  const handleMonthChange = useCallback(({ activeStartDate }: { activeStartDate: Date | null }) => {
+    if (!activeStartDate) return;
+    setLoading(true);
+    setActiveMonth(new Date(activeStartDate.getFullYear(), activeStartDate.getMonth(), 1));
+  }, []);
+
+  const dayByDate = useMemo(
+    () => new Map(calendarData?.days.map((day) => [day.date, day]) ?? []),
+    [calendarData],
+  );
+
   const todayKey = fmt(new Date());
 
   const tileClassName = useCallback(
     ({ date, view }: { date: Date; view: string }) => {
       if (view !== "month") return "";
-      return fmt(date) === todayKey ? "today-tile" : "";
+
+      const classes = [];
+      const day = dayByDate.get(fmt(date));
+      if (day?.status && day.status !== "neutral" && day.status !== "not_started") {
+        classes.push(`streak-${day.status}`);
+      }
+      if (day?.status === "neutral" && !day.has_schedule) {
+        classes.push("streak-no-schedule");
+      }
+      if (fmt(date) === todayKey) classes.push("today-tile");
+      return classes.join(" ");
     },
-    [todayKey],
+    [dayByDate, todayKey],
   );
+
+  if (loading) {
+    return <CalendarSkeleton />;
+  }
 
   return (
     <div className="fitness-calendar">
       <Calendar
         onClickDay={handleClick}
+        onActiveStartDateChange={handleMonthChange}
         tileClassName={tileClassName}
         showNeighboringMonth={false}
         locale="en-US"
@@ -119,6 +197,54 @@ export default function CalendarView() {
         .fitness-calendar .react-calendar__tile.today-tile:enabled:hover,
         .fitness-calendar .react-calendar__tile.today-tile:enabled:focus {
           background: #d9440a;
+        }
+        .fitness-calendar .react-calendar__tile.streak-streak {
+          background: #dcfce7;
+          color: #166534;
+          font-weight: 700;
+        }
+        .fitness-calendar .react-calendar__tile.streak-failed {
+          background: #fee2e2;
+          color: #b91c1c;
+          font-weight: 700;
+        }
+        .fitness-calendar .react-calendar__tile.streak-pending {
+          background: #fef3c7;
+          color: #92400e;
+          font-weight: 700;
+        }
+        .fitness-calendar .react-calendar__tile.streak-no-schedule {
+          background: #f3f4f6;
+          box-shadow: inset 0 0 0 1px #e5e7eb;
+          color: #6b7280;
+        }
+        .fitness-calendar .react-calendar__tile.streak-streak:enabled:hover,
+        .fitness-calendar .react-calendar__tile.streak-streak:enabled:focus {
+          background: #bbf7d0;
+        }
+        .fitness-calendar .react-calendar__tile.streak-failed:enabled:hover,
+        .fitness-calendar .react-calendar__tile.streak-failed:enabled:focus {
+          background: #fecaca;
+        }
+        .fitness-calendar .react-calendar__tile.streak-pending:enabled:hover,
+        .fitness-calendar .react-calendar__tile.streak-pending:enabled:focus {
+          background: #fde68a;
+        }
+        .fitness-calendar .react-calendar__tile.streak-no-schedule:enabled:hover,
+        .fitness-calendar .react-calendar__tile.streak-no-schedule:enabled:focus {
+          background: #e5e7eb;
+        }
+        .fitness-calendar .react-calendar__tile.today-tile.streak-streak {
+          background: #22c55e;
+          color: #fff;
+        }
+        .fitness-calendar .react-calendar__tile.today-tile.streak-failed {
+          background: #ef4444;
+          color: #fff;
+        }
+        .fitness-calendar .react-calendar__tile.today-tile.streak-pending {
+          background: #eab308;
+          color: #fff;
         }
         .fitness-calendar .react-calendar__month-view__days__day--neighboringMonth {
           color: #d1d5db;

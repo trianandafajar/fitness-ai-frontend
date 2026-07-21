@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { User, LogOut, Flame, Bell } from "lucide-react";
-import { kpiService } from "@/services/kpi.service";
+import { streakService } from "@/services/streak.service";
 import NotificationDropdown from "./NotificationDropdown";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
 import { dashboardNotificationsStore } from "@/stores/dashboard-notifications.store";
@@ -61,7 +61,7 @@ export default function DashboardHeader() {
     useDashboardNotifications();
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [streakDays, setStreakDays] = useState(0);
+  const [streakCount, setStreakCount] = useState(0);
   const [showNotif, setShowNotif] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -79,14 +79,26 @@ export default function DashboardHeader() {
 
   const fetchStreak = useCallback(async () => {
     try {
-      const res = await kpiService.getCurrent();
-      const score = res.data?.today?.data?.consistency_score;
-      if (score != null) setStreakDays(score);
+      const res = await streakService.getCount();
+      setStreakCount(res.data.count);
     } catch { }
   }, []);
 
   useEffect(() => {
-    fetchStreak();
+    const initialLoad = window.setTimeout(() => {
+      void fetchStreak();
+    }, 0);
+
+    return () => window.clearTimeout(initialLoad);
+  }, [fetchStreak]);
+
+  useEffect(() => {
+    const handleStreakUpdated = () => {
+      void fetchStreak();
+    };
+
+    window.addEventListener("fitness:streak-updated", handleStreakUpdated);
+    return () => window.removeEventListener("fitness:streak-updated", handleStreakUpdated);
   }, [fetchStreak]);
 
   async function handleLogout() {
@@ -105,16 +117,16 @@ export default function DashboardHeader() {
       </div>
 
       <div className="flex items-center gap-2.5">
-        <Tooltip label={`${streakDays}-day activity streak`}>
+        <Tooltip label={`${streakCount}-day activity streak`}>
           <div className="flex items-center gap-1">
             <Flame
-              className={`h-5 w-5 ${streakDays > 0 ? "text-orange" : "text-ink-faint"}`}
-              fill={streakDays > 0 ? "currentColor" : "none"}
+              className={`h-5 w-5 ${streakCount > 0 ? "text-orange" : "text-ink-faint"}`}
+              fill={streakCount > 0 ? "currentColor" : "none"}
             />
             <span
-              className={`text-sm font-bold ${streakDays > 0 ? "text-ink" : "text-ink-faint"}`}
+              className={`text-sm font-bold ${streakCount > 0 ? "text-ink" : "text-ink-faint"}`}
             >
-              {streakDays}
+              {streakCount}
             </span>
           </div>
         </Tooltip>

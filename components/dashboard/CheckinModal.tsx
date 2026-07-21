@@ -63,6 +63,7 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
 
     try {
       await attendanceService.checkin(fd);
+      window.dispatchEvent(new Event("fitness:streak-updated"));
       onSuccess();
     } catch (err: any) {
       const msg = err?.response?.data?.message;

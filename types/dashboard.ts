@@ -94,6 +94,29 @@ export interface AttendanceToday {
   } | null;
 }
 
+export type StreakStatus = "streak" | "failed" | "pending" | "neutral" | "not_started";
+
+export interface StreakCalendarDay {
+  date: string;
+  status: StreakStatus;
+  has_schedule: boolean;
+  has_attendance: boolean;
+}
+
+export interface StreakCalendarResponse {
+  month: string;
+  summary: {
+    streak_days: number;
+    failed_days: number;
+    pending_days: number;
+  };
+  days: StreakCalendarDay[];
+}
+
+export interface StreakCountResponse {
+  count: number;
+}
+
 export interface MealItem {
   food: string;
   portion: string | null;
