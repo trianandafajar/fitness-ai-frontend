@@ -122,7 +122,7 @@ function OnboardingContent() {
   }
 
   return (
-    <PageContainer className="pt-8 sm:pt-10">
+    <PageContainer className="pt-8 sm:pt-10 px-6">
       <OnboardingHeader step={step} total={TOTAL_STEPS} />
 
       {step === 1 && (

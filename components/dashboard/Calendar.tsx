@@ -1,28 +1,53 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Calendar from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import { streakService } from "@/services/streak.service";
-import type { StreakCalendarResponse } from "@/types/dashboard";
-import { formatDateKey, formatMonthKey } from "@/lib/utils";
+import type { StreakCalendarDay, StreakCalendarRangeResponse } from "@/types/dashboard";
+import { addDays, formatDateKey } from "@/lib/utils";
+
+const DAYS_PER_VIEW = 16;
+const RANGE_ANCHOR = new Date(2026, 1, 1);
+
+function getFixedRangeStart(date: Date): Date {
+  const dateInUtc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
+  const anchorInUtc = Date.UTC(RANGE_ANCHOR.getFullYear(), RANGE_ANCHOR.getMonth(), RANGE_ANCHOR.getDate());
+  const dayIndex = Math.floor((dateInUtc - anchorInUtc) / (24 * 60 * 60 * 1000));
+  const rangeIndex = Math.floor(dayIndex / DAYS_PER_VIEW);
+
+  return addDays(RANGE_ANCHOR, rangeIndex * DAYS_PER_VIEW);
+}
+
+function getInitialViewStart(): Date {
+  return getFixedRangeStart(new Date());
+}
 
 function CalendarSkeleton() {
   return (
-    <div className="animate-pulse rounded-xl border border-line bg-white p-3" aria-label="Loading calendar" role="status">
-      <div className="mb-5 h-10 rounded-lg bg-surface" />
-      <div className="mb-3 grid grid-cols-7 gap-2">
-        {[1, 2, 3, 4, 5, 6, 7].map((item) => (
-          <div key={item} className="h-3 rounded bg-surface" />
-        ))}
+    <>
+      <div className="mb-3 flex items-center justify-between">
+        <div className="motion-reduce:animate-none animate-pulse h-5 w-20 rounded-full bg-surface"/>
       </div>
-      <div className="grid grid-cols-7 gap-2">
-        {Array.from({ length: 35 }, (_, index) => (
-          <div key={index} className="h-8 rounded-full bg-surface" />
-        ))}
+      <div className="rounded-2xl border border-line bg-white p-4" aria-label="Loading calendar" role="status">
+        <div className="mb-5 flex items-center justify-between">
+          <div className="space-y-2">
+            <div className="motion-reduce:animate-none animate-pulse h-2.5 w-16 rounded-full bg-orange-tint" />
+            <div className="motion-reduce:animate-none animate-pulse h-5 w-32 rounded bg-surface" />
+          </div>
+          <div className="motion-reduce:animate-none animate-pulse flex gap-2">
+            <div className="h-10 w-13 rounded-xl bg-surface" />
+            <div className="h-10 w-10 rounded-xl bg-surface" />
+            <div className="h-10 w-10 rounded-xl bg-surface" />
+          </div>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          {Array.from({ length: DAYS_PER_VIEW }, (_, index) => index + 1).map((item) => (
+            <div key={item} className="motion-reduce:animate-none animate-pulse h-24 rounded-2xl bg-surface" />
+          ))}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -32,17 +57,17 @@ interface CalendarViewProps {
 
 export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
   const router = useRouter();
-  const [activeMonth, setActiveMonth] = useState(() => new Date());
-  const [calendarData, setCalendarData] = useState<StreakCalendarResponse | null>(null);
+  const [viewStart, setViewStart] = useState(getInitialViewStart);
+  const [calendarData, setCalendarData] = useState<StreakCalendarRangeResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
-  const selectedMonth = formatMonthKey(activeMonth);
+  const selectedRange = formatDateKey(viewStart);
 
   useEffect(() => {
     let cancelled = false;
 
-    streakService.getCalendar(selectedMonth)
+    streakService.getRange(selectedRange, DAYS_PER_VIEW)
       .then((response) => {
         if (!cancelled) setCalendarData(response.data);
       })
@@ -59,7 +84,22 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
     return () => {
       cancelled = true;
     };
-  }, [refreshKey, selectedMonth]);
+  }, [refreshKey, selectedRange]);
+
+  const dayByDate = useMemo(
+    () => new Map(calendarData?.days.map((day) => [day.date, day]) ?? []),
+    [calendarData],
+  );
+
+  const visibleDays = useMemo(() => {
+    return Array.from({ length: DAYS_PER_VIEW }, (_, index) => addDays(viewStart, index));
+  }, [viewStart]);
+
+  const todayKey = formatDateKey(new Date());
+  const todayRangeKey = formatDateKey(getInitialViewStart());
+  const isTodayRange = selectedRange === todayRangeKey;
+  const monthLabel = viewStart.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const rangeLabel = `${visibleDays[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${visibleDays[visibleDays.length - 1].toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 
   const handleClick = useCallback(
     (date: Date) => {
@@ -68,211 +108,146 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
     [router],
   );
 
-  const handleMonthChange = useCallback(({ activeStartDate }: { activeStartDate: Date | null }) => {
-    if (!activeStartDate) return;
+  const movePrevious = useCallback(() => {
     setLoading(true);
-    setActiveMonth(new Date(activeStartDate.getFullYear(), activeStartDate.getMonth(), 1));
-  }, []);
+    setViewStart(addDays(viewStart, -DAYS_PER_VIEW));
+  }, [viewStart]);
 
-  const dayByDate = useMemo(
-    () => new Map(calendarData?.days.map((day) => [day.date, day]) ?? []),
-    [calendarData],
-  );
+  const moveNext = useCallback(() => {
+    setLoading(true);
+    setViewStart(addDays(viewStart, DAYS_PER_VIEW));
+  }, [viewStart]);
 
-  const todayKey = formatDateKey(new Date());
+  const goToToday = useCallback(() => {
+    if (isTodayRange) return;
 
-  const tileClassName = useCallback(
-    ({ date, view }: { date: Date; view: string }) => {
-      if (view !== "month") return "";
+    setLoading(true);
+    setViewStart(getInitialViewStart());
+  }, [isTodayRange]);
 
-      const classes = [];
-      const day = dayByDate.get(formatDateKey(date));
-      if (day?.status && day.status !== "neutral" && day.status !== "not_started") {
-        classes.push(`streak-${day.status}`);
-      }
-      if (day?.status === "neutral" && !day.has_schedule) {
-        classes.push("streak-no-schedule");
-      }
-      if (formatDateKey(date) === todayKey) classes.push("today-tile");
-      return classes.join(" ");
-    },
-    [dayByDate, todayKey],
-  );
+  const getDayClasses = (day: StreakCalendarDay | undefined, date: Date): string => {
+    const classes = [
+      "relative flex min-h-24 flex-col items-center justify-center rounded-2xl border p-2 text-center transition active:scale-[0.98]",
+    ];
+
+    if (day?.status === "streak") classes.push("border-green-200 bg-green-50 text-green-800 hover:bg-green-100");
+    else if (day?.status === "failed") classes.push("border-red-200 bg-red-50 text-red-800 hover:bg-red-100");
+    else if (day?.status === "pending") classes.push("border-yellow-200 bg-yellow-50 text-yellow-800 hover:bg-yellow-100");
+    else if (day?.status === "not_started") classes.push("border-slate-200 bg-slate-50 text-slate-400 hover:bg-slate-100");
+    else if (day?.status === "neutral" && !day.has_schedule) classes.push("border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100");
+    else classes.push("border-line bg-white text-ink hover:bg-orange-tint");
+
+    if (formatDateKey(date) === todayKey) classes.push("ring-2 ring-orange/30 ring-offset-1");
+
+    return classes.join(" ");
+  };
+
+  const getStatusLabel = (day: StreakCalendarDay | undefined): string => {
+    if (day?.status === "streak") return "Streak";
+    if (day?.status === "failed") return "Failed";
+    if (day?.status === "pending") return "Pending";
+    if (day?.status === "not_started") return "Not started";
+    if (day?.status === "neutral" && !day.has_schedule) return "Rest day";
+    if (day?.has_schedule) return "Planned";
+    return "";
+  };
 
   if (loading && !hasLoadedOnce) {
     return <CalendarSkeleton />;
   }
 
   return (
-    <div className="fitness-calendar relative" aria-busy={loading}>
-      <Calendar
-        activeStartDate={activeMonth}
-        onClickDay={handleClick}
-        onActiveStartDateChange={handleMonthChange}
-        tileClassName={tileClassName}
-        showNeighboringMonth={false}
-        locale="en-US"
-        prevLabel="‹"
-        nextLabel="›"
-        prev2Label={null}
-        next2Label={null}
-      />
-
-      {loading && (
-        <div
-          className="pointer-events-none absolute inset-x-0 top-13 z-10 h-0.75 overflow-hidden rounded-full bg-orange/15"
-          aria-live="polite"
-          aria-label="Updating streak"
-          role="status"
-        >
-          <span className="calendar-loading-line block h-full w-1/3 rounded-full bg-orange" />
+    <>
+      <div className="mb-3 flex items-center justify-between">
+        <div className="font-display text-base font-bold">Calendar</div>
+      </div>
+      <div className="fitness-calendar relative rounded-2xl border border-line bg-white p-4" aria-busy={loading}>
+        <div className="mb-4 flex items-center justify-between">
+          <div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-orange-deep">Focus days</div>
+            <div className="mt-1 font-display text-base font-bold text-ink">{monthLabel}</div>
+            <div className="mt-0.5 text-[11px] text-ink-soft">Days {rangeLabel}</div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={goToToday}
+              disabled={isTodayRange}
+              className="h-10 rounded-xl border border-orange/20 bg-orange-tint px-3 text-[11px] font-bold text-orange-deep transition hover:border-orange/40 hover:bg-orange/15 disabled:cursor-default disabled:opacity-45 focus:outline-none focus:ring-2 focus:ring-orange/30"
+            >
+              Today
+            </button>
+            <button
+              type="button"
+              onClick={movePrevious}
+            aria-label="Show previous sixteen days"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-white text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <button
+              type="button"
+              onClick={moveNext}
+            aria-label="Show next sixteen days"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-white text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
         </div>
-      )}
 
-      <style>{`
-        .fitness-calendar {
-          --cal-radius: 6px;
-        }
-        .fitness-calendar .calendar-loading-line {
-          animation: calendar-loading-line 1.2s ease-in-out infinite;
-        }
-        @keyframes calendar-loading-line {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(330%); }
-        }
-        @media (prefers-reduced-motion: reduce) {
+        <div className="grid grid-cols-4 gap-2">
+          {visibleDays.map((date) => {
+            const dateKey = formatDateKey(date);
+            const day = dayByDate.get(dateKey);
+            const displayDay = loading ? undefined : day;
+            const statusLabel = loading ? "" : getStatusLabel(day);
+
+            return (
+              <button
+                key={dateKey}
+                type="button"
+                onClick={() => handleClick(date)}
+                aria-label={`${date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}${statusLabel ? `, ${statusLabel}` : ""}`}
+                className={getDayClasses(displayDay, date)}
+              >
+                <span className="text-[10px] font-bold uppercase tracking-wide opacity-70">
+                  {date.toLocaleDateString("en-US", { weekday: "short" })}
+                </span>
+                <span className="mt-1 font-display text-2xl font-bold leading-none">{date.getDate()}</span>
+                {statusLabel && <span className="mt-2 text-[9px] font-bold uppercase tracking-wide opacity-75">{statusLabel}</span>}
+              </button>
+            );
+          })}
+        </div>
+        {loading && (
+          <div
+            className="pointer-events-none absolute inset-x-0 top-21 z-10 h-0.75 overflow-hidden rounded-full bg-orange/15"
+            aria-live="polite"
+            aria-label="Updating streak"
+            role="status"
+          >
+            <span className="calendar-loading-line block h-full w-1/3 rounded-full bg-orange" />
+          </div>
+        )}
+
+        <style>{`
           .fitness-calendar .calendar-loading-line {
-            animation: none;
-            opacity: 0.7;
-            transform: translateX(0);
+            animation: calendar-loading-line 1.2s ease-in-out infinite;
           }
-        }
-        .fitness-calendar .react-calendar {
-          width: 100%;
-          border: 1px solid #e5e7eb;
-          border-radius: var(--cal-radius);
-          background: #fff;
-          font-family: inherit;
-          line-height: 1.2;
-          padding: 8px;
-        }
-        .fitness-calendar .react-calendar__navigation {
-          height: 40px;
-          margin-bottom: 4px;
-        }
-        .fitness-calendar .react-calendar__navigation button {
-          min-width: 36px;
-          background: none;
-          font-size: 15px;
-          font-weight: 600;
-          color: #17181c;
-          border-radius: 8px;
-        }
-        .fitness-calendar .react-calendar__navigation button:enabled:hover,
-        .fitness-calendar .react-calendar__navigation button:enabled:focus {
-          background: #f9fafb;
-        }
-        .fitness-calendar .react-calendar__navigation__label {
-          font-family: var(--font-space-grotesk, 'sans-serif');
-          font-size: 14px;
-          font-weight: 700;
-          pointer-events: none;
-        }
-        .fitness-calendar .react-calendar__month-view__weekdays {
-          text-transform: uppercase;
-          font-size: 10.5px;
-          font-weight: 700;
-          color: #9ca3af;
-          letter-spacing: 0.05em;
-        }
-        .fitness-calendar .react-calendar__month-view__weekdays__weekday {
-          padding: 8px 2px;
-        }
-        .fitness-calendar .react-calendar__month-view__weekdays__weekday abbr {
-          text-decoration: none;
-        }
-        .fitness-calendar .react-calendar__tile {
-          max-width: 100%;
-          padding: 10px 0;
-          background: none;
-          text-align: center;
-          font-size: 13px;
-          font-weight: 500;
-          color: #17181c;
-          border-radius: 2px;
-          transition: background 0.15s;
-        }
-        .fitness-calendar .react-calendar__tile:enabled:hover,
-        .fitness-calendar .react-calendar__tile:enabled:focus {
-          background: #fff0eb;
-        }
-        .fitness-calendar .react-calendar__tile--now {
-          background: transparent;
-        }
-        .fitness-calendar .react-calendar__tile.today-tile {
-          background: #ff5a1f;
-          color: #fff;
-          font-weight: 700;
-        }
-        .fitness-calendar .react-calendar__tile.today-tile:enabled:hover,
-        .fitness-calendar .react-calendar__tile.today-tile:enabled:focus {
-          background: #d9440a;
-        }
-        .fitness-calendar .react-calendar__tile.streak-streak {
-          background: #dcfce7;
-          color: #166534;
-          font-weight: 700;
-        }
-        .fitness-calendar .react-calendar__tile.streak-failed {
-          background: #fee2e2;
-          color: #b91c1c;
-          font-weight: 700;
-        }
-        .fitness-calendar .react-calendar__tile.streak-pending {
-          background: #fef3c7;
-          color: #92400e;
-          font-weight: 700;
-        }
-        .fitness-calendar .react-calendar__tile.streak-no-schedule {
-          background: #f3f4f6;
-          box-shadow: inset 0 0 0 1px #e5e7eb;
-          color: #6b7280;
-        }
-        .fitness-calendar .react-calendar__tile.streak-streak:enabled:hover,
-        .fitness-calendar .react-calendar__tile.streak-streak:enabled:focus {
-          background: #bbf7d0;
-        }
-        .fitness-calendar .react-calendar__tile.streak-failed:enabled:hover,
-        .fitness-calendar .react-calendar__tile.streak-failed:enabled:focus {
-          background: #fecaca;
-        }
-        .fitness-calendar .react-calendar__tile.streak-pending:enabled:hover,
-        .fitness-calendar .react-calendar__tile.streak-pending:enabled:focus {
-          background: #fde68a;
-        }
-        .fitness-calendar .react-calendar__tile.streak-no-schedule:enabled:hover,
-        .fitness-calendar .react-calendar__tile.streak-no-schedule:enabled:focus {
-          background: #e5e7eb;
-        }
-        .fitness-calendar .react-calendar__tile.today-tile.streak-streak {
-          background: #22c55e;
-          color: #fff;
-        }
-        .fitness-calendar .react-calendar__tile.today-tile.streak-failed {
-          background: #ef4444;
-          color: #fff;
-        }
-        .fitness-calendar .react-calendar__tile.today-tile.streak-pending {
-          background: #eab308;
-          color: #fff;
-        }
-        .fitness-calendar .react-calendar__month-view__days__day--neighboringMonth {
-          color: #d1d5db;
-        }
-        .fitness-calendar .react-calendar__tile:disabled {
-          color: #d1d5db;
-        }
-      `}</style>
-    </div>
+          @keyframes calendar-loading-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(330%); }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .fitness-calendar .calendar-loading-line {
+              animation: none;
+              opacity: 0.7;
+              transform: translateX(0);
+            }
+          }
+        `}</style>
+      </div>
+    </>
   );
 }

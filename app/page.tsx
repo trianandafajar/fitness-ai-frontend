@@ -61,7 +61,7 @@ export default function GetStartedPage() {
   }
 
   return (
-    <PageContainer className="min-h-0 h-dvh overflow-hidden">
+    <PageContainer className="min-h-0 h-dvh overflow-hidden px-6">
       <section className="relative flex h-[58vh] shrink-0 items-center justify-center overflow-hidden rounded-br-[100px] bg-orange-100">
         <Player
           key={current.id}

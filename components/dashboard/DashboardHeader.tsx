@@ -66,7 +66,7 @@ export default function DashboardHeader() {
   }, [logout, router]);
 
   return (
-    <div className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-white py-4">
+    <div className="sticky top-0 z-40 flex w-full items-center justify-between rounded-b-2xl bg-white p-4 shadow-sm">
       <div>
         <div className="text-[13px] text-ink-soft">{getGreeting()}</div>
         <div className="font-display text-xl font-bold text-ink">

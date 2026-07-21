@@ -75,3 +75,9 @@ export const formatDayLabel = (days: string | null): string => {
     .map((day) => capitalize(day.trim()).slice(0, 3))
     .join(", ");
 };
+
+export const addDays = (date: Date, amount: number): Date => {
+  const next = new Date(date);
+  next.setDate(next.getDate() + amount);
+  return next;
+};

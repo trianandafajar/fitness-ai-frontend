@@ -85,9 +85,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }, [user?.id]);
 
   return (
-    <PageContainer className="pb-28 sm:pb-28">
+    <PageContainer className="w-full min-w-0 overflow-x-clip pb-28 sm:pb-28">
       <DashboardHeader />
-      <div className="flex-1 mt-4">{children}</div>
+      <main className="mt-4 min-w-0 flex-1 px-6">{children}</main>
       <BottomNav />
     </PageContainer>
   );

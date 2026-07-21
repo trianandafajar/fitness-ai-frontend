@@ -113,6 +113,13 @@ export interface StreakCalendarResponse {
   days: StreakCalendarDay[];
 }
 
+export interface StreakCalendarRangeResponse {
+  start_date: string;
+  end_date: string;
+  summary: StreakCalendarResponse["summary"];
+  days: StreakCalendarDay[];
+}
+
 export interface StreakCountResponse {
   count: number;
 }

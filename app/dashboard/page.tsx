@@ -135,9 +135,6 @@ export default function DashboardPage() {
       )}
 
       <div>
-        <div className="mb-3 flex items-center justify-between">
-          <div className="font-display text-base font-bold">Calendar</div>
-        </div>
         <CalendarView refreshKey={calendarRefreshKey} />
       </div>
 

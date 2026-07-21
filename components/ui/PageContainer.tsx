@@ -9,7 +9,7 @@ const PageContainer = ({
 }: PageContainerProps) => {
   return (
     <div
-      className={`mx-auto flex min-h-screen max-w-100 flex-col px-6 ${className}`}
+      className={`mx-auto flex min-h-screen max-w-100 flex-col ${className}`}
     >
       {children}
     </div>
