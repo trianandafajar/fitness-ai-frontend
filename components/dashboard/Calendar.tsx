@@ -32,7 +32,6 @@ function CalendarSkeleton() {
       <div className="rounded-2xl border border-line bg-white p-4" aria-label="Loading calendar" role="status">
         <div className="mb-5 flex items-center justify-between">
           <div className="space-y-2">
-            <div className="motion-reduce:animate-none animate-pulse h-2.5 w-16 rounded-full bg-orange-tint" />
             <div className="motion-reduce:animate-none animate-pulse h-5 w-32 rounded bg-surface" />
           </div>
           <div className="motion-reduce:animate-none animate-pulse flex gap-2">
@@ -130,14 +129,19 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
       "relative flex min-h-24 flex-col items-center justify-center rounded-2xl border p-2 text-center transition active:scale-[0.98]",
     ];
 
-    if (day?.status === "streak") classes.push("border-green-200 bg-green-50 text-green-800 hover:bg-green-100");
-    else if (day?.status === "failed") classes.push("border-red-200 bg-red-50 text-red-800 hover:bg-red-100");
-    else if (day?.status === "pending") classes.push("border-yellow-200 bg-yellow-50 text-yellow-800 hover:bg-yellow-100");
-    else if (day?.status === "not_started") classes.push("border-slate-200 bg-slate-50 text-slate-400 hover:bg-slate-100");
-    else if (day?.status === "neutral" && !day.has_schedule) classes.push("border-gray-200 bg-gray-50 text-gray-500 hover:bg-gray-100");
-    else classes.push("border-line bg-white text-ink hover:bg-orange-tint");
+    if (day?.status === "streak") {
+      classes.push("border-green-200 bg-green-50 text-green-800 hover:bg-green-100");
+    } else if (day?.status === "failed") {
+      classes.push("border-red-200 bg-red-200 text-red-800 hover:bg-red-100");
+    } else {
+       classes.push(
+        "border-orange/10 bg-white/5 text-black/50 hover:bg-orange/10"
+      );
+    }
 
-    if (formatDateKey(date) === todayKey) classes.push("ring-2 ring-orange/30 ring-offset-1");
+    if (formatDateKey(date) === todayKey) {
+      classes.push("ring-2 ring-orange/30 ring-offset-1");
+    }
 
     return classes.join(" ");
   };
@@ -164,7 +168,6 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
       <div className="fitness-calendar relative rounded-2xl border border-line bg-white p-4" aria-busy={loading}>
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.16em] text-orange-deep">Focus days</div>
             <div className="mt-1 font-display text-base font-bold text-ink">{monthLabel}</div>
             <div className="mt-0.5 text-[11px] text-ink-soft">Days {rangeLabel}</div>
           </div>
