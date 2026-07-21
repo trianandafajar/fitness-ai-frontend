@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Bell, Clock, Dumbbell } from "lucide-react";
 import type { NotificationData } from "./useNotifications";
+import { formatTimeAgo } from "@/lib/utils";
 
 interface NotificationDropdownProps {
   notifications: NotificationData[];
@@ -11,17 +12,6 @@ interface NotificationDropdownProps {
   onMarkAsRead: (id: string) => void;
   onMarkAllAsRead: () => void;
   onClose: () => void;
-}
-
-function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "just now";
-  if (mins < 60) return `${mins}m ago`;
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return `${hrs}h ago`;
-  const days = Math.floor(hrs / 24);
-  return `${days}d ago`;
 }
 
 export default function NotificationDropdown({
@@ -89,7 +79,7 @@ export default function NotificationDropdown({
                     {n.data.day_of_week && ` • ${n.data.day_of_week}`}
                   </div>
                 )}
-                <div className="mt-0.5 text-[10px] text-ink-faint">{timeAgo(n.created_at)}</div>
+                <div className="mt-0.5 text-[10px] text-ink-faint">{formatTimeAgo(n.created_at)}</div>
               </div>
               {!n.read_at && (
                 <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange" />

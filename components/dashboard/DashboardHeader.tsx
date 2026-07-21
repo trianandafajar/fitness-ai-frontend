@@ -9,51 +9,9 @@ import { streakService } from "@/services/streak.service";
 import NotificationDropdown from "./NotificationDropdown";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
 import { dashboardNotificationsStore } from "@/stores/dashboard-notifications.store";
+import Tooltip from "@/components/ui/Tooltip";
+import { getGreeting, getInitials } from "@/lib/utils";
 
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour < 11) return "Good morning";
-  if (hour < 15) return "Good afternoon";
-  if (hour < 18) return "Good evening";
-  return "Good evening";
-}
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
-}
-
-// Small reusable tooltip wrapper — pure Tailwind, no extra deps.
-function Tooltip({
-  label,
-  children,
-  position = "bottom",
-}: {
-  label: string;
-  children: React.ReactNode;
-  position?: "bottom" | "left";
-}) {
-  const posClasses =
-    position === "bottom"
-      ? "top-full left-1/2 mt-2 -translate-x-1/2"
-      : "right-full top-1/2 mr-2 -translate-y-1/2";
-
-  return (
-    <div className="group relative flex items-center">
-      {children}
-      <span
-        role="tooltip"
-        className={`pointer-events-none absolute ${posClasses} z-50 whitespace-nowrap rounded-md bg-ink px-2 py-1 text-[11px] font-medium text-white opacity-0 shadow-md transition-opacity duration-150 group-hover:opacity-100`}
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
 
 export default function DashboardHeader() {
   const { user, logout } = useAuth();
@@ -101,11 +59,11 @@ export default function DashboardHeader() {
     return () => window.removeEventListener("fitness:streak-updated", handleStreakUpdated);
   }, [fetchStreak]);
 
-  async function handleLogout() {
+  const handleLogout = useCallback(async () => {
     dashboardNotificationsStore.reset();
     await logout();
     router.push("/login");
-  }
+  }, [logout, router]);
 
   return (
     <div className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-white py-4">

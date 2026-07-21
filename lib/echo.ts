@@ -4,18 +4,17 @@ import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 import Cookies from "js-cookie";
 import { api } from "@/lib/axios";
+import { REVERB_APP_KEY, REVERB_HOST, REVERB_PORT } from "@/lib/app-config";
 
 let echo: Echo<"reverb"> | null = null;
 
 function createEcho() {
-  const reverbPort = Number(process.env.NEXT_PUBLIC_REVERB_PORT ?? "443");
-
   return new Echo({
     broadcaster: "reverb",
-    key: process.env.NEXT_PUBLIC_REVERB_APP_KEY!,
-    wsHost: process.env.NEXT_PUBLIC_REVERB_HOST!,
-    wsPort: reverbPort,
-    wssPort: reverbPort,
+    key: REVERB_APP_KEY,
+    wsHost: REVERB_HOST,
+    wsPort: REVERB_PORT,
+    wssPort: REVERB_PORT,
 
     forceTLS: true,
     enabledTransports: ["ws", "wss"],

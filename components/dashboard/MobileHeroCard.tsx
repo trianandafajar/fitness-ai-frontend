@@ -1,15 +1,12 @@
 import Link from "next/link";
 import type { WorkoutSchedule } from "@/types/dashboard";
 import { Timer, Check, ClipboardCheck } from "lucide-react";
+import { capitalize } from "@/lib/utils";
 
 interface MobileHeroCardProps {
   schedule: WorkoutSchedule | null;
   checkedIn: boolean;
   onCheckin?: (schedule: WorkoutSchedule) => void;
-}
-
-function formatDayName(day: string): string {
-  return day.charAt(0).toUpperCase() + day.slice(1);
 }
 
 export default function MobileHeroCard({ schedule, checkedIn, onCheckin }: MobileHeroCardProps) {
@@ -29,7 +26,7 @@ export default function MobileHeroCard({ schedule, checkedIn, onCheckin }: Mobil
   }
 
   const exerciseCount = schedule.exercises.length;
-  const dayLabel = formatDayName(schedule.day_of_week);
+  const dayLabel = capitalize(schedule.day_of_week);
   const timeLabel = schedule.scheduled_time ?? "Anytime";
 
   return (

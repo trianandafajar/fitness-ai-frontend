@@ -5,21 +5,9 @@ import { Plus, Pencil, Trash2, X, TrendingUp, TrendingDown, Minus, Weight, Check
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { weightLogService } from "@/services/weight-logs.service";
 import type { WeightLog } from "@/types/dashboard";
+import { formatDate, weekRange } from "@/lib/utils";
 
 const WEIGHT_GOAL = 65;
-
-function formatDate(iso: string) {
-  const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-}
-
-function weekRange(weekStart: string) {
-  const start = new Date(weekStart + "T00:00:00");
-  const end = new Date(start);
-  end.setDate(end.getDate() + 6);
-  const fmt = (d: Date) => d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-  return `${fmt(start)} - ${fmt(end)}`;
-}
 
 export default function WeightLogsPage() {
   const [logs, setLogs] = useState<WeightLog[]>([]);
@@ -188,7 +176,7 @@ export default function WeightLogsPage() {
                     {log.weight_kg}
                   </div>
                   <div className="flex-1">
-                    <div className="text-sm font-semibold text-ink">{weekRange(log.week_start)}</div>
+                    <div className="text-sm font-semibold text-ink">{weekRange  (log.week_start)}</div>
                     <div className="text-xs text-ink-soft">
                       {log.weight_kg} kg
                       {diff !== null && (

@@ -4,19 +4,12 @@ import { useRouter } from "next/navigation";
 import { PartyPopper, AlertCircle, Dumbbell, Utensils, Check, Target, Clock, CalendarDays } from "lucide-react";
 import { ButtonPrimary } from "@/components/ui/Button";
 import type { AiAnalysis } from "./types";
+import { formatDayLabel } from "@/lib/utils";
 
 interface Props {
   aiResult: AiAnalysis | null;
   loading: boolean;
   onRetry: () => void;
-}
-
-function formatDayLabel(days: string | null): string {
-  if (!days) return "";
-  const parts = days.split(",").map((d) => d.trim());
-  return parts
-    .map((d) => d.charAt(0).toUpperCase() + d.slice(1, 3))
-    .join(", ");
 }
 
 const MEAL_LABELS: Record<string, string> = {

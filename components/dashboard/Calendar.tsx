@@ -6,17 +6,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import { streakService } from "@/services/streak.service";
 import type { StreakCalendarResponse } from "@/types/dashboard";
-
-function fmt(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-function monthKey(date: Date): string {
-  return fmt(date).slice(0, 7);
-}
+import { formatDateKey, formatMonthKey } from "@/lib/utils";
 
 function CalendarSkeleton() {
   return (
@@ -47,7 +37,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
   const [loading, setLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
-  const selectedMonth = monthKey(activeMonth);
+  const selectedMonth = formatMonthKey(activeMonth);
 
   useEffect(() => {
     let cancelled = false;
@@ -73,7 +63,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
 
   const handleClick = useCallback(
     (date: Date) => {
-      router.push(`/dashboard/day?date=${fmt(date)}`);
+      router.push(`/dashboard/day?date=${formatDateKey(date)}`);
     },
     [router],
   );
@@ -89,21 +79,21 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
     [calendarData],
   );
 
-  const todayKey = fmt(new Date());
+  const todayKey = formatDateKey(new Date());
 
   const tileClassName = useCallback(
     ({ date, view }: { date: Date; view: string }) => {
       if (view !== "month") return "";
 
       const classes = [];
-      const day = dayByDate.get(fmt(date));
+      const day = dayByDate.get(formatDateKey(date));
       if (day?.status && day.status !== "neutral" && day.status !== "not_started") {
         classes.push(`streak-${day.status}`);
       }
       if (day?.status === "neutral" && !day.has_schedule) {
         classes.push("streak-no-schedule");
       }
-      if (fmt(date) === todayKey) classes.push("today-tile");
+      if (formatDateKey(date) === todayKey) classes.push("today-tile");
       return classes.join(" ");
     },
     [dayByDate, todayKey],
