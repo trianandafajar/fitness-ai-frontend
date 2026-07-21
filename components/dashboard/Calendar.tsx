@@ -45,6 +45,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
   const [activeMonth, setActiveMonth] = useState(() => new Date());
   const [calendarData, setCalendarData] = useState<StreakCalendarResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const selectedMonth = monthKey(activeMonth);
 
@@ -59,7 +60,10 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
         if (!cancelled) setCalendarData(null);
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setHasLoadedOnce(true);
+          setLoading(false);
+        }
       });
 
     return () => {
@@ -105,13 +109,14 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
     [dayByDate, todayKey],
   );
 
-  if (loading) {
+  if (loading && !hasLoadedOnce) {
     return <CalendarSkeleton />;
   }
 
   return (
-    <div className="fitness-calendar">
+    <div className="fitness-calendar relative" aria-busy={loading}>
       <Calendar
+        activeStartDate={activeMonth}
         onClickDay={handleClick}
         onActiveStartDateChange={handleMonthChange}
         tileClassName={tileClassName}
@@ -123,9 +128,34 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
         next2Label={null}
       />
 
+      {loading && (
+        <div
+          className="pointer-events-none absolute inset-x-0 top-13 z-10 h-0.75 overflow-hidden rounded-full bg-orange/15"
+          aria-live="polite"
+          aria-label="Updating streak"
+          role="status"
+        >
+          <span className="calendar-loading-line block h-full w-1/3 rounded-full bg-orange" />
+        </div>
+      )}
+
       <style>{`
         .fitness-calendar {
-          --cal-radius: 12px;
+          --cal-radius: 6px;
+        }
+        .fitness-calendar .calendar-loading-line {
+          animation: calendar-loading-line 1.2s ease-in-out infinite;
+        }
+        @keyframes calendar-loading-line {
+          0% { transform: translateX(-100%); }
+          100% { transform: translateX(330%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .fitness-calendar .calendar-loading-line {
+            animation: none;
+            opacity: 0.7;
+            transform: translateX(0);
+          }
         }
         .fitness-calendar .react-calendar {
           width: 100%;
@@ -179,7 +209,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
           font-size: 13px;
           font-weight: 500;
           color: #17181c;
-          border-radius: 999px;
+          border-radius: 2px;
           transition: background 0.15s;
         }
         .fitness-calendar .react-calendar__tile:enabled:hover,

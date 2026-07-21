@@ -108,7 +108,7 @@ export default function DashboardHeader() {
   }
 
   return (
-    <div className="my-5 flex items-center justify-between">
+    <div className="sticky top-0 z-40 flex items-center justify-between border-b border-line bg-white py-4">
       <div>
         <div className="text-[13px] text-ink-soft">{getGreeting()}</div>
         <div className="font-display text-xl font-bold text-ink">

@@ -87,7 +87,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <PageContainer className="pb-28 sm:pb-28">
       <DashboardHeader />
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 mt-4">{children}</div>
       <BottomNav />
     </PageContainer>
   );
