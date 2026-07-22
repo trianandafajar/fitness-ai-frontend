@@ -4,16 +4,29 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { streakService } from "@/services/streak.service";
-import type { StreakCalendarDay, StreakCalendarRangeResponse } from "@/types/dashboard";
+import type {
+  StreakCalendarDay,
+  StreakCalendarRangeResponse,
+} from "@/types/dashboard";
 import { addDays, formatDateKey } from "@/lib/utils";
 
 const DAYS_PER_VIEW = 16;
 const RANGE_ANCHOR = new Date(2026, 1, 1);
 
 function getFixedRangeStart(date: Date): Date {
-  const dateInUtc = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-  const anchorInUtc = Date.UTC(RANGE_ANCHOR.getFullYear(), RANGE_ANCHOR.getMonth(), RANGE_ANCHOR.getDate());
-  const dayIndex = Math.floor((dateInUtc - anchorInUtc) / (24 * 60 * 60 * 1000));
+  const dateInUtc = Date.UTC(
+    date.getFullYear(),
+    date.getMonth(),
+    date.getDate(),
+  );
+  const anchorInUtc = Date.UTC(
+    RANGE_ANCHOR.getFullYear(),
+    RANGE_ANCHOR.getMonth(),
+    RANGE_ANCHOR.getDate(),
+  );
+  const dayIndex = Math.floor(
+    (dateInUtc - anchorInUtc) / (24 * 60 * 60 * 1000),
+  );
   const rangeIndex = Math.floor(dayIndex / DAYS_PER_VIEW);
 
   return addDays(RANGE_ANCHOR, rangeIndex * DAYS_PER_VIEW);
@@ -27,9 +40,13 @@ function CalendarSkeleton() {
   return (
     <>
       <div className="mb-3 flex items-center justify-between">
-        <div className="motion-reduce:animate-none animate-pulse h-5 w-20 rounded-full bg-surface"/>
+        <div className="motion-reduce:animate-none animate-pulse h-5 w-20 rounded-full bg-surface" />
       </div>
-      <div className="rounded-2xl border border-line bg-white p-4" aria-label="Loading calendar" role="status">
+      <div
+        className="rounded-2xl border border-line bg-white p-4"
+        aria-label="Loading calendar"
+        role="status"
+      >
         <div className="mb-5 flex items-center justify-between">
           <div className="space-y-2">
             <div className="motion-reduce:animate-none animate-pulse h-5 w-32 rounded bg-surface" />
@@ -41,9 +58,14 @@ function CalendarSkeleton() {
           </div>
         </div>
         <div className="grid grid-cols-4 gap-2">
-          {Array.from({ length: DAYS_PER_VIEW }, (_, index) => index + 1).map((item) => (
-            <div key={item} className="motion-reduce:animate-none animate-pulse h-24 rounded-2xl bg-surface" />
-          ))}
+          {Array.from({ length: DAYS_PER_VIEW }, (_, index) => index + 1).map(
+            (item) => (
+              <div
+                key={item}
+                className="motion-reduce:animate-none animate-pulse h-24 rounded-2xl bg-surface"
+              />
+            ),
+          )}
         </div>
       </div>
     </>
@@ -57,7 +79,8 @@ interface CalendarViewProps {
 export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
   const router = useRouter();
   const [viewStart, setViewStart] = useState(getInitialViewStart);
-  const [calendarData, setCalendarData] = useState<StreakCalendarRangeResponse | null>(null);
+  const [calendarData, setCalendarData] =
+    useState<StreakCalendarRangeResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
@@ -66,7 +89,8 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
   useEffect(() => {
     let cancelled = false;
 
-    streakService.getRange(selectedRange, DAYS_PER_VIEW)
+    streakService
+      .getRange(selectedRange, DAYS_PER_VIEW)
       .then((response) => {
         if (!cancelled) setCalendarData(response.data);
       })
@@ -91,13 +115,18 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
   );
 
   const visibleDays = useMemo(() => {
-    return Array.from({ length: DAYS_PER_VIEW }, (_, index) => addDays(viewStart, index));
+    return Array.from({ length: DAYS_PER_VIEW }, (_, index) =>
+      addDays(viewStart, index),
+    );
   }, [viewStart]);
 
   const todayKey = formatDateKey(new Date());
   const todayRangeKey = formatDateKey(getInitialViewStart());
   const isTodayRange = selectedRange === todayRangeKey;
-  const monthLabel = viewStart.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const monthLabel = viewStart.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
   const rangeLabel = `${visibleDays[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${visibleDays[visibleDays.length - 1].toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 
   const handleClick = useCallback(
@@ -124,35 +153,47 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
     setViewStart(getInitialViewStart());
   }, [isTodayRange]);
 
-  const getDayClasses = (day: StreakCalendarDay | undefined, date: Date): string => {
+  const getDayClasses = (
+    day: StreakCalendarDay | undefined,
+    date: Date
+  ): string => {
     const classes = [
       "relative flex min-h-24 flex-col items-center justify-center rounded-2xl border p-2 text-center transition active:scale-[0.98]",
     ];
 
     if (day?.status === "streak") {
-      classes.push("border-green-200 bg-green-50 text-green-800 hover:bg-green-100");
+      classes.push(
+        "border-green-200 bg-green-50 text-green-800 hover:bg-green-100"
+      );
     } else if (day?.status === "failed") {
-      classes.push("border-red-200 bg-red-200 text-red-800 hover:bg-red-100");
+      classes.push(
+        "border-orange bg-orange text-white hover:bg-orange-deep"
+      );
+    } else if (day?.has_schedule) {
+      classes.push(
+        "border-orange/30 bg-orange-tint/50 text-orange-deep hover:border-orange/50 hover:bg-orange-tint"
+      );
     } else {
-       classes.push(
-        "border-orange/10 bg-white/5 text-black/50 hover:bg-orange/10"
+      classes.push(
+        "border-line bg-surface text-ink-soft hover:border-ink-faint hover:bg-white"
       );
     }
 
     if (formatDateKey(date) === todayKey) {
-      classes.push("ring-2 ring-orange/30 ring-offset-1");
+      classes.push(
+        "ring-3 ring-orange/30 ring-offset-2"
+      );
     }
 
     return classes.join(" ");
   };
 
   const getStatusLabel = (day: StreakCalendarDay | undefined): string => {
-    if (day?.status === "streak") return "Streak";
-    if (day?.status === "failed") return "Failed";
-    if (day?.status === "pending") return "Pending";
-    if (day?.status === "not_started") return "Not started";
-    if (day?.status === "neutral" && !day.has_schedule) return "Rest day";
-    if (day?.has_schedule) return "Planned";
+    if (day?.status === "streak") return "Completed";
+    if (day?.status === "failed") return "Skipped";
+    if (day?.has_schedule) return "Scheduled";
+    if (day && !day.has_schedule) return "Rest day";
+
     return "";
   };
 
@@ -165,11 +206,18 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
       <div className="mb-3 flex items-center justify-between">
         <div className="font-display text-base font-bold">Calendar</div>
       </div>
-      <div className="fitness-calendar relative rounded-2xl border border-line bg-white p-4" aria-busy={loading}>
+      <div
+        className="fitness-calendar relative rounded-2xl border border-line bg-white p-4"
+        aria-busy={loading}
+      >
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <div className="mt-1 font-display text-base font-bold text-ink">{monthLabel}</div>
-            <div className="mt-0.5 text-[11px] text-ink-soft">Days {rangeLabel}</div>
+            <div className="mt-1 font-display text-base font-bold text-ink">
+              {monthLabel}
+            </div>
+            <div className="mt-0.5 text-[11px] text-ink-soft">
+              Days {rangeLabel}
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -183,7 +231,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
             <button
               type="button"
               onClick={movePrevious}
-            aria-label="Show previous sixteen days"
+              aria-label="Show previous sixteen days"
               className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-white text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
             >
               <ChevronLeft size={18} />
@@ -191,7 +239,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
             <button
               type="button"
               onClick={moveNext}
-            aria-label="Show next sixteen days"
+              aria-label="Show next sixteen days"
               className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-white text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
             >
               <ChevronRight size={18} />
@@ -205,6 +253,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
             const day = dayByDate.get(dateKey);
             const displayDay = loading ? undefined : day;
             const statusLabel = loading ? "" : getStatusLabel(day);
+            const isRestDay = statusLabel === "Rest day";
 
             return (
               <button
@@ -217,8 +266,16 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
                 <span className="text-[10px] font-bold uppercase tracking-wide opacity-70">
                   {date.toLocaleDateString("en-US", { weekday: "short" })}
                 </span>
-                <span className="mt-1 font-display text-2xl font-bold leading-none">{date.getDate()}</span>
-                {statusLabel && <span className="mt-2 text-[9px] font-bold uppercase tracking-wide opacity-75">{statusLabel}</span>}
+                <span className="mt-1 font-display text-2xl font-bold leading-none">
+                  {date.getDate()}
+                </span>
+                {statusLabel && (
+                  <span
+                    className="mt-2 text-[9px] font-bold uppercase tracking-wide opacity-75 "
+                  >
+                    {statusLabel}
+                  </span>
+                )}
               </button>
             );
           })}

@@ -1,4 +1,7 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 
 interface TooltipProps {
   label: string;
@@ -7,44 +10,131 @@ interface TooltipProps {
 }
 
 const Tooltip = ({ label, children, side = "bottom" }: TooltipProps) => {
-  const positionClasses = {
-    top: "bottom-full left-1/2 mb-2 -translate-x-1/2",
-    right: "left-full top-1/2 ml-2 -translate-y-1/2",
-    bottom: "top-full left-1/2 mt-2 -translate-x-1/2",
-    left: "right-full top-1/2 mr-2 -translate-y-1/2",
+  const triggerRef = useRef<HTMLDivElement>(null);
+
+  const [isVisible, setIsVisible] = useState(false);
+  const [position, setPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+
+  const updatePosition = () => {
+    const trigger = triggerRef.current;
+
+    if (!trigger) return;
+
+    const rect = trigger.getBoundingClientRect();
+    const gap = 8;
+
+    const positions = {
+      top: {
+        top: rect.top - gap,
+        left: rect.left + rect.width / 2,
+      },
+      right: {
+        top: rect.top + rect.height / 2,
+        left: rect.right + gap,
+      },
+      bottom: {
+        top: rect.bottom + gap,
+        left: rect.left + rect.width / 2,
+      },
+      left: {
+        top: rect.top + rect.height / 2,
+        left: rect.left - gap,
+      },
+    };
+
+    setPosition(positions[side]);
+  };
+
+  useEffect(() => {
+    if (!isVisible) return;
+
+    updatePosition();
+
+    window.addEventListener("resize", updatePosition);
+    window.addEventListener("scroll", updatePosition, true);
+
+    return () => {
+      window.removeEventListener("resize", updatePosition);
+      window.removeEventListener("scroll", updatePosition, true);
+    };
+  }, [isVisible, side]);
+
+  const transformClasses = {
+    top: "-translate-x-1/2 -translate-y-full",
+    right: "-translate-y-1/2",
+    bottom: "-translate-x-1/2",
+    left: "-translate-x-full -translate-y-1/2",
   };
 
   const arrowClasses = {
-    top: "left-1/2 top-full -translate-x-1/2 border-x-[5px] border-t-[5px] border-x-transparent border-t-ink",
-    right:
-      "right-full top-1/2 -translate-y-1/2 border-y-[5px] border-r-[5px] border-y-transparent border-r-ink",
-    bottom:
-      "bottom-full left-1/2 -translate-x-1/2 border-x-[5px] border-b-[5px] border-x-transparent border-b-ink",
-    left: "left-full top-1/2 -translate-y-1/2 border-y-[5px] border-l-[5px] border-y-transparent border-l-ink",
+    top: `
+      left-1/2 top-full -translate-x-1/2
+      border-x-[5px] border-t-[5px]
+      border-x-transparent border-t-ink
+    `,
+    right: `
+      right-full top-1/2 -translate-y-1/2
+      border-y-[5px] border-r-[5px]
+      border-y-transparent border-r-ink
+    `,
+    bottom: `
+      bottom-full left-1/2 -translate-x-1/2
+      border-x-[5px] border-b-[5px]
+      border-x-transparent border-b-ink
+    `,
+    left: `
+      left-full top-1/2 -translate-y-1/2
+      border-y-[5px] border-l-[5px]
+      border-y-transparent border-l-ink
+    `,
   };
 
   return (
-    <div className="group relative inline-flex">
-      {children}
-
+    <>
       <div
-        role="tooltip"
-        className={`
-          pointer-events-none absolute
-          ${positionClasses[side]}
-          z-50 whitespace-nowrap rounded-md bg-ink
-          px-2.5 py-1.5 text-xs font-medium text-white
-          opacity-0 shadow-md scale-95
-          transition-all duration-150
-          group-hover:scale-100 group-hover:opacity-100
-          group-focus-within:scale-100 group-focus-within:opacity-100
-        `}
+        ref={triggerRef}
+        className="inline-flex"
+        onMouseEnter={() => {
+          updatePosition();
+          setIsVisible(true);
+        }}
+        onMouseLeave={() => setIsVisible(false)}
+        onFocus={() => {
+          updatePosition();
+          setIsVisible(true);
+        }}
+        onBlur={() => setIsVisible(false)}
       >
-        {label}
-
-        <span className={`absolute h-0 w-0 ${arrowClasses[side]}`} />
+        {children}
       </div>
-    </div>
+
+      {isVisible &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            role="tooltip"
+            style={{
+              top: position.top,
+              left: position.left,
+            }}
+            className={`
+              pointer-events-none fixed z-[9999]
+              ${transformClasses[side]}
+              whitespace-nowrap rounded-md bg-ink
+              px-2.5 py-1.5 text-xs font-medium text-white
+              shadow-md
+            `}
+          >
+            {label}
+
+            <span className={`absolute h-0 w-0 ${arrowClasses[side]}`} />
+          </div>,
+          document.body,
+        )}
+    </>
   );
 };
 
