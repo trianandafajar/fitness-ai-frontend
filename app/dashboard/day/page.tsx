@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Dumbbell, UtensilsCrossed, ClipboardCheck } from "lucide-react";
 import ExerciseList from "@/components/dashboard/ExerciseList";
 import CheckinModal from "@/components/dashboard/CheckinModal";
-import { ButtonPrimary } from "@/components/ui/Button";
+import { ButtonGlass, ButtonPrimary } from "@/components/ui/Button";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import { mealScheduleService } from "@/services/meal-schedules.service";
 import { attendanceService } from "@/services/attendances.service";
@@ -183,14 +183,14 @@ function DayContent() {
                   Checked in
                 </div>
               ) : (
-                <ButtonPrimary
+                <ButtonGlass
                   type="button"
                   onClick={handleCheckin}
                   disabled={!todaySchedule}
                   className="w-full py-3 text-sm"
                 >
                   {todaySchedule ? "Check In" : "No workout scheduled"}
-                </ButtonPrimary>
+                </ButtonGlass>
               )}
             </div>
           )}

@@ -163,25 +163,25 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
 
     if (day?.status === "streak") {
       classes.push(
-        "border-green-200 bg-green-50 text-green-800 hover:bg-green-100"
+        "border-green-200 bg-green-200 text-green-800 hover:bg-green-100"
+      );
+    } else if (day?.status === "not_started") {
+      classes.push(
+        "border-orange/30 bg-orange-tint/50 text-orange-deep hover:border-orange/50 hover:bg-orange-tint"
       );
     } else if (day?.status === "failed") {
       classes.push(
         "border-orange bg-orange text-white hover:bg-orange-deep"
       );
-    } else if (day?.has_schedule) {
+    } else  {
       classes.push(
         "border-orange/30 bg-orange-tint/50 text-orange-deep hover:border-orange/50 hover:bg-orange-tint"
       );
-    } else {
-      classes.push(
-        "border-line bg-surface text-ink-soft hover:border-ink-faint hover:bg-white"
-      );
-    }
+    } 
 
     if (formatDateKey(date) === todayKey) {
       classes.push(
-        "ring-3 ring-orange/30 ring-offset-2"
+        "ring-3 ring-orange ring-offset-2"
       );
     }
 
@@ -190,6 +190,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
 
   const getStatusLabel = (day: StreakCalendarDay | undefined): string => {
     if (day?.status === "streak") return "Completed";
+    if (day?.status === "not_started") return "Not started";
     if (day?.status === "failed") return "Skipped";
     if (day?.has_schedule) return "Scheduled";
     if (day && !day.has_schedule) return "Rest day";
@@ -253,7 +254,8 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
             const day = dayByDate.get(dateKey);
             const displayDay = loading ? undefined : day;
             const statusLabel = loading ? "" : getStatusLabel(day);
-            const isRestDay = statusLabel === "Rest day";
+            const isNeutralLabel =
+              statusLabel === "Rest day" || statusLabel === "Not started";
 
             return (
               <button
@@ -271,7 +273,11 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
                 </span>
                 {statusLabel && (
                   <span
-                    className="mt-2 text-[9px] font-bold uppercase tracking-wide opacity-75 "
+                    className={`mt-2 text-[9px] font-bold uppercase tracking-wide opacity-75 ${
+                      isNeutralLabel
+                        ? "rounded-full border border-line bg-white/80 px-2 py-0.5"
+                        : ""
+                    }`}
                   >
                     {statusLabel}
                   </span>
