@@ -1,10 +1,12 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { PartyPopper, AlertCircle, Dumbbell, Utensils, Check, Target, Clock, CalendarDays } from "lucide-react";
 import { ButtonPrimary } from "@/components/ui/Button";
-import type { AiAnalysis } from "./types";
-import { formatDayLabel } from "@/lib/utils";
+import { mealScheduleService } from "@/services/meal-schedules.service";
+import type { MealSchedule } from "@/types/dashboard";
+import type { AiAnalysis, EnrichedExercise, EnrichedFood } from "./types";
 
 interface Props {
   aiResult: AiAnalysis | null;
@@ -19,8 +21,65 @@ const MEAL_LABELS: Record<string, string> = {
   snack: "Snack",
 };
 
+const DAY_ORDER = [
+  "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
+];
+
+const DAY_LABELS: Record<string, string> = Object.fromEntries(
+  DAY_ORDER.map((day) => [day, day.charAt(0).toUpperCase() + day.slice(1)])
+);
+
+function groupExercisesByDay(items: EnrichedExercise[]) {
+  const groups = new Map<string, EnrichedExercise[]>();
+
+  items.forEach((item) => {
+    const days = item.scheduled_day?.split(",").map((day) => day.trim().toLowerCase()).filter(Boolean) ?? [];
+    days.forEach((day) => {
+      groups.set(day, [...(groups.get(day) ?? []), item]);
+    });
+  });
+
+  return DAY_ORDER
+    .filter((day) => groups.has(day))
+    .map((day) => ({ day, items: groups.get(day) ?? [] }));
+}
+
+function groupMealsByDay(schedules: MealSchedule[]) {
+  const groups = new Map<string, MealSchedule[]>();
+
+  schedules.forEach((schedule) => {
+    groups.set(schedule.day_of_week, [...(groups.get(schedule.day_of_week) ?? []), schedule]);
+  });
+
+  return DAY_ORDER
+    .filter((day) => groups.has(day))
+    .map((day) => ({ day, schedules: groups.get(day) ?? [] }));
+}
+
+function findFoodSuggestion(items: EnrichedFood[], foodName: string) {
+  const normalizedName = foodName.toLowerCase();
+  return items.find((item) => item.food?.name.toLowerCase() === normalizedName);
+}
+
 export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
   const router = useRouter();
+  const [mealSchedules, setMealSchedules] = useState<MealSchedule[]>([]);
+
+  useEffect(() => {
+    if (!aiResult || typeof aiResult.meal_suggestions === "string") return;
+
+    let cancelled = false;
+
+    mealScheduleService.getAll()
+      .then(({ data }) => {
+        if (!cancelled) setMealSchedules(data);
+      })
+      .catch(() => {
+        if (!cancelled) setMealSchedules([]);
+      });
+
+    return () => { cancelled = true; };
+  }, [aiResult]);
 
   if (loading) {
     return (
@@ -61,6 +120,14 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
   const recommendations = Array.isArray(aiResult.recommendations)
     ? aiResult.recommendations
     : [aiResult.recommendations].filter(Boolean);
+  const exerciseSuggestions = Array.isArray(aiResult.exercise_suggestions)
+    ? aiResult.exercise_suggestions
+    : [];
+  const mealSuggestions = Array.isArray(aiResult.meal_suggestions)
+    ? aiResult.meal_suggestions
+    : [];
+  const exerciseGroups = groupExercisesByDay(exerciseSuggestions);
+  const mealGroups = groupMealsByDay(mealSchedules);
 
   return (
     <div className="flex flex-1 flex-col">
@@ -101,91 +168,109 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
       )}
 
       {/* Exercise Suggestions */}
-      {Array.isArray(aiResult.exercise_suggestions) && aiResult.exercise_suggestions.length > 0 && (
+      {exerciseGroups.length > 0 && (
         <div className="mb-5">
           <h3 className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-ink">
             <Dumbbell className="h-4 w-4 text-orange-deep" /> Exercises
           </h3>
-          <div className="space-y-2">
-            {aiResult.exercise_suggestions.map((item, i) => {
-              const ex = item.exercise;
-              return (
-                <div key={i} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
-                  {ex?.image ? (
-                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-surface">
-                      <img src={ex.image} alt={ex.name} className="h-full w-full object-cover" loading="lazy" />
-                    </div>
-                  ) : (
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
-                      <Dumbbell className="h-5 w-5 text-orange-deep" />
-                    </div>
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13px] font-semibold text-ink">{ex?.name ?? item.text}</span>
-                      {(item.scheduled_day || item.scheduled_time) && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-[10px] font-semibold text-orange-deep whitespace-nowrap">
-                          <Clock className="h-3 w-3" />
-                          {formatDayLabel(item.scheduled_day)}
-                          {item.scheduled_day && item.scheduled_time && " · "}
-                          {item.scheduled_time?.slice(0, 5)}
-                        </span>
-                      )}
-                    </div>
-                    {ex?.target_muscles && ex.target_muscles.length > 0 && (
-                      <div className="mt-0.5 flex flex-wrap gap-1">
-                        {ex.target_muscles.map((m) => (
-                          <span key={m} className="rounded-md bg-surface px-1.5 py-0.5 text-[10px] font-medium text-ink-soft">{m}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+          <div className="space-y-4">
+            {exerciseGroups.map(({ day, items }) => (
+              <div key={day}>
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-orange" />
+                  <h4 className="text-[12px] font-bold uppercase tracking-wide text-ink-soft">{DAY_LABELS[day] ?? day}</h4>
+                  <span className="text-[11px] text-ink-faint">{items.length} {items.length === 1 ? "exercise" : "exercises"}</span>
                 </div>
-              );
-            })}
+                <div className="space-y-2 border-l border-orange/20 pl-3">
+                  {items.map((item, i) => {
+                    const ex = item.exercise;
+                    return (
+                      <div key={`${day}-${ex?.id ?? item.text}-${i}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                        {ex?.image ? (
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
+                            <img src={ex.image} alt={ex.name} className="relative z-10 h-full w-full object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+                            <Dumbbell className="absolute inset-0 z-0 m-auto h-5 w-5 text-orange-deep" />
+                          </div>
+                        ) : (
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
+                            <Dumbbell className="h-5 w-5 text-orange-deep" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[13px] font-semibold text-ink">{ex?.name ?? item.text}</span>
+                            {item.scheduled_time && (
+                              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-[10px] font-semibold text-orange-deep">
+                                <Clock className="h-3 w-3" />
+                                {item.scheduled_time.slice(0, 5)}
+                              </span>
+                            )}
+                          </div>
+                          {ex?.target_muscles && ex.target_muscles.length > 0 && (
+                            <div className="mt-0.5 flex flex-wrap gap-1">
+                              {ex.target_muscles.map((m) => (
+                                <span key={m} className="rounded-md bg-surface px-1.5 py-0.5 text-[10px] font-medium text-ink-soft">{m}</span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
       {/* Meal Suggestions */}
-      {Array.isArray(aiResult.meal_suggestions) && aiResult.meal_suggestions.length > 0 && (
+      {mealGroups.length > 0 && (
         <div className="mb-5">
           <h3 className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-ink">
             <Utensils className="h-4 w-4 text-orange-deep" /> Meals
           </h3>
-          <div className="space-y-2">
-            {aiResult.meal_suggestions.map((item, i) => {
-              const fd = item.food;
-              return (
-                <div key={i} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
-                  {fd?.image ? (
-                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-surface">
-                      <img src={fd.image} alt={fd.name} className="h-full w-full object-cover" loading="lazy" />
-                    </div>
-                  ) : (
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
-                      <Utensils className="h-5 w-5 text-orange-deep" />
-                    </div>
-                  )}
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[13px] font-semibold text-ink">{fd?.name ?? item.text}</span>
-                      {(item.meal_time || item.time) && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-[10px] font-semibold text-orange-deep whitespace-nowrap">
-                          <Clock className="h-3 w-3" />
-                          {item.meal_time ? MEAL_LABELS[item.meal_time] ?? item.meal_time : ""}
-                          {item.meal_time && item.time && " · "}
-                          {item.time?.slice(0, 5)}
-                        </span>
-                      )}
-                    </div>
-                    {fd?.calories_per_100g && (
-                      <div className="mt-0.5 text-[11.5px] text-ink-soft">{fd.calories_per_100g} kcal/100g</div>
-                    )}
-                  </div>
+          <div className="space-y-4">
+            {mealGroups.map(({ day, schedules }) => (
+              <div key={day}>
+                <div className="mb-2 flex items-center gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-orange" />
+                  <h4 className="text-[12px] font-bold uppercase tracking-wide text-ink-soft">{DAY_LABELS[day] ?? day}</h4>
                 </div>
-              );
-            })}
+                <div className="space-y-2 border-l border-orange/20 pl-3">
+                  {schedules.map((schedule) => schedule.items.map((mealItem) => {
+                    const suggestion = findFoodSuggestion(mealSuggestions, mealItem.food);
+                    const fd = suggestion?.food;
+                    return (
+                      <div key={`${day}-${schedule.meal_time}-${mealItem.food}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                        {fd?.image ? (
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
+                            <img src={fd.image} alt={fd.name} className="relative z-10 h-full w-full object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+                            <Utensils className="absolute inset-0 z-0 m-auto h-5 w-5 text-orange-deep" />
+                          </div>
+                        ) : (
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
+                            <Utensils className="h-5 w-5 text-orange-deep" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[13px] font-semibold text-ink">{fd?.name ?? mealItem.food}</span>
+                            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-[10px] font-semibold text-orange-deep">
+                              <Clock className="h-3 w-3" />
+                              {MEAL_LABELS[schedule.meal_time] ?? schedule.meal_time} · {schedule.time?.slice(0, 5)}
+                            </span>
+                          </div>
+                          {fd?.calories_per_100g && (
+                            <div className="mt-0.5 text-[11.5px] text-ink-soft">{fd.calories_per_100g} kcal/100g</div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  }))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
