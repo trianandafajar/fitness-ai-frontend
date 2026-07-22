@@ -32,3 +32,7 @@ export function setProfileCompleted(): void {
     sameSite: "lax",
   });
 }
+
+export function removeProfileCompleted(): void {
+  Cookies.remove(PROFILE_KEY);
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, Suspense } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore, Suspense } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import PageContainer from "@/components/ui/PageContainer";
 import OnboardingHeader from "@/components/onboarding/OnboardingHeader";
@@ -27,17 +27,42 @@ function restoreData(): OnboardingData {
   return initialOnboardingData;
 }
 
+const emptySubscribe = () => () => {};
+const getClientSnapshot = () => true;
+const getServerSnapshot = () => false;
+
 function OnboardingContent() {
+  const hydrated = useSyncExternalStore(
+    emptySubscribe,
+    getClientSnapshot,
+    getServerSnapshot,
+  );
+
+  if (!hydrated) return null;
+
+  return <OnboardingForm />;
+}
+
+function OnboardingForm() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const { user, profile, fetchUser } = useAuth();
 
-  const raw = parseInt(searchParams.get("step") || "1", 10);
+  useEffect(() => {
+    if (!user) {
+      fetchUser().catch(() => {});
+    }
+  }, [fetchUser, user]);
+
+  const savedStep = profile?.profile_completed
+    ? TOTAL_STEPS
+    : Math.min((profile?.onboarding_step ?? 0) + 1, TOTAL_STEPS);
+  const raw = parseInt(searchParams.get("step") || String(savedStep), 10);
   const step = Math.min(Math.max(raw || 1, 1), TOTAL_STEPS);
 
   const [data, setData] = useState<OnboardingData>(restoreData);
   const { submitStep1, submitStep2, submitStep3, submitStep4, submitStep5, aiResult, loading, error, clearError } = useOnboarding();
-  const { user } = useAuth();
   const [analyzing, setAnalyzing] = useState(false);
   const analysisTriggered = useRef(false);
 
@@ -45,7 +70,7 @@ function OnboardingContent() {
     if (user?.name && data.name !== user.name) {
       update({ name: user.name });
     }
-  }, [user?.name]);
+  }, [data.name, user?.name]);
 
   useEffect(() => {
     if (step === 5 && !aiResult && !analysisTriggered.current) {

@@ -126,8 +126,10 @@ export function useOnboarding() {
       if (result.ai_analysis) {
         setAiResult(result.ai_analysis);
       }
-      await fetchUser();
-      setProfileCompleted();
+      if (result.profile_completed) {
+        await fetchUser();
+        setProfileCompleted();
+      }
       return result;
     } catch (err) {
       if (isAxiosError(err) && err.response?.data?.message) {
