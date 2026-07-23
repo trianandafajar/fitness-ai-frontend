@@ -62,7 +62,7 @@ function CalendarSkeleton() {
             (item) => (
               <div
                 key={item}
-                className="motion-reduce:animate-none animate-pulse h-24 rounded-2xl bg-surface"
+                className="motion-reduce:animate-none animate-pulse h-20 rounded-lg bg-surface"
               />
             ),
           )}
@@ -158,7 +158,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
     date: Date
   ): string => {
     const classes = [
-      "relative flex min-h-24 flex-col items-center justify-center rounded-2xl border p-2 text-center transition active:scale-[0.98]",
+      "relative flex min-h-17 flex-col items-center justify-center rounded-lg border p-1 text-center transition active:scale-[0.98]",
     ];
 
     if (day?.status === "streak") {
@@ -167,22 +167,44 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
       );
     } else if (day?.status === "not_started") {
       classes.push(
-        "border-orange/30 bg-orange-tint/50 text-orange-deep hover:border-orange/50 hover:bg-orange-tint"
+        "border-orange/20 bg-orange-tint/20 text-orange-deep/35 opacity-75 hover:border-orange/30 hover:bg-orange-tint/30"
       );
     } else if (day?.status === "failed") {
       classes.push(
         "border-orange bg-orange text-white hover:bg-orange-deep"
       );
-    } else  {
+    } else if (day?.has_schedule) {
       classes.push(
         "border-orange/30 bg-orange-tint/50 text-orange-deep hover:border-orange/50 hover:bg-orange-tint"
       );
-    } 
+    } else {
+      classes.push(
+        "border-orange/30 bg-orange-tint/50 text-orange-deep hover:border-orange/50 hover:bg-orange-tint"
+      );
+    }
 
     if (formatDateKey(date) === todayKey) {
       classes.push(
-        "ring-3 ring-orange ring-offset-2"
+        "ring-2 ring-orange ring-offset-2"
       );
+    }
+
+    return classes.join(" ");
+  };
+
+  const getStatusClasses = (day: StreakCalendarDay | undefined): string => {
+    const classes = [
+      "mt-1 inline-flex max-w-full items-center whitespace-nowrap rounded-md px-1 py-0.5 text-[7px] font-semibold uppercase leading-none tracking-wide",
+    ];
+
+    if (day?.status === "not_started") {
+      classes.push("text-orange-deep/35");
+    } else if (day?.status === "streak") {
+      classes.push(" text-green-700");
+    } else if (day?.status === "failed") {
+      classes.push(" text-white");
+    } else {
+      classes.push(" text-orange-deep");
     }
 
     return classes.join(" ");
@@ -254,8 +276,6 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
             const day = dayByDate.get(dateKey);
             const displayDay = loading ? undefined : day;
             const statusLabel = loading ? "" : getStatusLabel(day);
-            const isNeutralLabel =
-              statusLabel === "Rest day" || statusLabel === "Not started";
 
             return (
               <button
@@ -268,17 +288,11 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
                 <span className="text-[10px] font-bold uppercase tracking-wide opacity-70">
                   {date.toLocaleDateString("en-US", { weekday: "short" })}
                 </span>
-                <span className="mt-1 font-display text-2xl font-bold leading-none">
+                <span className="mt-0.5 font-display text-lg font-bold leading-none">
                   {date.getDate()}
                 </span>
                 {statusLabel && (
-                  <span
-                    className={`mt-2 text-[9px] font-bold uppercase tracking-wide opacity-75 ${
-                      isNeutralLabel
-                        ? "rounded-full border border-line bg-white/80 px-2 py-0.5"
-                        : ""
-                    }`}
-                  >
+                  <span className={getStatusClasses(day)}>
                     {statusLabel}
                   </span>
                 )}
