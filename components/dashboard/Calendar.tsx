@@ -43,11 +43,11 @@ function CalendarSkeleton() {
         <div className="motion-reduce:animate-none animate-pulse h-5 w-20 rounded-full bg-surface" />
       </div>
       <div
-        className="rounded-2xl border border-line bg-white p-4"
+        className="rounded-xl border border-line bg-white pt-4"
         aria-label="Loading calendar"
         role="status"
       >
-        <div className="mb-5 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between px-4">
           <div className="space-y-2">
             <div className="motion-reduce:animate-none animate-pulse h-5 w-32 rounded bg-surface" />
           </div>
@@ -230,10 +230,10 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
         <div className="font-display text-base font-bold">Calendar</div>
       </div>
       <div
-        className="fitness-calendar relative rounded-2xl border border-line bg-white p-4"
+        className="fitness-calendar relative rounded-xl border border-line bg-white pt-4"
         aria-busy={loading}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex items-center justify-between px-4">
           <div>
             <div className="mt-1 font-display text-base font-bold text-ink">
               {monthLabel}
