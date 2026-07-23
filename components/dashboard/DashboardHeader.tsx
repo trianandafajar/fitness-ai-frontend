@@ -89,7 +89,7 @@ export default function DashboardHeader() {
           </div>
         </Tooltip>
 
-        <div className="relative" ref={notifRef}>
+        <div ref={notifRef}>
           <Tooltip label="Notifications">
             <button
               onClick={() => setShowNotif((prev) => !prev)}
