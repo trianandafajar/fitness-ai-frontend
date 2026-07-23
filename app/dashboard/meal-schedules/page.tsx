@@ -5,6 +5,15 @@ import { Plus, Pencil, Trash2, X, Clock } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { mealScheduleService } from "@/services/meal-schedules.service";
 import type { MealSchedule } from "@/types/dashboard";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/Drawer";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 
 const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 const DAY_LABELS: Record<string, string> = {
@@ -41,6 +50,7 @@ export default function MealSchedulesPage() {
     time: "",
     items: [] as { food: string; portion: string; notes: string }[],
   });
+  const confirm = useConfirm();
 
   // --- Draggable tabs state/refs ---
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -86,12 +96,13 @@ export default function MealSchedulesPage() {
     }
   }, []);
 
-  useEffect(() => { fetchSchedules(); }, [fetchSchedules]);
   useEffect(() => {
-    if (showModal) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
-  }, [showModal]);
+    const initialLoad = window.setTimeout(() => {
+      void fetchSchedules();
+    }, 0);
+
+    return () => window.clearTimeout(initialLoad);
+  }, [fetchSchedules]);
 
   function schedulesForDay(day: string) {
     return schedules.filter((s) => s.day_of_week === day);
@@ -164,7 +175,15 @@ export default function MealSchedulesPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm("Delete this meal schedule?")) return;
+    const confirmed = await confirm({
+      title: "Delete Meal Schedule?",
+      description:
+        "This meal schedule will be permanently deleted. This action cannot be undone.",
+      confirmText: "Delete",
+    });
+
+    if (!confirmed) return;
+
     try {
       await mealScheduleService.remove(id);
       setLoading(true);
@@ -289,19 +308,22 @@ export default function MealSchedulesPage() {
         </div>
       )}
 
-      {/* Modal Form */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center">
-          <div className="flex w-full flex-col rounded-t-2xl bg-white p-5 sm:w-115 sm:rounded-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold">
-                {editingId ? "Edit Meal Schedule" : "Add Meal Schedule"}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="rounded-lg p-1.5 hover:bg-surface">
-                <X size={18} />
-              </button>
-            </div>
+      <Drawer open={showModal} onOpenChange={setShowModal} side="bottom">
+        <DrawerContent>
+          <DrawerHeader className="flex-row items-center justify-between">
+            <DrawerTitle className="font-display">
+              {editingId ? "Edit Meal Schedule" : "Add Meal Schedule"}
+            </DrawerTitle>
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="rounded-lg p-1.5 hover:bg-surface"
+            >
+              <X size={18} />
+            </button>
+          </DrawerHeader>
 
+          <DrawerBody>
             <div className="space-y-3.5">
               <div className="flex gap-3">
                 <div className="flex-1">
@@ -379,8 +401,9 @@ export default function MealSchedulesPage() {
                 </div>
               </div>
             </div>
+          </DrawerBody>
 
-            <div className="mt-4 flex gap-2.5">
+          <DrawerFooter className="flex-row">
               <ButtonSecondary type="button" onClick={() => setShowModal(false)} className="flex-1 py-2.75 text-[13.5px]">
                 Cancel
               </ButtonSecondary>
@@ -392,10 +415,9 @@ export default function MealSchedulesPage() {
               >
                 {saving ? "Saving..." : editingId ? "Update" : "Add Schedule"}
               </ButtonPrimary>
-            </div>
-          </div>
-        </div>
-      )}
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }

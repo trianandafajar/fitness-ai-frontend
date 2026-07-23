@@ -3,6 +3,14 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { X, Camera, MapPin, ImageIcon } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/Drawer";
 import { attendanceService } from "@/services/attendances.service";
 import type { WorkoutSchedule } from "@/types/dashboard";
 import {
@@ -221,10 +229,16 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
   }, [photoPreview]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center">
-      <div className="flex w-full flex-col rounded-t-2xl bg-white p-5 sm:w-110 sm:rounded-2xl">
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-display text-lg font-bold">Check In</h2>
+    <Drawer
+      open
+      onOpenChange={(open) => {
+        if (!open) handleClose();
+      }}
+      side="bottom"
+    >
+      <DrawerContent className="max-h-[90vh]">
+        <DrawerHeader className="flex-row items-center justify-between">
+          <DrawerTitle className="font-display">Check In</DrawerTitle>
           <button
             type="button"
             onClick={handleClose}
@@ -232,7 +246,9 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
           >
             <X size={18} />
           </button>
-        </div>
+        </DrawerHeader>
+
+        <DrawerBody>
 
         <div className="mb-4 rounded-xl bg-orange-tint p-3.5">
           <div className="flex items-center gap-2 text-sm font-semibold text-orange-deep">
@@ -379,7 +395,9 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
           </div>
         )}
 
-        <div className="mt-4 flex gap-2.5">
+        </DrawerBody>
+
+        <DrawerFooter className="flex-row">
           <ButtonSecondary
             type="button"
             onClick={handleClose}
@@ -396,8 +414,8 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
           >
             {loading ? "Checking in..." : "Check In"}
           </ButtonPrimary>
-        </div>
-      </div>
-    </div>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
   );
 }

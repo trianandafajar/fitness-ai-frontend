@@ -1,11 +1,30 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Pencil, Trash2, X, TrendingUp, TrendingDown, Minus, Weight, Check } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  X,
+  TrendingUp,
+  TrendingDown,
+  Minus,
+  Weight,
+  Check,
+} from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { weightLogService } from "@/services/weight-logs.service";
 import type { WeightLog } from "@/types/dashboard";
 import { formatDate, weekRange } from "@/lib/utils";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/Drawer";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 
 const WEIGHT_GOAL = 65;
 
@@ -20,22 +39,21 @@ export default function WeightLogsPage() {
     weight_kg: "",
     notes: "",
   });
+  const confirm = useConfirm();
 
   const fetchLogs = useCallback(async () => {
     try {
       const res = await weightLogService.getAll(12);
       setLogs(res.data ?? []);
-    } catch {} finally {
+    } catch {
+    } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { fetchLogs(); }, [fetchLogs]);
   useEffect(() => {
-    if (showModal) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
-  }, [showModal]);
+    fetchLogs();
+  }, [fetchLogs]);
 
   function openAdd() {
     setEditingId(null);
@@ -80,14 +98,23 @@ export default function WeightLogsPage() {
     }
   }
 
-  async function handleDelete(id: number) {
-    if (!confirm("Delete this weight log?")) return;
+  const handleDelete = async (id: number) => {
+    const confirmed = await confirm({
+      title: "Delete Weight Log?",
+      description:
+        "This weight log will be permanently deleted. This action cannot be undone.",
+      confirmText: "Delete",
+    });
+
+    if (!confirmed) return;
+
     try {
       await weightLogService.remove(id);
+
       setLoading(true);
       await fetchLogs();
     } catch {}
-  }
+  };
 
   const latest = logs[0];
   const prevWeight = logs[1]?.weight_kg ?? null;
@@ -203,18 +230,23 @@ export default function WeightLogsPage() {
       )}
 
       {/* Modal Form */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center">
-          <div className="flex w-full flex-col rounded-t-2xl bg-white p-5 sm:w-115 sm:rounded-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold">
-                {editingId ? "Edit Weight" : "Log Weight"}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="rounded-lg p-1.5 hover:bg-surface">
-                <X size={18} />
-              </button>
-            </div>
+      <Drawer open={showModal} onOpenChange={setShowModal} side="bottom">
+        <DrawerContent>
+          <DrawerHeader className="flex-row items-center justify-between">
+            <DrawerTitle className="font-display">
+              {editingId ? "Edit Weight" : "Log Weight"}
+            </DrawerTitle>
 
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="rounded-lg p-1.5 hover:bg-surface"
+            >
+              <X size={18} />
+            </button>
+          </DrawerHeader>
+
+          <DrawerBody>
             <div className="space-y-3.5">
               <div>
                 <label className="mb-1 block text-[13px] font-semibold text-ink">Date</label>
@@ -234,6 +266,7 @@ export default function WeightLogsPage() {
                 <label className="mb-1 block text-[13px] font-semibold text-ink">
                   Weight <span className="font-normal text-ink-soft">(kg)</span>
                 </label>
+
                 <input
                   type="number"
                   min="20"
@@ -257,23 +290,28 @@ export default function WeightLogsPage() {
                 />
               </div>
             </div>
+          </DrawerBody>
 
-            <div className="mt-4 flex gap-2.5">
-              <ButtonSecondary type="button" onClick={() => setShowModal(false)} className="flex-1 py-2.75 text-[13.5px]">
-                Cancel
-              </ButtonSecondary>
-              <ButtonPrimary
-                type="button"
-                onClick={handleSave}
-                disabled={saving || !form.weight_kg}
-                className="flex-1 py-2.75 text-[13.5px]"
-              >
-                {saving ? "Saving..." : editingId ? "Update" : "Log Weight"}
-              </ButtonPrimary>
-            </div>
-          </div>
-        </div>
-      )}
+          <DrawerFooter className="flex-row">
+            <ButtonSecondary
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="flex-1 py-2.75 text-[13.5px]"
+            >
+              Cancel
+            </ButtonSecondary>
+
+            <ButtonPrimary
+              type="button"
+              onClick={handleSave}
+              disabled={saving || !form.weight_kg}
+              className="flex-1 py-2.75 text-[13.5px]"
+            >
+              {saving ? "Saving..." : editingId ? "Update" : "Log Weight"}
+            </ButtonPrimary>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Inter, IBM_Plex_Mono } from "next/font/google";
 import { APP_NAME, APP_TAGLINE } from "@/lib/app-config";
 import "./globals.css";
+import { ConfirmProvider } from "@/components/ui/ConfirmDrawer";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -36,7 +37,9 @@ export default function RootLayout({
       <body
         className={`${spaceGrotesk.variable} ${inter.variable} ${ibmPlexMono.variable} font-sans`}
       >
-        {children}
+        <ConfirmProvider>
+          {children}
+        </ConfirmProvider>
       </body>
     </html>
   );

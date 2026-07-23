@@ -5,6 +5,15 @@ import { Plus, Pencil, Trash2, X, Coffee, Sun, Moon, Cookie, Utensils } from "lu
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { mealLogService } from "@/services/meal-logs.service";
 import type { MealLog, MealLogTodayResponse } from "@/types/dashboard";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/Drawer";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 
 const MEAL_TYPES = ["breakfast", "lunch", "dinner", "snack"];
 const MEAL_LABELS: Record<string, string> = {
@@ -48,6 +57,7 @@ export default function MealLogsPage() {
     total_carbs_g: "",
     total_fat_g: "",
   });
+  const confirm = useConfirm();
 
   const fetchLogs = useCallback(async () => {
     try {
@@ -59,13 +69,13 @@ export default function MealLogsPage() {
     }
   }, []);
 
-  useEffect(() => { fetchLogs(); }, [fetchLogs]);
   useEffect(() => {
-    if (showModal) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
-  }, [showModal]);
+    const initialLoad = window.setTimeout(() => {
+      void fetchLogs();
+    }, 0);
 
+    return () => window.clearTimeout(initialLoad);
+  }, [fetchLogs]);
   function openAdd() {
     setEditingId(null);
     setForm({
@@ -122,7 +132,15 @@ export default function MealLogsPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm("Delete this meal log?")) return;
+    const confirmed = await confirm({
+      title: "Delete Meal Log?",
+      description:
+        "This meal log will be permanently deleted. This action cannot be undone.",
+      confirmText: "Delete",
+    });
+
+    if (!confirmed) return;
+
     try {
       await mealLogService.remove(id);
       setLoading(true);
@@ -174,7 +192,7 @@ export default function MealLogsPage() {
           {logs.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <p className="text-sm text-ink-soft">No meals logged today.</p>
-              <p className="text-xs text-ink-faint">Tap "Add Meal" to start tracking.</p>
+              <p className="text-xs text-ink-faint">Tap &quot;Add Meal&quot; to start tracking.</p>
             </div>
           ) : (
             <div className="space-y-2.5">
@@ -220,19 +238,22 @@ export default function MealLogsPage() {
         </>
       )}
 
-      {/* Modal Form */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center">
-          <div className="flex w-full flex-col rounded-t-2xl bg-white p-5 sm:w-115 sm:rounded-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold">
-                {editingId ? "Edit Meal" : "Add Meal"}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="rounded-lg p-1.5 hover:bg-surface">
-                <X size={18} />
-              </button>
-            </div>
+      <Drawer open={showModal} onOpenChange={setShowModal} side="bottom">
+        <DrawerContent>
+          <DrawerHeader className="flex-row items-center justify-between">
+            <DrawerTitle className="font-display">
+              {editingId ? "Edit Meal" : "Add Meal"}
+            </DrawerTitle>
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="rounded-lg p-1.5 hover:bg-surface"
+            >
+              <X size={18} />
+            </button>
+          </DrawerHeader>
 
+          <DrawerBody>
             <div className="space-y-3.5">
               <div>
                 <label className="mb-1 block text-[13px] font-semibold text-ink">Meal Type</label>
@@ -277,7 +298,7 @@ export default function MealLogsPage() {
                       type="number"
                       min="0"
                       step="0.1"
-                      value={(form as any)[field.key]}
+                      value={form[field.key as keyof typeof form]}
                       onChange={(e) => updateField(field.key, e.target.value)}
                       className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                     />
@@ -285,23 +306,27 @@ export default function MealLogsPage() {
                 ))}
               </div>
             </div>
+          </DrawerBody>
 
-            <div className="mt-4 flex gap-2.5">
-              <ButtonSecondary type="button" onClick={() => setShowModal(false)} className="flex-1 py-2.75 text-[13.5px]">
-                Cancel
-              </ButtonSecondary>
-              <ButtonPrimary
-                type="button"
-                onClick={handleSave}
-                disabled={saving}
-                className="flex-1 py-2.75 text-[13.5px]"
-              >
-                {saving ? "Saving..." : editingId ? "Update" : "Add Meal"}
-              </ButtonPrimary>
-            </div>
-          </div>
-        </div>
-      )}
+          <DrawerFooter className="flex-row">
+            <ButtonSecondary
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="flex-1 py-2.75 text-[13.5px]"
+            >
+              Cancel
+            </ButtonSecondary>
+            <ButtonPrimary
+              type="button"
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1 py-2.75 text-[13.5px]"
+            >
+              {saving ? "Saving..." : editingId ? "Update" : "Add Meal"}
+            </ButtonPrimary>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }

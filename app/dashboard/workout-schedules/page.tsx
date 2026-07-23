@@ -5,6 +5,15 @@ import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import type { WorkoutSchedule } from "@/types/dashboard";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/Drawer";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 
 const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 const DAY_LABELS: Record<string, string> = {
@@ -39,6 +48,7 @@ export default function WorkoutSchedulesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<FormData>(emptyForm());
+  const confirm = useConfirm();
 
   const fetchSchedules = useCallback(async () => {
     try {
@@ -49,16 +59,13 @@ export default function WorkoutSchedulesPage() {
     }
   }, []);
 
-  useEffect(() => { fetchSchedules(); }, [fetchSchedules]);
-
   useEffect(() => {
-    if (showModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => { document.body.style.overflow = ""; };
-  }, [showModal]);
+    const initialLoad = window.setTimeout(() => {
+      void fetchSchedules();
+    }, 0);
+
+    return () => window.clearTimeout(initialLoad);
+  }, [fetchSchedules]);
 
   const today = new Date();
   const dayIndex = today.getDay();
@@ -145,7 +152,15 @@ export default function WorkoutSchedulesPage() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm("Delete this schedule?")) return;
+    const confirmed = await confirm({
+      title: "Delete Workout Schedule?",
+      description:
+        "This workout schedule will be permanently deleted. This action cannot be undone.",
+      confirmText: "Delete",
+    });
+
+    if (!confirmed) return;
+
     try {
       await workoutScheduleService.remove(id);
       setLoading(true);
@@ -192,19 +207,23 @@ export default function WorkoutSchedulesPage() {
         </div>
       )}
 
-      {showModal && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 sm:items-center">
-          <div className="flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-white p-5 sm:max-h-[80vh] sm:w-130 sm:rounded-2xl">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold">
-                {editingId ? "Edit Schedule" : "Add Schedule"}
-              </h2>
-              <button onClick={() => setShowModal(false)} className="rounded-lg p-1.5 hover:bg-surface">
-                <X size={18} />
-              </button>
-            </div>
+      <Drawer open={showModal} onOpenChange={setShowModal} side="bottom">
+        <DrawerContent>
+          <DrawerHeader className="flex-row items-center justify-between">
+            <DrawerTitle className="font-display">
+              {editingId ? "Edit Schedule" : "Add Schedule"}
+            </DrawerTitle>
+            <button
+              type="button"
+              onClick={() => setShowModal(false)}
+              className="rounded-lg p-1.5 hover:bg-surface"
+            >
+              <X size={18} />
+            </button>
+          </DrawerHeader>
 
-            <div className="flex-1 overflow-y-auto space-y-4 px-0.5">
+          <DrawerBody>
+            <div className="space-y-4 px-0.5">
               <div>
                 <label className="mb-1 block text-[13px] font-semibold text-ink">Day</label>
                 <div className="rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink">
@@ -275,8 +294,9 @@ export default function WorkoutSchedulesPage() {
                 </div>
               </div>
             </div>
+          </DrawerBody>
 
-            <div className="mt-4 flex gap-2.5">
+          <DrawerFooter className="flex-row">
               <ButtonSecondary
                 type="button"
                 onClick={() => setShowModal(false)}
@@ -292,10 +312,9 @@ export default function WorkoutSchedulesPage() {
               >
                 {saving ? "Saving..." : editingId ? "Update" : "Create"}
               </ButtonPrimary>
-            </div>
-          </div>
-        </div>
-      )}
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }

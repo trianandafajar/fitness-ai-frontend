@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Dumbbell, UtensilsCrossed, ClipboardCheck } from "lucide-react";
 import ExerciseList from "@/components/dashboard/ExerciseList";
 import CheckinModal from "@/components/dashboard/CheckinModal";
-import { ButtonGlass, ButtonPrimary } from "@/components/ui/Button";
+import { ButtonGlass } from "@/components/ui/Button";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import { mealScheduleService } from "@/services/meal-schedules.service";
 import { attendanceService } from "@/services/attendances.service";
@@ -86,20 +86,26 @@ function DayContent() {
     setLoading(false);
   }, [isToday]);
 
-  useEffect(() => { fetchData(); }, [fetchData]);
+  useEffect(() => {
+    const initialLoad = window.setTimeout(() => {
+      void fetchData();
+    }, 0);
 
-  const handleCheckin = useCallback(() => {
+    return () => window.clearTimeout(initialLoad);
+  }, [fetchData]);
+
+  function handleCheckin() {
     if (todaySchedule) {
       setSelectedSchedule(todaySchedule);
       setShowCheckin(true);
     }
-  }, [todaySchedule]);
+  }
 
-  const handleCheckinSuccess = useCallback(() => {
+  function handleCheckinSuccess() {
     setShowCheckin(false);
     setSelectedSchedule(null);
-    fetchData();
-  }, [fetchData]);
+    void fetchData();
+  }
 
   const formattedDate = `${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`;
   const dayLabel = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1);
