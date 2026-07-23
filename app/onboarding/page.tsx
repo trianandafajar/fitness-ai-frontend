@@ -62,7 +62,7 @@ function OnboardingForm() {
   const step = Math.min(Math.max(raw || 1, 1), TOTAL_STEPS);
 
   const [data, setData] = useState<OnboardingData>(restoreData);
-  const { submitStep1, submitStep2, submitStep3, submitStep4, submitStep5, aiResult, loading, error, clearError } = useOnboarding();
+  const { submitStep1, submitStep2, submitStep3, submitStep4, submitStep5, completeOnboarding, aiResult, loading, error, clearError } = useOnboarding();
   const [analyzing, setAnalyzing] = useState(false);
   const analysisTriggered = useRef(false);
 
@@ -146,6 +146,14 @@ function OnboardingForm() {
     }
   }
 
+  async function handleComplete() {
+    clearError();
+    try {
+      await completeOnboarding();
+      router.push("/dashboard");
+    } catch { }
+  }
+
   return (
     <PageContainer className="pt-8 sm:pt-10 px-6">
       <OnboardingHeader step={step} total={TOTAL_STEPS} />
@@ -163,7 +171,7 @@ function OnboardingForm() {
         <StepBodyGoal data={data} update={update} onNext={handleStep4} onBack={back} loading={loading} error={error} />
       )}
       {step === 5 && (
-        <StepAnalysis aiResult={aiResult} loading={analyzing} onRetry={handleStep5} />
+        <StepAnalysis aiResult={aiResult} loading={analyzing} onRetry={handleStep5} onComplete={handleComplete} />
       )}
     </PageContainer>
   );

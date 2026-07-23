@@ -47,4 +47,8 @@ export const onboardingService = {
   step5() {
     return api.post("/onboarding/step5");
   },
+
+  complete() {
+    return api.post("/onboarding/complete");
+  },
 };

@@ -12,6 +12,7 @@ interface Props {
   aiResult: AiAnalysis | null;
   loading: boolean;
   onRetry: () => void;
+  onComplete: () => void;
 }
 
 const MEAL_LABELS: Record<string, string> = {
@@ -61,7 +62,7 @@ function findFoodSuggestion(items: EnrichedFood[], foodName: string) {
   return items.find((item) => item.food?.name.toLowerCase() === normalizedName);
 }
 
-export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
+export default function StepAnalysis({ aiResult, loading, onRetry, onComplete }: Props) {
   const router = useRouter();
   const [mealSchedules, setMealSchedules] = useState<MealSchedule[]>([]);
 
@@ -231,18 +232,40 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
             <Utensils className="h-4 w-4 text-orange-deep" /> Meals
           </h3>
           <div className="space-y-4">
-            {mealGroups.map(({ day, schedules }) => (
-              <div key={day}>
-                <div className="mb-2 flex items-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-orange" />
-                  <h4 className="text-[12px] font-bold uppercase tracking-wide text-ink-soft">{DAY_LABELS[day] ?? day}</h4>
-                </div>
-                <div className="space-y-2 border-l border-orange/20 pl-3">
-                  {schedules.map((schedule) => schedule.items.map((mealItem) => {
-                    const suggestion = findFoodSuggestion(mealSuggestions, mealItem.food);
-                    const fd = suggestion?.food;
-                    return (
-                      <div key={`${day}-${schedule.meal_time}-${mealItem.food}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+            {mealGroups.map(({ day, schedules }) => {
+              // Group meal items by food name, collecting all meal_time badges
+              const foodMap = new Map<string, { fd: EnrichedFood['food']; badges: { label: string; time: string }[] }>();
+
+              schedules.forEach((schedule) => {
+                schedule.items.forEach((mealItem) => {
+                  const suggestion = findFoodSuggestion(mealSuggestions, mealItem.food);
+                  const fd = suggestion?.food;
+                  const foodKey = fd?.name ?? mealItem.food;
+                  const badge = {
+                    label: MEAL_LABELS[schedule.meal_time] ?? schedule.meal_time,
+                    time: schedule.time?.slice(0, 5) ?? '',
+                  };
+
+                  if (foodMap.has(foodKey)) {
+                    const entry = foodMap.get(foodKey)!;
+                    if (!entry.badges.some((b) => b.label === badge.label && b.time === badge.time)) {
+                      entry.badges.push(badge);
+                    }
+                  } else {
+                    foodMap.set(foodKey, { fd: fd ?? null, badges: [badge] });
+                  }
+                });
+              });
+
+              return (
+                <div key={day}>
+                  <div className="mb-2 flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-orange" />
+                    <h4 className="text-[12px] font-bold uppercase tracking-wide text-ink-soft">{DAY_LABELS[day] ?? day}</h4>
+                  </div>
+                  <div className="space-y-2 border-l border-orange/20 pl-3">
+                    {Array.from(foodMap.entries()).map(([foodName, { fd, badges }]) => (
+                      <div key={`${day}-${foodName}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
                         {fd?.image ? (
                           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
                             <img src={fd.image} alt={fd.name} className="relative z-10 h-full w-full object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
@@ -254,23 +277,25 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
                           </div>
                         )}
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-[13px] font-semibold text-ink">{fd?.name ?? mealItem.food}</span>
-                            <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-[10px] font-semibold text-orange-deep">
-                              <Clock className="h-3 w-3" />
-                              {MEAL_LABELS[schedule.meal_time] ?? schedule.meal_time} · {schedule.time?.slice(0, 5)}
-                            </span>
-                          </div>
+                          <span className="text-[13px] font-semibold text-ink">{foodName}</span>
                           {fd?.calories_per_100g && (
                             <div className="mt-0.5 text-[11.5px] text-ink-soft">{fd.calories_per_100g} kcal/100g</div>
                           )}
                         </div>
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          {badges.map((b) => (
+                            <span key={`${b.label}-${b.time}`} className="inline-flex items-center gap-1 rounded-full bg-orange-tint px-2.5 py-1 text-[10px] font-semibold text-orange-deep whitespace-nowrap">
+                              <Clock className="h-3 w-3" />
+                              {b.label} · {b.time}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    );
-                  }))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
@@ -284,8 +309,8 @@ export default function StepAnalysis({ aiResult, loading, onRetry }: Props) {
       )}
 
       <div className="mt-auto pt-1 mb-6">
-        <ButtonPrimary type="button" onClick={() => router.push("/dashboard")}>
-          View Dashboard
+        <ButtonPrimary type="button" onClick={onComplete}>
+          Complete & View Dashboard
         </ButtonPrimary>
       </div>
     </div>

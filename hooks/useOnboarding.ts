@@ -126,10 +126,6 @@ export function useOnboarding() {
       if (result.ai_analysis) {
         setAiResult(result.ai_analysis);
       }
-      if (result.profile_completed) {
-        await fetchUser();
-        setProfileCompleted();
-      }
       return result;
     } catch (err) {
       if (isAxiosError(err) && err.response?.data?.message) {
@@ -143,12 +139,32 @@ export function useOnboarding() {
     }
   }
 
+  async function completeOnboarding() {
+    setLoading(true);
+    setError("");
+    try {
+      await onboardingService.complete();
+      await fetchUser();
+      setProfileCompleted();
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Failed to complete onboarding. Please try again.");
+      }
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return {
     submitStep1,
     submitStep2,
     submitStep3,
     submitStep4,
     submitStep5,
+    completeOnboarding,
     aiResult,
     loading,
     error,
