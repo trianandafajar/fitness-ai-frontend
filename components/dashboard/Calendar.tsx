@@ -230,10 +230,10 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
         <div className="font-display text-base font-bold">Calendar</div>
       </div>
       <div
-        className="fitness-calendar relative rounded-xl border border-line bg-white pt-4"
+        className="fitness-calendar relative  bg-white"
         aria-busy={loading}
       >
-        <div className="mb-4 flex items-center justify-between px-4">
+        <div className="mb-4 flex items-center border border-line rounded-xl p-4 justify-between px-4">
           <div>
             <div className="mt-1 font-display text-base font-bold text-ink">
               {monthLabel}
