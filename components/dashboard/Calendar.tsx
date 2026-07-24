@@ -44,11 +44,11 @@ function CalendarSkeleton() {
         <div className="motion-reduce:animate-none animate-pulse h-5 w-20 rounded-full bg-surface" />
       </div>
       <div
-        className="rounded-xl border border-line bg-white pt-4"
+        className="bg-white pt-4"
         aria-label="Loading calendar"
         role="status"
       >
-        <div className="mb-5 flex items-center justify-between px-4">
+        <div className="mb-5 flex items-center justify-between rounded-xl border border-line p-4">
           <div className="space-y-2">
             <div className="motion-reduce:animate-none animate-pulse h-5 w-32 rounded bg-surface" />
           </div>
