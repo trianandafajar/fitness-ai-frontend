@@ -200,7 +200,7 @@ export default function AdminExercisesPage() {
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-semibold text-ink">{ex.name}</div>
                 <div className="text-[12px] text-ink-soft">
-                  {ex.category}
+                  {ex.category} 
                   {ex.equipment ? ` · ${ex.equipment}` : ""}
                 </div>
               </div>
