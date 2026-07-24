@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { X, Camera, MapPin, ImageIcon } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
+import { toast } from "@/components/ui/Toast";
 import {
   Drawer,
   DrawerBody,
@@ -176,6 +177,10 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
 
       window.dispatchEvent(new Event("fitness:streak-updated"));
 
+      toast.success("Check-in successful", {
+        description: "Your streak has been updated.",
+      });
+
       onSuccess();
     } catch (err: unknown) {
       const responseError = err as {
@@ -186,9 +191,10 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
         };
       };
 
-      setError(
-        responseError.response?.data?.message ?? "Check-in failed. Try again.",
-      );
+      const message = responseError.response?.data?.message ?? "Check-in failed. Try again.";
+
+      setError(message);
+      toast.error("Check-in failed", { description: message });
     } finally {
       setLoading(false);
     }

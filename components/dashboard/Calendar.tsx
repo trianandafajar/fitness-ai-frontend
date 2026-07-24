@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { streakService } from "@/services/streak.service";
+import { toast } from "@/components/ui/Toast";
 import type {
   StreakCalendarDay,
   StreakCalendarRangeResponse,
@@ -95,7 +96,12 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
         if (!cancelled) setCalendarData(response.data);
       })
       .catch(() => {
-        if (!cancelled) setCalendarData(null);
+        if (!cancelled) {
+          setCalendarData(null);
+          toast.error("Failed to load calendar", {
+            description: "Could not fetch streak data. Pull to refresh.",
+          });
+        }
       })
       .finally(() => {
         if (!cancelled) {
