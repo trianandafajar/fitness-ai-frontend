@@ -1,0 +1,382 @@
+"use client";
+
+import { useEffect, useState, useCallback, useRef } from "react";
+import { adminService } from "@/services/admin.service";
+import type { AdminExercise } from "@/types/admin";
+import { toast } from "@/components/ui/Toast";
+import { Plus, Pencil, Trash2, X, ImageIcon } from "lucide-react";
+
+const CATEGORIES = ["chest", "back", "shoulders", "arms", "legs", "core", "cardio"];
+
+interface ExerciseForm {
+  name: string;
+  equipment: string;
+  target_muscles: string[];
+  category: string;
+  image: File | null;
+  description: string;
+}
+
+const EMPTY_FORM: ExerciseForm = {
+  name: "",
+  equipment: "",
+  target_muscles: [],
+  category: "chest",
+  image: null,
+  description: "",
+};
+
+export default function AdminExercisesPage() {
+  const [exercises, setExercises] = useState<AdminExercise[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingImage, setEditingImage] = useState<string | null>(null);
+  const [form, setForm] = useState<ExerciseForm>(EMPTY_FORM);
+  const [muscleInput, setMuscleInput] = useState("");
+  const [saving, setSaving] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await adminService.getExercises();
+      setExercises(res.data.data);
+    } catch {
+      toast.error("Failed to load exercises");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  function openAdd() {
+    setEditingId(null);
+    setEditingImage(null);
+    setForm(EMPTY_FORM);
+    setMuscleInput("");
+    setPreview(null);
+    setShowForm(true);
+  }
+
+  function openEdit(ex: AdminExercise) {
+    setEditingId(ex.id);
+    setEditingImage(ex.image_url);
+    setForm({
+      name: ex.name,
+      equipment: ex.equipment ?? "",
+      target_muscles: ex.target_muscles ?? [],
+      category: ex.category,
+      image: null,
+      description: ex.description ?? "",
+    });
+    setMuscleInput("");
+    setPreview(null);
+    setShowForm(true);
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setForm((f) => ({ ...f, image: file }));
+    setPreview(URL.createObjectURL(file));
+  }
+
+  function handleDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setForm((f) => ({ ...f, image: file }));
+      setPreview(URL.createObjectURL(file));
+    }
+  }
+
+  function addMuscle() {
+    const val = muscleInput.trim();
+    if (val && !form.target_muscles.includes(val)) {
+      setForm((f) => ({ ...f, target_muscles: [...f.target_muscles, val] }));
+    }
+    setMuscleInput("");
+  }
+
+  function removeMuscle(m: string) {
+    setForm((f) => ({ ...f, target_muscles: f.target_muscles.filter((x) => x !== m) }));
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      const payload: Record<string, unknown> = {
+        name: form.name,
+        equipment: form.equipment,
+        target_muscles: form.target_muscles,
+        category: form.category,
+        description: form.description,
+      };
+      if (form.image) {
+        payload.image = form.image;
+      }
+
+      if (editingId) {
+        await adminService.updateExercise(editingId, payload);
+        toast.success("Exercise updated");
+      } else {
+        await adminService.createExercise(payload);
+        toast.success("Exercise created");
+      }
+      setShowForm(false);
+      load();
+    } catch {
+      toast.error(editingId ? "Failed to update" : "Failed to create");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete(id: number, name: string) {
+    if (!confirm(`Delete "${name}"?`)) return;
+    try {
+      await adminService.deleteExercise(id);
+      toast.success("Exercise deleted");
+      load();
+    } catch {
+      toast.error("Failed to delete");
+    }
+  }
+
+  const inputClass =
+    "w-full rounded-xl border-[1.5px] border-line bg-surface px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-orange focus:bg-white";
+
+  const showImagePreview = preview ?? editingImage;
+
+  return (
+    <div>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-display text-xl font-bold">Exercises</h1>
+        <button
+          onClick={openAdd}
+          className="flex items-center gap-1.5 rounded-xl bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-deep"
+        >
+          <Plus size={16} />
+          Add Exercise
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-16 animate-pulse rounded-xl bg-white" />
+          ))}
+        </div>
+      ) : exercises.length === 0 ? (
+        <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-ink-soft">
+          No exercises yet.
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {exercises.map((ex) => (
+            <div
+              key={ex.id}
+              className="flex items-center gap-3 rounded-xl border border-line bg-white p-3"
+            >
+              {ex.image_url ? (
+                <img
+                  src={ex.image_url}
+                  alt={ex.name}
+                  className="h-14 w-14 shrink-0 rounded-lg object-cover"
+                />
+              ) : (
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-surface">
+                  <ImageIcon size={20} className="text-ink-faint" />
+                </div>
+              )}
+              <div className="min-w-0 flex-1">
+                <div className="truncate text-sm font-semibold text-ink">{ex.name}</div>
+                <div className="text-[12px] text-ink-soft">
+                  {ex.category}
+                  {ex.equipment ? ` · ${ex.equipment}` : ""}
+                </div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <button
+                  onClick={() => openEdit(ex)}
+                  className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
+                >
+                  <Pencil size={16} />
+                </button>
+                <button
+                  onClick={() => handleDelete(ex.id, ex.name)}
+                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showForm && (
+        <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-6 sm:rounded-2xl">
+            <div className="mb-5 flex items-center justify-between">
+              <h2 className="font-display text-lg font-bold">
+                {editingId ? "Edit Exercise" : "Add Exercise"}
+              </h2>
+              <button onClick={() => setShowForm(false)} className="rounded-lg p-1.5 hover:bg-surface">
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="mb-1.5 block text-[13px] font-semibold text-ink">Name</label>
+                <input
+                  value={form.name}
+                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  className={inputClass}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="mb-1.5 block text-[13px] font-semibold text-ink">Category</label>
+                  <select
+                    value={form.category}
+                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    className={inputClass}
+                    required
+                  >
+                    {CATEGORIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-[13px] font-semibold text-ink">Equipment</label>
+                  <input
+                    value={form.equipment}
+                    onChange={(e) => setForm((f) => ({ ...f, equipment: e.target.value }))}
+                    placeholder="e.g. Dumbbell"
+                    className={inputClass}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-[13px] font-semibold text-ink">Image</label>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                {showImagePreview ? (
+                  <div className="relative">
+                    <img
+                      src={showImagePreview}
+                      alt="Preview"
+                      className="h-40 w-full rounded-xl object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setForm((f) => ({ ...f, image: null }));
+                        setPreview(null);
+                        setEditingImage(null);
+                        if (fileRef.current) fileRef.current.value = "";
+                      }}
+                      className="absolute right-2 top-2 rounded-full bg-black/50 p-1 text-white"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    onDragEnter={(e) => { e.preventDefault(); setDragging(true); }}
+                    onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={handleDrop}
+                    className={`flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed py-8 text-sm transition ${dragging
+                        ? "border-orange bg-orange/5 text-orange-deep"
+                        : "border-line text-ink-soft hover:border-orange/50 hover:text-orange-deep"
+                      }`}
+                  >
+                    <ImageIcon size={20} />
+                    {dragging ? "Drop image here" : "Drag & drop or click to choose image"}
+                  </button>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-[13px] font-semibold text-ink">Target Muscles</label>
+                <div className="flex gap-2">
+                  <input
+                    value={muscleInput}
+                    onChange={(e) => setMuscleInput(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMuscle(); } }}
+                    placeholder="Type and press Enter"
+                    className="flex-1 rounded-xl border-[1.5px] border-line bg-surface px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-orange focus:bg-white"
+                  />
+                  <button type="button" onClick={addMuscle} className="rounded-xl border border-line px-3 text-sm font-medium hover:bg-surface">
+                    Add
+                  </button>
+                </div>
+                {form.target_muscles.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {form.target_muscles.map((m) => (
+                      <span key={m} className="flex items-center gap-1 rounded-lg bg-orange-tint px-2 py-1 text-xs font-medium text-orange-deep">
+                        {m}
+                        <button type="button" onClick={() => removeMuscle(m)} className="ml-0.5">
+                          <X size={12} />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="mb-1.5 block text-[13px] font-semibold text-ink">Description</label>
+                <textarea
+                  value={form.description}
+                  onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                  rows={3}
+                  className="w-full rounded-xl border-[1.5px] border-line bg-surface px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-orange focus:bg-white resize-none"
+                />
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowForm(false)}
+                  className="flex-1 rounded-xl border-[1.5px] border-line py-3 text-[14px] font-semibold text-ink hover:bg-surface"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving}
+                  className="flex-1 rounded-xl bg-orange py-3 text-[14px] font-semibold text-white transition hover:bg-orange-deep disabled:opacity-50"
+                >
+                  {saving ? "Saving..." : editingId ? "Update" : "Create"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
