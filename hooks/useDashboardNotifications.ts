@@ -25,9 +25,17 @@ export function useDashboardNotifications() {
     } catch {}
   }, []);
 
+  const removeNotification = useCallback(async (id: string) => {
+    try {
+      await notificationService.remove(id);
+      dashboardNotificationsStore.removeNotification(id);
+    } catch {}
+  }, []);
+
   return {
     ...state,
     markAsRead,
     markAllAsRead,
+    removeNotification,
   } as const;
 }

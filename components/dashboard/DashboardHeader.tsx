@@ -15,7 +15,7 @@ import { getGreeting, getInitials } from "@/lib/utils";
 
 export default function DashboardHeader() {
   const { user, logout } = useAuth();
-  const { notifications, unreadCount, markAsRead, markAllAsRead } =
+  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification } =
     useDashboardNotifications();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -111,6 +111,7 @@ export default function DashboardHeader() {
               unreadCount={unreadCount}
               onMarkAsRead={markAsRead}
               onMarkAllAsRead={markAllAsRead}
+              onDelete={removeNotification}
               onClose={() => setShowNotif(false)}
             />
           )}

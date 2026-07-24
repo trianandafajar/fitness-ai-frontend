@@ -8,4 +8,6 @@ export const notificationService = {
   markAsRead: (id: string) => api.post(`/notifications/${id}/read`),
 
   markAllAsRead: () => api.post("/notifications/read-all"),
+
+  remove: (id: string) => api.delete(`/notifications/${id}`),
 };

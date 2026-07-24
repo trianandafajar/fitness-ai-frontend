@@ -102,6 +102,23 @@ function createStore(initial: DashboardNotificationsState) {
       };
       listeners.forEach((listener) => listener());
     },
+    removeNotification: (id: string) => {
+      const notification = state.notifications.find(
+        (current) => current.id === id,
+      );
+
+      state = {
+        ...state,
+        notifications: state.notifications.filter(
+          (current) => current.id !== id,
+        ),
+        unreadCount:
+          notification && !notification.read_at
+            ? Math.max(0, state.unreadCount - 1)
+            : state.unreadCount,
+      };
+      listeners.forEach((listener) => listener());
+    },
   };
 }
 

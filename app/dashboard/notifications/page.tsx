@@ -1,7 +1,8 @@
 "use client";
 
-import { Bell, Clock, Check, Dumbbell } from "lucide-react";
+import { Bell, Clock, Check, Dumbbell, Trash2 } from "lucide-react";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
+import { getNotificationDescription } from "@/components/dashboard/useNotifications";
 
 function timeAgo(iso: string) {
   const diff = Date.now() - new Date(iso).getTime();
@@ -15,7 +16,7 @@ function timeAgo(iso: string) {
 }
 
 export default function NotificationsPage() {
-  const { notifications, loading, markAsRead, markAllAsRead } =
+  const { notifications, loading, markAsRead, markAllAsRead, removeNotification } =
     useDashboardNotifications();
 
   return (
@@ -88,9 +89,7 @@ export default function NotificationsPage() {
                       <span className="text-[10px] text-ink-faint">
                         {timeAgo(n.created_at)}
                       </span>
-                      {!n.read_at && (
-                        <div className="h-2 w-2 rounded-full bg-orange" />
-                      )}
+                      {!n.read_at && <div className="h-2 w-2 rounded-full bg-orange" />}
                       {n.read_at && (
                         <button
                           onClick={(e) => {
@@ -102,12 +101,27 @@ export default function NotificationsPage() {
                           <Check size={12} />
                         </button>
                       )}
+                      <button
+                        type="button"
+                        aria-label="Delete notification"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void removeNotification(n.id);
+                        }}
+                        className="rounded p-1 text-ink-faint hover:text-danger"
+                      >
+                        <Trash2 size={14} />
+                      </button>
                     </div>
+                  </div>
+
+                  <div className="mt-1 text-xs text-ink-soft">
+                    {getNotificationDescription(n)}
                   </div>
 
                   {n.data.exercises && n.data.exercises.length > 0 && (
                     <div className="mt-1.5 flex flex-wrap gap-1">
-                      {n.data.exercises.map((ex: any) => (
+                    {n.data.exercises.map((ex) => (
                         <span
                           key={ex.name}
                           className="rounded-lg bg-surface px-2 py-0.5 text-[11px] text-ink"

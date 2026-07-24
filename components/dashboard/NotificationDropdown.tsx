@@ -2,8 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, Clock, Dumbbell } from "lucide-react";
-import type { NotificationData } from "./useNotifications";
+import { Bell, Clock, Dumbbell, X } from "lucide-react";
+import {
+  getNotificationDescription,
+  type NotificationData,
+} from "./useNotifications";
 import { formatTimeAgo } from "@/lib/utils";
 
 interface NotificationDropdownProps {
@@ -11,6 +14,7 @@ interface NotificationDropdownProps {
   unreadCount: number;
   onMarkAsRead: (id: string) => void;
   onMarkAllAsRead: () => void;
+  onDelete: (id: string) => Promise<void>;
   onClose: () => void;
 }
 
@@ -19,6 +23,7 @@ export default function NotificationDropdown({
   unreadCount,
   onMarkAsRead,
   onMarkAllAsRead,
+  onDelete,
   onClose,
 }: NotificationDropdownProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -48,6 +53,7 @@ export default function NotificationDropdown({
         </div>
         {unreadCount > 0 && (
           <button
+            type="button"
             onClick={onMarkAllAsRead}
             className="text-[11px] font-semibold text-orange hover:text-orange-deep"
           >
@@ -61,30 +67,46 @@ export default function NotificationDropdown({
           <div className="px-4 py-8 text-center text-sm text-ink-soft">No notifications yet.</div>
         ) : (
           notifications.slice(0, 5).map((n) => (
-            <button
+            <div
               key={n.id}
-              onClick={() => onMarkAsRead(n.id)}
-              className={`flex w-full gap-3 px-4 py-3 text-left transition-colors hover:bg-surface ${
+              className={`flex w-full gap-1 transition-colors hover:bg-surface ${
                 !n.read_at ? "bg-orange-tint/20" : ""
               }`}
             >
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-tint text-orange-deep">
-                <Dumbbell size={14} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-semibold text-ink">{n.data.message}</div>
-                {n.data.scheduled_time && (
-                  <div className="flex items-center gap-1 text-xs text-ink-soft">
-                    <Clock size={11} /> {n.data.scheduled_time.slice(0, 5)}
-                    {n.data.day_of_week && ` • ${n.data.day_of_week}`}
+              <button
+                type="button"
+                onClick={() => onMarkAsRead(n.id)}
+                className="flex min-w-0 flex-1 gap-3 px-4 py-3 text-left"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-tint text-orange-deep">
+                  <Dumbbell size={14} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-semibold text-ink">{n.data.message}</div>
+                  <div className="mt-0.5 text-[11px] text-ink-soft">
+                    {getNotificationDescription(n)}
                   </div>
+                  {n.data.scheduled_time && (
+                    <div className="mt-1 flex items-center gap-1 text-xs text-ink-soft">
+                      <Clock size={11} /> {n.data.scheduled_time.slice(0, 5)}
+                      {n.data.day_of_week && ` - ${n.data.day_of_week}`}
+                    </div>
+                  )}
+                  <div className="mt-0.5 text-[10px] text-ink-faint">{formatTimeAgo(n.created_at)}</div>
+                </div>
+                {!n.read_at && (
+                  <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange" />
                 )}
-                <div className="mt-0.5 text-[10px] text-ink-faint">{formatTimeAgo(n.created_at)}</div>
-              </div>
-              {!n.read_at && (
-                <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange" />
-              )}
-            </button>
+              </button>
+              <button
+  type="button"
+  aria-label="Dismiss notification"
+  onClick={() => void onDelete(n.id)}
+  className="self-start mt-2 rounded-lg p-1.5 text-ink-faint transition hover:bg-white hover:text-ink"
+>
+  <X size={14} />
+</button>
+            </div>
           ))
         )}
       </div>
