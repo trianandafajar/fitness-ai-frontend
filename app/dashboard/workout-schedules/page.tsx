@@ -14,6 +14,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/Drawer";
 import { useConfirm } from "@/components/ui/ConfirmDrawer";
+import { toast } from "@/components/ui/Toast";
 
 const DAYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
 const DAY_LABELS: Record<string, string> = {
@@ -134,7 +135,12 @@ export default function WorkoutSchedulesPage() {
         })),
     };
 
-    if (payload.exercises.length === 0) return;
+    if (payload.exercises.length === 0) {
+      toast.error("Add at least one exercise", {
+        description: "A workout schedule needs an exercise before it can be saved.",
+      });
+      return;
+    }
 
     setSaving(true);
     try {
@@ -143,10 +149,19 @@ export default function WorkoutSchedulesPage() {
       } else {
         await workoutScheduleService.create(payload);
       }
+      toast.success(editingId ? "Workout schedule updated" : "Workout schedule created", {
+        description: editingId
+          ? "Your workout schedule has been updated."
+          : "Your workout schedule has been created.",
+      });
       setShowModal(false);
       setLoading(true);
       await fetchSchedules();
-    } catch { } finally {
+    } catch {
+      toast.error(editingId ? "Failed to update schedule" : "Failed to create schedule", {
+        description: "Please try again.",
+      });
+    } finally {
       setSaving(false);
     }
   }
@@ -163,9 +178,16 @@ export default function WorkoutSchedulesPage() {
 
     try {
       await workoutScheduleService.remove(id);
+      toast.success("Workout schedule deleted", {
+        description: "The workout schedule has been removed.",
+      });
       setLoading(true);
       await fetchSchedules();
-    } catch { }
+    } catch {
+      toast.error("Failed to delete schedule", {
+        description: "Please try again.",
+      });
+    }
   }
 
   return (

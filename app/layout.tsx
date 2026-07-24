@@ -4,6 +4,7 @@ import { APP_NAME, APP_TAGLINE } from "@/lib/app-config";
 import "./globals.css";
 import { ConfirmProvider } from "@/components/ui/ConfirmDrawer";
 import { Toaster } from "@/components/ui/Toast";
+import ToastTestButton from "@/components/ui/ToastTestButton";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -41,6 +42,7 @@ export default function RootLayout({
         <ConfirmProvider>
           {children}
           <Toaster />
+          <ToastTestButton />
         </ConfirmProvider>
       </body>
     </html>
