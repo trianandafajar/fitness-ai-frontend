@@ -4,12 +4,15 @@ import { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { LayoutDashboard, Dumbbell, Apple, LogOut } from "lucide-react";
+import { LayoutDashboard, Dumbbell, Apple, FolderOpen, LogOut } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/exercise-categories", label: "Ex. Categories", icon: FolderOpen },
+  { href: "/admin/food-categories", label: "Food Categories", icon: FolderOpen },
   { href: "/admin/exercises", label: "Exercises", icon: Dumbbell },
   { href: "/admin/foods", label: "Foods", icon: Apple },
+
 ];
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -48,11 +51,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-                    active
+                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active
                       ? "bg-orange/10 text-orange-deep"
                       : "text-ink-soft hover:bg-surface hover:text-ink"
-                  }`}
+                    }`}
                 >
                   <item.icon size={18} />
                   {item.label}

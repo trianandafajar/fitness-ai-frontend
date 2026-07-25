@@ -3,6 +3,8 @@ import type {
   AdminDashboardData,
   AdminExercise,
   AdminFood,
+  ExerciseCategory,
+  FoodCategory,
 } from "@/types/admin";
 
 export const adminService = {
@@ -88,4 +90,30 @@ export const adminService = {
 
   deleteFood: (id: number) =>
     api.delete<{ message: string }>(`/admin/foods/${id}`),
+
+  // Exercise Categories
+  getExerciseCategories: () =>
+    api.get<{ data: ExerciseCategory[] }>("/exercise-categories"),
+
+  createExerciseCategory: (data: { name: string; slug: string }) =>
+    api.post<{ message: string; data: ExerciseCategory }>("/admin/exercise-categories", data),
+
+  updateExerciseCategory: (id: number, data: { name: string; slug: string }) =>
+    api.put<{ message: string; data: ExerciseCategory }>(`/admin/exercise-categories/${id}`, data),
+
+  deleteExerciseCategory: (id: number) =>
+    api.delete<{ message: string }>(`/admin/exercise-categories/${id}`),
+
+  // Food Categories
+  getFoodCategories: () =>
+    api.get<{ data: FoodCategory[] }>("/food-categories"),
+
+  createFoodCategory: (data: { name: string; slug: string }) =>
+    api.post<{ message: string; data: FoodCategory }>("/admin/food-categories", data),
+
+  updateFoodCategory: (id: number, data: { name: string; slug: string }) =>
+    api.put<{ message: string; data: FoodCategory }>(`/admin/food-categories/${id}`, data),
+
+  deleteFoodCategory: (id: number) =>
+    api.delete<{ message: string }>(`/admin/food-categories/${id}`),
 };

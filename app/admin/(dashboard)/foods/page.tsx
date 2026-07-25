@@ -2,15 +2,13 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { adminService } from "@/services/admin.service";
-import type { AdminFood } from "@/types/admin";
+import type { AdminFood, FoodCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
 import { Plus, Pencil, Trash2, X, ImageIcon } from "lucide-react";
 
-const CATEGORIES = ["protein", "carb", "vegetable", "fruit", "dairy", "snack"];
-
 interface FoodForm {
   name: string;
-  category: string;
+  category_id: string;
   image: File | null;
   calories_per_100g: number;
   protein_per_100g: number;
@@ -21,7 +19,7 @@ interface FoodForm {
 
 const EMPTY_FORM: FoodForm = {
   name: "",
-  category: "protein",
+  category_id: "",
   image: null,
   calories_per_100g: 0,
   protein_per_100g: 0,
@@ -32,6 +30,7 @@ const EMPTY_FORM: FoodForm = {
 
 export default function AdminFoodsPage() {
   const [foods, setFoods] = useState<AdminFood[]>([]);
+  const [categories, setCategories] = useState<FoodCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -45,8 +44,12 @@ export default function AdminFoodsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await adminService.getFoods();
-      setFoods(res.data.data);
+      const [foodRes, catRes] = await Promise.all([
+        adminService.getFoods(),
+        adminService.getFoodCategories(),
+      ]);
+      setFoods(foodRes.data.data);
+      setCategories(catRes.data.data);
     } catch {
       toast.error("Failed to load foods");
     } finally {
@@ -71,7 +74,7 @@ export default function AdminFoodsPage() {
     setEditingImage(food.image_url);
     setForm({
       name: food.name,
-      category: food.category,
+      category_id: String(food.category_id ?? ""),
       image: null,
       calories_per_100g: food.calories_per_100g,
       protein_per_100g: food.protein_per_100g,
@@ -110,7 +113,7 @@ export default function AdminFoodsPage() {
     try {
       const payload: Record<string, unknown> = {
         name: form.name,
-        category: form.category,
+        category_id: Number(form.category_id),
         calories_per_100g: form.calories_per_100g,
         protein_per_100g: form.protein_per_100g,
         carbs_per_100g: form.carbs_per_100g,
@@ -245,13 +248,14 @@ export default function AdminFoodsPage() {
                 <div>
                   <label className="mb-1.5 block text-[13px] font-semibold text-ink">Category</label>
                   <select
-                    value={form.category}
-                    onChange={(e) => updateField("category", e.target.value)}
+                    value={form.category_id}
+                    onChange={(e) => updateField("category_id", e.target.value)}
                     className={inputClass}
                     required
                   >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                    <option value="">Select category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
                   </select>
                 </div>

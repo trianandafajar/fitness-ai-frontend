@@ -2,17 +2,15 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { adminService } from "@/services/admin.service";
-import type { AdminExercise } from "@/types/admin";
+import type { AdminExercise, ExerciseCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
 import { Plus, Pencil, Trash2, X, ImageIcon } from "lucide-react";
-
-const CATEGORIES = ["chest", "back", "shoulders", "arms", "legs", "core", "cardio"];
 
 interface ExerciseForm {
   name: string;
   equipment: string;
   target_muscles: string[];
-  category: string;
+  category_id: string;
   image: File | null;
   description: string;
 }
@@ -21,13 +19,14 @@ const EMPTY_FORM: ExerciseForm = {
   name: "",
   equipment: "",
   target_muscles: [],
-  category: "chest",
+  category_id: "",
   image: null,
   description: "",
 };
 
 export default function AdminExercisesPage() {
   const [exercises, setExercises] = useState<AdminExercise[]>([]);
+  const [categories, setCategories] = useState<ExerciseCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -42,8 +41,12 @@ export default function AdminExercisesPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await adminService.getExercises();
-      setExercises(res.data.data);
+      const [exRes, catRes] = await Promise.all([
+        adminService.getExercises(),
+        adminService.getExerciseCategories(),
+      ]);
+      setExercises(exRes.data.data);
+      setCategories(catRes.data.data);
     } catch {
       toast.error("Failed to load exercises");
     } finally {
@@ -71,7 +74,7 @@ export default function AdminExercisesPage() {
       name: ex.name,
       equipment: ex.equipment ?? "",
       target_muscles: ex.target_muscles ?? [],
-      category: ex.category,
+      category_id: String(ex.category_id ?? ""),
       image: null,
       description: ex.description ?? "",
     });
@@ -117,7 +120,7 @@ export default function AdminExercisesPage() {
         name: form.name,
         equipment: form.equipment,
         target_muscles: form.target_muscles,
-        category: form.category,
+        category_id: Number(form.category_id),
         description: form.description,
       };
       if (form.image) {
@@ -200,7 +203,7 @@ export default function AdminExercisesPage() {
               <div className="min-w-0 flex-1">
                 <div className="truncate text-sm font-semibold text-ink">{ex.name}</div>
                 <div className="text-[12px] text-ink-soft">
-                  {ex.category} 
+                  {ex.category}
                   {ex.equipment ? ` · ${ex.equipment}` : ""}
                 </div>
               </div>
@@ -250,13 +253,14 @@ export default function AdminExercisesPage() {
                 <div>
                   <label className="mb-1.5 block text-[13px] font-semibold text-ink">Category</label>
                   <select
-                    value={form.category}
-                    onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                    value={form.category_id}
+                    onChange={(e) => setForm((f) => ({ ...f, category_id: e.target.value }))}
                     className={inputClass}
                     required
                   >
-                    {CATEGORIES.map((c) => (
-                      <option key={c} value={c}>{c}</option>
+                    <option value="">Select category</option>
+                    {categories.map((c) => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
                   </select>
                 </div>
