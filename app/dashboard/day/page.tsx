@@ -3,36 +3,14 @@
 import { Suspense } from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Dumbbell, UtensilsCrossed, ClipboardCheck } from "lucide-react";
+import { ArrowLeft, ClipboardCheck, Clock, Dumbbell, Utensils, UtensilsCrossed } from "lucide-react";
 import ExerciseList from "@/components/dashboard/ExerciseList";
 import CheckinModal from "@/components/dashboard/CheckinModal";
 import { ButtonGlass } from "@/components/ui/Button";
-import { workoutScheduleService } from "@/services/workout-schedules.service";
-import { mealScheduleService } from "@/services/meal-schedules.service";
-import { attendanceService } from "@/services/attendances.service";
-import type { WorkoutSchedule, MealSchedule, AttendanceToday } from "@/types/dashboard";
-
-const DAYS = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-const MEAL_LABELS: Record<string, string> = {
-  breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner", snack: "Snack",
-};
-
-function formatDateKey(d: Date): string {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
-}
-
-function parseDate(key: string): Date {
-  const [y, m, d] = key.split("-").map(Number);
-  return new Date(y, m - 1, d);
-}
-
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
+import { daysService } from "@/services/days.service";
+import type { MealItem, WorkoutSchedule, MealSchedule, AttendanceToday } from "@/types/dashboard";
+import { DAYS, MEAL_LABELS, MONTHS } from "@/lib/CONSTANTA";
+import { formatDateKey, parseDate } from "@/lib/utils";
 
 export default function DayPage() {
   return (
@@ -52,6 +30,12 @@ function DaySkeleton() {
   );
 }
 
+interface MealCardData {
+  item: MealItem;
+  portions: string[];
+  badges: { label: string; time: string }[];
+}
+
 function DayContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -69,22 +53,50 @@ function DayContent() {
   const todayKey = formatDateKey(new Date());
   const isToday = rawDate === todayKey;
 
-  const todaySchedule = workouts.find((s) => s.day_of_week === dayOfWeek) ?? null;
-  const dayMeals = meals.filter((m) => m.day_of_week === dayOfWeek);
+  const todaySchedule = workouts[0] ?? null;
+  const dayMeals = meals;
   const checkedIn = attendance?.has_attended === true;
+
+  const mealCards = new Map<string, MealCardData>();
+  dayMeals.forEach((meal) => {
+    meal.items.forEach((item) => {
+      const key = item.food.trim().toLowerCase();
+      const existing = mealCards.get(key);
+      const badge = {
+        label: MEAL_LABELS[meal.meal_time] ?? meal.meal_time,
+        time: meal.time?.slice(0, 5) ?? "",
+      };
+
+      if (existing) {
+        if (item.portion && !existing.portions.includes(item.portion)) {
+          existing.portions.push(item.portion);
+        }
+        if (!existing.badges.some((entry) => entry.label === badge.label && entry.time === badge.time)) {
+          existing.badges.push(badge);
+        }
+      } else {
+        mealCards.set(key, {
+          item,
+          portions: item.portion ? [item.portion] : [],
+          badges: [badge],
+        });
+      }
+    });
+  });
 
   const fetchData = useCallback(async () => {
     setLoading(true);
-    const [wr, mr, ar] = await Promise.allSettled([
-      workoutScheduleService.getAll(),
-      mealScheduleService.getAll(),
-      isToday ? attendanceService.getToday() : Promise.resolve(null),
-    ]);
-    if (wr.status === "fulfilled") setWorkouts(wr.value.data);
-    if (mr.status === "fulfilled") setMeals(mr.value.data);
-    if (ar.status === "fulfilled" && ar.value) setAttendance(ar.value.data);
-    setLoading(false);
-  }, [isToday]);
+    try {
+      const response = await daysService.get(rawDate);
+      const { workouts: nextWorkouts, meals: nextMeals, attendance: nextAttendance } = response.data.data;
+
+      setWorkouts(nextWorkouts);
+      setMeals(nextMeals);
+      setAttendance(nextAttendance);
+    } finally {
+      setLoading(false);
+    }
+  }, [rawDate]);
 
   useEffect(() => {
     const initialLoad = window.setTimeout(() => {
@@ -133,22 +145,30 @@ function DayContent() {
       ) : (
         <>
           <div>
-            <div className="mb-3 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-ink">
               <Dumbbell size={16} className="text-orange-deep" />
-              <div className="font-display text-base font-bold">Workout</div>
+              <span>Workout</span>
             </div>
-            <ExerciseList exercises={todaySchedule?.exercises ?? []} scheduleId={todaySchedule?.id} />
-            {todaySchedule?.scheduled_time && (
-              <div className="mt-2 text-[12px] font-mono text-ink-soft">
-                Scheduled at {todaySchedule.scheduled_time.slice(0, 5)}
+            <div className="space-y-2">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="text-[11px] text-ink-faint">
+                  {todaySchedule?.exercises.length ?? 0} {todaySchedule?.exercises.length === 1 ? "exercise" : "exercises"}
+                </span>
+                {todaySchedule?.scheduled_time && (
+                  <span className="ml-auto inline-flex items-center gap-1 rounded-full bg-orange-tint px-2 py-0.5 text-[10px] font-semibold text-orange-deep">
+                    <Clock className="h-3 w-3" />
+                    {todaySchedule.scheduled_time.slice(0, 5)}
+                  </span>
+                )}
               </div>
-            )}
+              <ExerciseList exercises={todaySchedule?.exercises ?? []} scheduleId={todaySchedule?.id} />
+            </div>
           </div>
 
           <div>
-            <div className="mb-3 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold text-ink">
               <UtensilsCrossed size={16} className="text-orange-deep" />
-              <div className="font-display text-base font-bold">Meals</div>
+              <span>Meals</span>
             </div>
             {dayMeals.length === 0 ? (
               <div className="rounded-2xl border border-line bg-white p-5">
@@ -156,27 +176,51 @@ function DayContent() {
               </div>
             ) : (
               <div className="space-y-2">
-                {(["breakfast", "lunch", "dinner", "snack"] as const).map((mt) => {
-                  const meal = dayMeals.find((m) => m.meal_time === mt);
-                  if (!meal) return null;
-                  return (
-                    <div key={mt} className="rounded-2xl border border-line bg-white p-4">
-                      <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-[13px] font-bold text-ink">{MEAL_LABELS[mt]}</span>
-                        {meal.time && (
-                          <span className="font-mono text-[11px] text-ink-faint">{meal.time.slice(0, 5)}</span>
+                <div className="mb-2 flex items-center gap-2">
+                  <span className="text-[11px] text-ink-faint">
+                    {mealCards.size} {mealCards.size === 1 ? "food" : "foods"}
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {Array.from(mealCards.entries()).map(([key, { item, portions, badges }]) => {
+                    const image = item.image_url ?? item.image;
+
+                    return (
+                      <div key={key} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                        {image ? (
+                          <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
+                            <img
+                              src={image}
+                              alt={item.food}
+                              className="relative z-10 h-full w-full object-cover"
+                              loading="lazy"
+                              onError={(event) => { event.currentTarget.style.display = "none"; }}
+                            />
+                            <Utensils className="absolute inset-0 z-0 m-auto h-5 w-5 text-orange-deep" />
+                          </div>
+                        ) : (
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
+                            <Utensils className="h-5 w-5 text-orange-deep" />
+                          </div>
                         )}
+                        <div className="min-w-0 flex-1">
+                          <div className="text-[13px] font-semibold text-ink">{item.food}</div>
+                          {portions.length > 0 && (
+                            <div className="mt-0.5 text-[11.5px] text-ink-soft">{portions.join(" · ")}</div>
+                          )}
+                        </div>
+                        <div className="flex shrink-0 flex-col items-end gap-1">
+                          {badges.map((badge) => (
+                            <span key={`${badge.label}-${badge.time}`} className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-orange-tint px-2.5 py-1 text-[10px] font-semibold text-orange-deep">
+                              <Clock className="h-3 w-3" />
+                              {badge.label}{badge.time ? ` · ${badge.time}` : ""}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {meal.items.map((item, i) => (
-                          <span key={i} className="rounded-lg bg-surface px-2 py-0.5 text-xs text-ink">
-                            {item.food}{item.portion ? ` (${item.portion})` : ""}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

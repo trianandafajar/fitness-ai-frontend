@@ -1,5 +1,7 @@
 export interface Exercise {
   name: string;
+  image?: string | null;
+  image_url?: string | null;
   sets: number | null;
   reps: number | null;
   notes?: string | null;
@@ -126,6 +128,8 @@ export interface StreakCountResponse {
 
 export interface MealItem {
   food: string;
+  image?: string | null;
+  image_url?: string | null;
   portion: string | null;
   notes: string | null;
 }

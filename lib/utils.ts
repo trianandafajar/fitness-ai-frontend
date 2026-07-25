@@ -81,3 +81,8 @@ export const addDays = (date: Date, amount: number): Date => {
   next.setDate(next.getDate() + amount);
   return next;
 };
+
+export const parseDate = (key: string): Date => {
+  const [y, m, d] = key.split("-").map(Number);
+  return new Date(y, m - 1, d);
+}
