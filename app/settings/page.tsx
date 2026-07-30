@@ -11,6 +11,7 @@ import Segmented from "@/components/ui/Segmented";
 import { Chip, ChipGroup } from "@/components/ui/Chip";
 import AddChipInput from "@/components/ui/AddChipInput";
 import GoalCard from "@/components/onboarding/GoalCard";
+import { GOAL_MAP } from "@/components/onboarding/types";
 
 type FormData = {
   name: string;
@@ -49,13 +50,15 @@ function toggle(list: string[], value: string) {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
 }
 
+const REVERSE_GOAL = Object.fromEntries(Object.entries(GOAL_MAP).map(([k, v]) => [v, k]));
+
 function toFormData(profile: Record<string, unknown>): Record<string, unknown> {
   return {
     date_of_birth: (profile.date_of_birth as string) ?? "",
     gender: (profile.gender as string) ?? "",
     height_cm: profile.height_cm != null ? String(profile.height_cm) : "",
     weight_kg: profile.weight_kg != null ? String(profile.weight_kg) : "",
-    fitness_goal: (profile.fitness_goal as string) ?? "",
+    fitness_goal: REVERSE_GOAL[profile.fitness_goal as string] ?? (profile.fitness_goal as string) ?? "",
     activity_level: (profile.activity_level as string) ?? "",
     goal_weight_kg: profile.goal_weight_kg != null ? String(profile.goal_weight_kg) : "",
     dietary_preferences: (profile.dietary_preferences as string[]) ?? [],
