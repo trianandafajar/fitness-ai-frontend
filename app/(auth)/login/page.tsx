@@ -90,7 +90,7 @@ export default function LoginPage() {
                 />
                 <Field
                     id="password"
-                    label="Confirm password"
+                    label="Password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter password"
                     autoComplete="new-password"
