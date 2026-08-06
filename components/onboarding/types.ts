@@ -57,6 +57,7 @@ export interface EnrichedExercise {
     name: string;
     equipment: string;
     image: string;
+    image_url?: string | null;
     target_muscles: string[];
     category: string;
   } | null;
@@ -70,6 +71,7 @@ export interface EnrichedFood {
     id: number;
     name: string;
     image: string;
+    image_url?: string | null;
     calories_per_100g: number;
     protein_per_100g: number;
     carbs_per_100g: number;
