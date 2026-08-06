@@ -115,7 +115,7 @@ export default function MealLogsPage() {
   async function handleSave() {
     const payload = {
       meal_type: form.meal_type,
-      logged_at: new Date(form.logged_at).toISOString(),
+      logged_at: form.logged_at,
       total_calories: Number(form.total_calories) || 0,
       total_protein_g: Number(form.total_protein_g) || 0,
       total_carbs_g: Number(form.total_carbs_g) || 0,
