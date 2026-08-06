@@ -16,6 +16,7 @@ import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { weightLogService } from "@/services/weight-logs.service";
 import type { WeightLog } from "@/types/dashboard";
 import { formatDate, weekRange } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 import {
   Drawer,
   DrawerBody,
@@ -26,9 +27,9 @@ import {
 } from "@/components/ui/Drawer";
 import { useConfirm } from "@/components/ui/ConfirmDrawer";
 
-const WEIGHT_GOAL = 65;
-
 export default function WeightLogsPage() {
+  const { profile } = useAuth();
+  const goalWeight = profile?.goal_weight_kg;
   const [logs, setLogs] = useState<WeightLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -176,12 +177,12 @@ export default function WeightLogsPage() {
             </div>
             <div className="mt-2 flex gap-4 text-xs text-ink-soft">
               <span>Week of {formatDate(latest.week_start)}</span>
-              {WEIGHT_GOAL && (
+              {goalWeight && (
                 <span>
-                  Goal: <span className="font-semibold text-ink">{WEIGHT_GOAL} kg</span>
+                  Goal: <span className="font-semibold text-ink">{goalWeight} kg</span>
                   {latest && (
-                    <span className={latest.weight_kg <= WEIGHT_GOAL ? "ml-1 text-success" : "ml-1 text-ink-faint"}>
-                      {latest.weight_kg <= WEIGHT_GOAL ? <Check className="inline h-4 w-4" /> : `${(latest.weight_kg - WEIGHT_GOAL).toFixed(1)} kg left`}
+                    <span className={latest.weight_kg <= goalWeight ? "ml-1 text-success" : "ml-1 text-ink-faint"}>
+                      {latest.weight_kg <= goalWeight ? <Check className="inline h-4 w-4" /> : `${(latest.weight_kg - goalWeight).toFixed(1)} kg left`}
                     </span>
                   )}
                 </span>
