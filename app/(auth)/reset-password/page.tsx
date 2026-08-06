@@ -4,6 +4,7 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { isAxiosError } from "axios";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Field from "@/components/ui/Field";
@@ -45,6 +46,8 @@ function ResetPasswordForm() {
 
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [done, setDone] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -140,24 +143,44 @@ function ResetPasswordForm() {
                 <Field
                     id="password"
                     label="New password"
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="Minimum of 8 characters"
                     autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    rightElement={
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="flex items-center"
+                            tabIndex={-1}
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    }
                 />
                 <PasswordStrengthHint password={password} />
 
                 <Field
                     id="confirmPassword"
                     label="Confirm new password"
-                    type="password"
+                    type={showConfirmPassword ? "text" : "password"}
                     placeholder="Repeat new password"
                     autoComplete="new-password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
+                    rightElement={
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="flex items-center"
+                            tabIndex={-1}
+                        >
+                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    }
                 />
                 {confirmPassword.length > 0 && !passwordsMatch && (
                     <p className="-mt-3 mb-4.5 text-[12.5px] font-medium text-orange-deep">
