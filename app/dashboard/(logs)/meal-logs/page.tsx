@@ -37,6 +37,12 @@ function nowISO() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+function toLocalInput(iso: string) {
+  const d = new Date(iso);
+  const pad = (n: number) => n.toString().padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function formatTime(iso: string) {
   const d = new Date(iso);
   return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
@@ -93,7 +99,7 @@ export default function MealLogsPage() {
     setEditingId(meal.id);
     setForm({
       meal_type: meal.meal_type,
-      logged_at: meal.logged_at.slice(0, 16),
+      logged_at: toLocalInput(meal.logged_at),
       total_calories: String(meal.total_calories),
       total_protein_g: String(meal.total_protein_g),
       total_carbs_g: String(meal.total_carbs_g),
@@ -109,7 +115,7 @@ export default function MealLogsPage() {
   async function handleSave() {
     const payload = {
       meal_type: form.meal_type,
-      logged_at: form.logged_at,
+      logged_at: new Date(form.logged_at).toISOString(),
       total_calories: Number(form.total_calories) || 0,
       total_protein_g: Number(form.total_protein_g) || 0,
       total_carbs_g: Number(form.total_carbs_g) || 0,
