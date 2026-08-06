@@ -40,9 +40,19 @@ export default function ForgotPasswordPage() {
     }
 
     async function handleResend() {
-        setSent(false);
         setError("");
-        // Re-trigger submit on next form submission
+        setLoading(true);
+        try {
+            await forgotPassword(identifier);
+        } catch (err) {
+            if (isAxiosError(err) && err.response?.data?.message) {
+                setError(err.response.data.message);
+            } else {
+                setError("Failed to resend link. Try again.");
+            }
+        } finally {
+            setLoading(false);
+        }
     }
 
     return (
@@ -87,6 +97,11 @@ export default function ForgotPasswordPage() {
                 </>
             ) : (
                 <div className="py-5 text-center">
+                    {error && (
+                        <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">
+                            {error}
+                        </div>
+                    )}
                     <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-orange-tint">
                         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
                             <path
@@ -106,8 +121,8 @@ export default function ForgotPasswordPage() {
                         <span className="font-semibold text-ink">{identifier}</span>,
                         the reset link is valid for 30 minutes.
                     </p>
-                    <ButtonSecondary type="button" onClick={handleResend}>
-                        Resend link
+                    <ButtonSecondary type="button" onClick={handleResend} disabled={loading}>
+                        {loading ? "Resending..." : "Resend link"}
                     </ButtonSecondary>
                 </div>
             )}
