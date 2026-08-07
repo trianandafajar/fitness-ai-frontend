@@ -41,6 +41,9 @@ export function middleware(request: NextRequest) {
   }
 
   if (isPublic) {
+    if (isAdmin) {
+      return NextResponse.redirect(new URL("/admin", request.url));
+    }
     const destination = profileCompleted ? AFTER_LOGIN_ROUTE : ONBOARDING_ROUTE;
     return NextResponse.redirect(new URL(destination, request.url));
   }
