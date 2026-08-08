@@ -272,8 +272,10 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
 
         <div className="space-y-3.5">
           <div>
-            <label className="mb-1.5 block text-[13px] font-semibold text-ink">
+            <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-ink">
+              <Camera size={14} />
               Photo
+              <span className="font-normal text-ink-soft">(Optional)</span>
             </label>
 
             {!photoPreview && (
