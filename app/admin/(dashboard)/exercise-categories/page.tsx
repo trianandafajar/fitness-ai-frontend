@@ -5,7 +5,7 @@ import { adminService } from "@/services/admin.service";
 import type { ExerciseCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
 import Pagination from "@/components/ui/Pagination";
-import { Plus, Pencil, Trash2, X, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Loader2, Search } from "lucide-react";
 
 interface CategoryForm {
   name: string;
@@ -26,11 +26,13 @@ export default function AdminExerciseCategoriesPage() {
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ lastPage: 1, total: 0, from: 0, to: 0 });
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await adminService.getExerciseCategories(page, PER_PAGE);
+      const res = await adminService.getExerciseCategories(page, PER_PAGE, query);
       setCategories(res.data.data.data);
       setPagination({
         lastPage: res.data.data.last_page,
@@ -43,7 +45,15 @@ export default function AdminExerciseCategoriesPage() {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, query]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setQuery(search.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     load();
@@ -115,6 +125,27 @@ export default function AdminExerciseCategoriesPage() {
           <Plus size={16} />
           Add Category
         </button>
+      </div>
+
+      <div className="relative mb-4 sm:max-w-xs">
+        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+        <input
+          type="search"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search categories..."
+          className="w-full rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
+        />
+        {search && (
+          <button
+            type="button"
+            onClick={() => setSearch("")}
+            aria-label="Clear search"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint transition hover:text-ink"
+          >
+            <X size={16} />
+          </button>
+        )}
       </div>
 
       {loading ? (

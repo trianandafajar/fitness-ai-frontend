@@ -13,9 +13,13 @@ export const adminService = {
     api.get<{ data: AdminDashboardData }>("/admin/dashboard"),
 
   // Exercises
-  getExercises: (page = 1, perPage = 15) =>
+  getExercises: (
+    page = 1,
+    perPage = 15,
+    params: { search?: string; category_id?: string } = {},
+  ) =>
     api.get<{ data: Paginated<AdminExercise> }>("/exercises", {
-      params: { page, per_page: perPage },
+      params: { page, per_page: perPage, ...params },
     }),
 
   createExercise: (data: Record<string, unknown>) => {
@@ -57,9 +61,13 @@ export const adminService = {
     api.delete<{ message: string }>(`/admin/exercises/${id}`),
 
   // Foods
-  getFoods: (page = 1, perPage = 15) =>
+  getFoods: (
+    page = 1,
+    perPage = 15,
+    params: { search?: string; category_id?: string } = {},
+  ) =>
     api.get<{ data: Paginated<AdminFood> }>("/foods", {
-      params: { page, per_page: perPage },
+      params: { page, per_page: perPage, ...params },
     }),
 
   createFood: (data: Record<string, unknown>) => {
@@ -97,9 +105,9 @@ export const adminService = {
     api.delete<{ message: string }>(`/admin/foods/${id}`),
 
   // Exercise Categories
-  getExerciseCategories: (page = 1, perPage = 15) =>
+  getExerciseCategories: (page = 1, perPage = 15, search = "") =>
     api.get<{ data: Paginated<ExerciseCategory> }>("/exercise-categories", {
-      params: { page, per_page: perPage },
+      params: { page, per_page: perPage, search: search || undefined },
     }),
 
   getAllExerciseCategories: () =>
@@ -115,9 +123,9 @@ export const adminService = {
     api.delete<{ message: string }>(`/admin/exercise-categories/${id}`),
 
   // Food Categories
-  getFoodCategories: (page = 1, perPage = 15) =>
+  getFoodCategories: (page = 1, perPage = 15, search = "") =>
     api.get<{ data: Paginated<FoodCategory> }>("/food-categories", {
-      params: { page, per_page: perPage },
+      params: { page, per_page: perPage, search: search || undefined },
     }),
 
   getAllFoodCategories: () =>

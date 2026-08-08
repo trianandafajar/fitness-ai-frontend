@@ -5,7 +5,7 @@ import { adminService } from "@/services/admin.service";
 import type { AdminFood, FoodCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
 import Pagination from "@/components/ui/Pagination";
-import { Plus, Pencil, Trash2, X, ImageIcon, Loader2 } from "lucide-react";
+import { Plus, Pencil, Trash2, X, ImageIcon, Loader2, Search, ChevronDown } from "lucide-react";
 
 interface FoodForm {
   name: string;
@@ -46,6 +46,9 @@ export default function AdminFoodsPage() {
   const [dragging, setDragging] = useState(false);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({ lastPage: 1, total: 0, from: 0, to: 0 });
+  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
+  const [categoryId, setCategoryId] = useState("");
 
   const loadCategories = useCallback(async () => {
     try {
@@ -57,7 +60,10 @@ export default function AdminFoodsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const foodRes = await adminService.getFoods(page, PER_PAGE);
+      const foodRes = await adminService.getFoods(page, PER_PAGE, {
+        search: query,
+        category_id: categoryId,
+      });
       setFoods(foodRes.data.data.data);
       setPagination({
         lastPage: foodRes.data.data.last_page,
@@ -70,11 +76,19 @@ export default function AdminFoodsPage() {
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [page, query, categoryId]);
 
   useEffect(() => {
     loadCategories();
   }, [loadCategories]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setQuery(search.trim());
+      setPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   useEffect(() => {
     load();
@@ -195,6 +209,42 @@ export default function AdminFoodsPage() {
           <Plus size={16} />
           Add Food
         </button>
+      </div>
+
+      <div className="mb-4 flex flex-col gap-2.5 sm:flex-row">
+        <div className="relative flex-1 sm:max-w-xs">
+          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+          <input
+            type="search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search foods..."
+            className="w-full rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
+          />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch("")}
+              aria-label="Clear search"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint transition hover:text-ink"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
+        <div className="relative">
+          <select
+            value={categoryId}
+            onChange={(e) => { setCategoryId(e.target.value); setPage(1); }}
+            className="appearance-none rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-3 pr-9 text-sm outline-none transition focus:border-orange"
+          >
+            <option value="">All Categories</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <ChevronDown size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-ink-faint" />
+        </div>
       </div>
 
       {loading ? (
