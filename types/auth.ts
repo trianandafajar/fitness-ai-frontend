@@ -41,6 +41,21 @@ export interface RegisterCredentials {
   password_confirmation: string;
 }
 
+export interface VerifyEmailCredentials {
+  email: string;
+  code: string;
+}
+
+export interface VerifyEmailResponse {
+  message: string;
+}
+
+export interface VerificationStatusResponse {
+  verified: boolean;
+  expires_in?: number | null;
+  resend_after?: number | null;
+}
+
 export interface ForgotPasswordCredentials {
   email: string;
 }

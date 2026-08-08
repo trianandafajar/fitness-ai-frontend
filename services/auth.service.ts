@@ -4,6 +4,9 @@ import type {
   LoginResponse,
   RegisterCredentials,
   RegisterResponse,
+  VerifyEmailCredentials,
+  VerifyEmailResponse,
+  VerificationStatusResponse,
   ForgotPasswordCredentials,
   ResetPasswordCredentials,
   MeResponse,
@@ -19,6 +22,23 @@ export const authService = {
 
   async register(credentials: RegisterCredentials): Promise<RegisterResponse> {
     const { data } = await api.post<RegisterResponse>("/auth/register", credentials);
+    return data;
+  },
+
+  async verifyEmail(credentials: VerifyEmailCredentials): Promise<VerifyEmailResponse> {
+    const { data } = await api.post<VerifyEmailResponse>("/auth/verify-email", credentials);
+    return data;
+  },
+
+  async verificationStatus(email: string): Promise<VerificationStatusResponse> {
+    const { data } = await api.get<VerificationStatusResponse>("/auth/verify-email/status", {
+      params: { email },
+    });
+    return data;
+  },
+
+  async resendVerification(email: string): Promise<MessageResponse> {
+    const { data } = await api.post<MessageResponse>("/auth/verify-email/resend", { email });
     return data;
   },
 

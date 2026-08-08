@@ -38,6 +38,10 @@ export default function LoginPage() {
         } catch (err) {
             if (isAxiosError(err) && err.response) {
                 const data = err.response.data;
+                if (data.verified === false && data.email) {
+                    router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+                    return;
+                }
                 if (data.email) {
                     setError(Array.isArray(data.email) ? data.email[0] : data.email);
                 } else if (data.message) {

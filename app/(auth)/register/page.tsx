@@ -46,8 +46,8 @@ export default function RegisterPage() {
         setError("");
         setLoading(true);
         try {
-            await register(name, email, password, confirmPassword);
-            router.push("/login");
+            const res = await register(name, email, password, confirmPassword);
+            router.push(`/verify-email?email=${encodeURIComponent(res.user.email)}`);
         } catch (err) {
             if (isAxiosError(err) && err.response) {
                 const data = err.response.data;

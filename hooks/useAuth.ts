@@ -63,6 +63,21 @@ export function useAuth() {
     [],
   );
 
+  const verifyEmail = useCallback(async (email: string, code: string) => {
+    const response = await authService.verifyEmail({ email, code });
+    return response;
+  }, []);
+
+  const getVerificationStatus = useCallback(async (email: string) => {
+    const response = await authService.verificationStatus(email);
+    return response;
+  }, []);
+
+  const resendVerification = useCallback(async (email: string) => {
+    const response = await authService.resendVerification(email);
+    return response;
+  }, []);
+
   const forgotPassword = useCallback(async (email: string) => {
     const response = await authService.forgotPassword({ email });
     return response;
@@ -88,5 +103,5 @@ export function useAuth() {
     authStore.reset();
   }, []);
 
-  return { ...state, login, register, forgotPassword, resetPassword, logout, fetchUser } as const;
+  return { ...state, login, register, verifyEmail, getVerificationStatus, resendVerification, forgotPassword, resetPassword, logout, fetchUser } as const;
 }
