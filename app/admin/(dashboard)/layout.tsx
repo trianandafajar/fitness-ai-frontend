@@ -1,10 +1,10 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { LayoutDashboard, Dumbbell, Apple, FolderOpen, LogOut } from "lucide-react";
+import { LayoutDashboard, Dumbbell, Apple, FolderOpen, LogOut, Loader2 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
@@ -19,10 +19,16 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const [loggingOut, setLoggingOut] = useState(false);
 
   async function handleLogout() {
-    await logout();
-    router.push("/admin/login");
+    setLoggingOut(true);
+    try {
+      await logout();
+      router.push("/admin/login");
+    } finally {
+      setLoggingOut(false);
+    }
   }
 
   return (
@@ -34,10 +40,15 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
           </Link>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:bg-surface hover:text-ink"
+            disabled={loggingOut}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <LogOut size={16} />
-            Logout
+            {loggingOut ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <LogOut size={16} />
+            )}
+            {loggingOut ? "Logging out..." : "Logout"}
           </button>
         </div>
       </header>

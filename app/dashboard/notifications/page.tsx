@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Clock, Check, Dumbbell, Trash2 } from "lucide-react";
+import { Bell, Clock, Check, Dumbbell, Trash2, Loader2 } from "lucide-react";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
 import { getNotificationDescription } from "@/components/dashboard/useNotifications";
 
@@ -16,7 +16,7 @@ function timeAgo(iso: string) {
 }
 
 export default function NotificationsPage() {
-  const { notifications, loading, markAsRead, markAllAsRead, removeNotification } =
+  const { notifications, loading, markAsRead, markAllAsRead, removeNotification, busyId, markingAll } =
     useDashboardNotifications();
 
   return (
@@ -33,9 +33,15 @@ export default function NotificationsPage() {
         {notifications.some((n) => !n.read_at) && (
           <button
             onClick={markAllAsRead}
-            className="flex items-center gap-1.5 rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink-soft hover:bg-surface hover:text-ink"
+            disabled={markingAll}
+            className="flex items-center gap-1.5 rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink-soft hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Check size={16} /> Mark All Read
+            {markingAll ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Check size={16} />
+            )}{" "}
+            {markingAll ? "Marking..." : "Mark All Read"}
           </button>
         )}
       </div>
@@ -59,7 +65,7 @@ export default function NotificationsPage() {
           {notifications.map((n) => (
             <div
               key={n.id}
-              onClick={() => !n.read_at && markAsRead(n.id)}
+              onClick={() => !n.read_at && busyId !== n.id && markAsRead(n.id)}
               className={`rounded-2xl border border-line bg-white p-4 transition-colors ${
                 !n.read_at
                   ? "cursor-pointer border-orange/30 bg-orange-tint/10 hover:bg-orange-tint/20"
@@ -96,7 +102,8 @@ export default function NotificationsPage() {
                             e.stopPropagation();
                             markAsRead(n.id);
                           }}
-                          className="rounded p-0.5 text-ink-faint hover:text-ink"
+                          disabled={busyId === n.id}
+                          className="rounded p-0.5 text-ink-faint hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
                         >
                           <Check size={12} />
                         </button>
@@ -108,9 +115,14 @@ export default function NotificationsPage() {
                           e.stopPropagation();
                           void removeNotification(n.id);
                         }}
-                        className="rounded p-1 text-ink-faint hover:text-danger"
+                        disabled={busyId === n.id}
+                        className="rounded p-1 text-ink-faint hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        <Trash2 size={14} />
+                        {busyId === n.id ? (
+                          <Loader2 size={14} className="animate-spin" />
+                        ) : (
+                          <Trash2 size={14} />
+                        )}
                       </button>
                     </div>
                   </div>

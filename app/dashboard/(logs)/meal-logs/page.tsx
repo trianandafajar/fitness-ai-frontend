@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Pencil, Trash2, X, Coffee, Sun, Moon, Cookie, Utensils } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Coffee, Sun, Moon, Cookie, Utensils, Loader2 } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { mealLogService } from "@/services/meal-logs.service";
 import type { MealLog, MealLogTodayResponse } from "@/types/dashboard";
@@ -53,6 +53,7 @@ export default function MealLogsPage() {
   const [logs, setLogs] = useState<MealLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState({
@@ -138,6 +139,9 @@ export default function MealLogsPage() {
   }
 
   async function handleDelete(id: number) {
+    if (deletingId !== null) return;
+
+    setDeletingId(id);
     const confirmed = await confirm({
       title: "Delete Meal Log?",
       description:
@@ -145,13 +149,18 @@ export default function MealLogsPage() {
       confirmText: "Delete",
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      setDeletingId(null);
+      return;
+    }
 
     try {
       await mealLogService.remove(id);
       setLoading(true);
       await fetchLogs();
-    } catch { }
+    } catch { } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -223,8 +232,8 @@ export default function MealLogsPage() {
                       <button onClick={() => openEdit(meal)} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-ink">
                         <Pencil size={15} />
                       </button>
-                      <button onClick={() => handleDelete(meal.id)} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger">
-                        <Trash2 size={15} />
+                      <button onClick={() => handleDelete(meal.id)} disabled={deletingId !== null} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger disabled:cursor-not-allowed disabled:opacity-40">
+                        {deletingId === meal.id ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
                       </button>
                     </div>
                   </div>

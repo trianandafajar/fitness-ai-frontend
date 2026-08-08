@@ -11,6 +11,7 @@ import type { AiAnalysis, EnrichedExercise, EnrichedFood } from "./types";
 interface Props {
   aiResult: AiAnalysis | null;
   loading: boolean;
+  completing: boolean;
   onRetry: () => void;
   onComplete: () => void;
 }
@@ -62,7 +63,7 @@ function findFoodSuggestion(items: EnrichedFood[], foodName: string) {
   return items.find((item) => item.food?.name.toLowerCase() === normalizedName);
 }
 
-export default function StepAnalysis({ aiResult, loading, onRetry, onComplete }: Props) {
+export default function StepAnalysis({ aiResult, loading, completing, onRetry, onComplete }: Props) {
   const router = useRouter();
   const [mealSchedules, setMealSchedules] = useState<MealSchedule[]>([]);
 
@@ -309,8 +310,8 @@ export default function StepAnalysis({ aiResult, loading, onRetry, onComplete }:
       )}
 
       <div className="mt-auto pt-1 mb-6">
-        <ButtonPrimary type="button" onClick={onComplete}>
-          Complete & View Dashboard
+        <ButtonPrimary type="button" onClick={onComplete} disabled={completing}>
+          {completing ? "Setting up your dashboard..." : "Complete & View Dashboard"}
         </ButtonPrimary>
       </div>
     </div>

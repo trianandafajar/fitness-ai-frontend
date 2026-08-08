@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { adminService } from "@/services/admin.service";
 import type { AdminFood, FoodCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
-import { Plus, Pencil, Trash2, X, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, X, ImageIcon, Loader2 } from "lucide-react";
 
 interface FoodForm {
   name: string;
@@ -37,6 +37,7 @@ export default function AdminFoodsPage() {
   const [editingImage, setEditingImage] = useState<string | null>(null);
   const [form, setForm] = useState<FoodForm>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -141,13 +142,18 @@ export default function AdminFoodsPage() {
   }
 
   async function handleDelete(id: number, name: string) {
+    if (deletingId !== null) return;
     if (!confirm(`Delete "${name}"?`)) return;
+
+    setDeletingId(id);
     try {
       await adminService.deleteFood(id);
       toast.success("Food deleted");
       load();
     } catch {
       toast.error("Failed to delete");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -212,9 +218,10 @@ export default function AdminFoodsPage() {
                 </button>
                 <button
                   onClick={() => handleDelete(food.id, food.name)}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger"
+                  disabled={deletingId !== null}
+                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <Trash2 size={16} />
+                  {deletingId === food.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                 </button>
               </div>
             </div>

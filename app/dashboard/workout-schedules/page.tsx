@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Loader2 } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { workoutScheduleService } from "@/services/workout-schedules.service";
 import type { WorkoutSchedule } from "@/types/dashboard";
@@ -46,6 +46,7 @@ export default function WorkoutSchedulesPage() {
   const [schedules, setSchedules] = useState<WorkoutSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<FormData>(emptyForm());
@@ -167,6 +168,9 @@ export default function WorkoutSchedulesPage() {
   }
 
   async function handleDelete(id: number) {
+    if (deletingId !== null) return;
+
+    setDeletingId(id);
     const confirmed = await confirm({
       title: "Delete Workout Schedule?",
       description:
@@ -174,7 +178,10 @@ export default function WorkoutSchedulesPage() {
       confirmText: "Delete",
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      setDeletingId(null);
+      return;
+    }
 
     try {
       await workoutScheduleService.remove(id);
@@ -187,6 +194,8 @@ export default function WorkoutSchedulesPage() {
       toast.error("Failed to delete schedule", {
         description: "Please try again.",
       });
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -223,6 +232,7 @@ export default function WorkoutSchedulesPage() {
                 onAdd={() => openAdd(day)}
                 onEdit={() => schedule && openEdit(schedule)}
                 onDelete={() => schedule && handleDelete(schedule.id)}
+                deletingId={deletingId}
               />
             );
           })}
@@ -349,6 +359,7 @@ function DayCard({
   onAdd,
   onEdit,
   onDelete,
+  deletingId,
 }: {
   label: string;
   date: Date;
@@ -357,6 +368,7 @@ function DayCard({
   onAdd: () => void;
   onEdit: () => void;
   onDelete: () => void;
+  deletingId: number | null;
 }) {
   return (
     <div
@@ -382,8 +394,8 @@ function DayCard({
               <button onClick={onEdit} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-ink">
                 <Pencil size={15} />
               </button>
-              <button onClick={onDelete} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger">
-                <Trash2 size={15} />
+              <button onClick={onDelete} disabled={deletingId !== null} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger disabled:cursor-not-allowed disabled:opacity-40">
+                {deletingId === schedule.id ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
               </button>
             </>
           ) : (

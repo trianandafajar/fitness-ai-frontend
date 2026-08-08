@@ -11,6 +11,7 @@ import {
   Minus,
   Weight,
   Check,
+  Loader2,
 } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { weightLogService } from "@/services/weight-logs.service";
@@ -33,6 +34,7 @@ export default function WeightLogsPage() {
   const [logs, setLogs] = useState<WeightLog[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState({
@@ -100,6 +102,9 @@ export default function WeightLogsPage() {
   }
 
   const handleDelete = async (id: number) => {
+    if (deletingId !== null) return;
+
+    setDeletingId(id);
     const confirmed = await confirm({
       title: "Delete Weight Log?",
       description:
@@ -107,14 +112,19 @@ export default function WeightLogsPage() {
       confirmText: "Delete",
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      setDeletingId(null);
+      return;
+    }
 
     try {
       await weightLogService.remove(id);
 
       setLoading(true);
       await fetchLogs();
-    } catch {}
+    } catch {} finally {
+      setDeletingId(null);
+    }
   };
 
   const latest = logs[0];
@@ -219,8 +229,8 @@ export default function WeightLogsPage() {
                     <button onClick={() => openEdit(log)} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-ink">
                       <Pencil size={15} />
                     </button>
-                    <button onClick={() => handleDelete(log.id)} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger">
-                      <Trash2 size={15} />
+                    <button onClick={() => handleDelete(log.id)} disabled={deletingId !== null} className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger disabled:cursor-not-allowed disabled:opacity-40">
+                      {deletingId === log.id ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
                     </button>
                   </div>
                 </div>

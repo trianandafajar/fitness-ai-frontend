@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Plus, Pencil, Trash2, X, Clock } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Clock, Loader2 } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { mealScheduleService } from "@/services/meal-schedules.service";
 import type { MealSchedule } from "@/types/dashboard";
@@ -42,6 +42,7 @@ export default function MealSchedulesPage() {
   const [schedules, setSchedules] = useState<MealSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [selectedDay, setSelectedDay] = useState(todayDay());
@@ -175,6 +176,9 @@ export default function MealSchedulesPage() {
   }
 
   async function handleDelete(id: number) {
+    if (deletingId !== null) return;
+
+    setDeletingId(id);
     const confirmed = await confirm({
       title: "Delete Meal Schedule?",
       description:
@@ -182,13 +186,18 @@ export default function MealSchedulesPage() {
       confirmText: "Delete",
     });
 
-    if (!confirmed) return;
+    if (!confirmed) {
+      setDeletingId(null);
+      return;
+    }
 
     try {
       await mealScheduleService.remove(id);
       setLoading(true);
       await fetchSchedules();
-    } catch { }
+    } catch { } finally {
+      setDeletingId(null);
+    }
   }
 
   return (
@@ -271,9 +280,10 @@ export default function MealSchedulesPage() {
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDelete(schedule.id); }}
-                          className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger"
+                          disabled={deletingId !== null}
+                          className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
                         >
-                          <Trash2 size={15} />
+                          {deletingId === schedule.id ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
                         </button>
                       </>
                     ) : (

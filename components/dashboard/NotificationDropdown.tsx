@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Bell, Clock, Dumbbell, X } from "lucide-react";
+import { Bell, Clock, Dumbbell, X, Loader2 } from "lucide-react";
 import {
   getNotificationDescription,
   type NotificationData,
@@ -16,6 +16,8 @@ interface NotificationDropdownProps {
   onMarkAllAsRead: () => void;
   onDelete: (id: string) => Promise<void>;
   onClose: () => void;
+  busyId: string | null;
+  markingAll: boolean;
 }
 
 export default function NotificationDropdown({
@@ -25,6 +27,8 @@ export default function NotificationDropdown({
   onMarkAllAsRead,
   onDelete,
   onClose,
+  busyId,
+  markingAll,
 }: NotificationDropdownProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -55,9 +59,10 @@ export default function NotificationDropdown({
           <button
             type="button"
             onClick={onMarkAllAsRead}
-            className="text-[11px] font-semibold text-orange hover:text-orange-deep"
+            disabled={markingAll}
+            className="text-[11px] font-semibold text-orange hover:text-orange-deep disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Mark all read
+            {markingAll ? "Marking..." : "Mark all read"}
           </button>
         )}
       </div>
@@ -76,7 +81,8 @@ export default function NotificationDropdown({
               <button
                 type="button"
                 onClick={() => onMarkAsRead(n.id)}
-                className="flex min-w-0 flex-1 gap-3 px-4 py-3 text-left"
+                disabled={busyId === n.id}
+                className="flex min-w-0 flex-1 gap-3 px-4 py-3 text-left disabled:cursor-not-allowed"
               >
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-tint text-orange-deep">
                   <Dumbbell size={14} />
@@ -102,9 +108,10 @@ export default function NotificationDropdown({
   type="button"
   aria-label="Dismiss notification"
   onClick={() => void onDelete(n.id)}
-  className="self-start mt-2 rounded-lg p-1.5 text-ink-faint transition hover:bg-white hover:text-ink"
+  disabled={busyId === n.id}
+  className="self-start mt-2 rounded-lg p-1.5 text-ink-faint transition hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
 >
-  <X size={14} />
+  {busyId === n.id ? <Loader2 size={14} className="animate-spin" /> : <X size={14} />}
 </button>
             </div>
           ))

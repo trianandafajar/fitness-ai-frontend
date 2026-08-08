@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { adminService } from "@/services/admin.service";
 import type { FoodCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
-import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Loader2 } from "lucide-react";
 
 interface CategoryForm {
   name: string;
@@ -20,6 +20,7 @@ export default function AdminFoodCategoriesPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<CategoryForm>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -70,13 +71,18 @@ export default function AdminFoodCategoriesPage() {
   }
 
   async function handleDelete(id: number, name: string) {
+    if (deletingId !== null) return;
     if (!confirm(`Delete category "${name}"?`)) return;
+
+    setDeletingId(id);
     try {
       await adminService.deleteFoodCategory(id);
       toast.success("Category deleted");
       load();
     } catch {
       toast.error("Failed to delete");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -126,9 +132,10 @@ export default function AdminFoodCategoriesPage() {
                 </button>
                 <button
                   onClick={() => handleDelete(cat.id, cat.name)}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger"
+                  disabled={deletingId !== null}
+                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <Trash2 size={16} />
+                  {deletingId === cat.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                 </button>
               </div>
             </div>

@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
-import { User, LogOut, Flame, Bell } from "lucide-react";
+import { User, LogOut, Flame, Bell, Loader2 } from "lucide-react";
 import { streakService } from "@/services/streak.service";
 import NotificationDropdown from "./NotificationDropdown";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
@@ -15,12 +15,13 @@ import { getGreeting, getInitials } from "@/lib/utils";
 
 export default function DashboardHeader() {
   const { user, logout } = useAuth();
-  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification } =
+  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, busyId, markingAll } =
     useDashboardNotifications();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
   const [showNotif, setShowNotif] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
 
@@ -61,8 +62,13 @@ export default function DashboardHeader() {
 
   const handleLogout = useCallback(async () => {
     dashboardNotificationsStore.reset();
-    await logout();
-    router.push("/login");
+    setLoggingOut(true);
+    try {
+      await logout();
+      router.push("/login");
+    } finally {
+      setLoggingOut(false);
+    }
   }, [logout, router]);
 
   return (
@@ -113,6 +119,8 @@ export default function DashboardHeader() {
               onMarkAllAsRead={markAllAsRead}
               onDelete={removeNotification}
               onClose={() => setShowNotif(false)}
+              busyId={busyId}
+              markingAll={markingAll}
             />
           )}
         </div>
@@ -141,11 +149,16 @@ export default function DashboardHeader() {
               </Link>
               <button
                 onClick={handleLogout}
+                disabled={loggingOut}
                 title="Sign out of your account"
-                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-ink hover:bg-surface"
+                className="flex w-full items-center gap-2.5 px-4 py-2.5 text-sm text-ink hover:bg-surface disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <LogOut size={16} className="text-ink-soft" />
-                Logout
+                {loggingOut ? (
+                  <Loader2 size={16} className="animate-spin text-ink-soft" />
+                ) : (
+                  <LogOut size={16} className="text-ink-soft" />
+                )}
+                {loggingOut ? "Logging out..." : "Logout"}
               </button>
             </div>
           )}

@@ -64,6 +64,7 @@ function OnboardingForm() {
   const [data, setData] = useState<OnboardingData>(restoreData);
   const { submitStep1, submitStep2, submitStep3, submitStep4, submitStep5, completeOnboarding, aiResult, loading, error, clearError } = useOnboarding();
   const [analyzing, setAnalyzing] = useState(false);
+  const [completing, setCompleting] = useState(false);
   const analysisTriggered = useRef(false);
 
   useEffect(() => {
@@ -148,10 +149,13 @@ function OnboardingForm() {
 
   async function handleComplete() {
     clearError();
+    setCompleting(true);
     try {
       await completeOnboarding();
       router.push("/dashboard");
-    } catch { }
+    } catch { } finally {
+      setCompleting(false);
+    }
   }
 
   return (
@@ -171,7 +175,7 @@ function OnboardingForm() {
         <StepBodyGoal data={data} update={update} onNext={handleStep4} onBack={back} loading={loading} error={error} />
       )}
       {step === 5 && (
-        <StepAnalysis aiResult={aiResult} loading={analyzing} onRetry={handleStep5} onComplete={handleComplete} />
+        <StepAnalysis aiResult={aiResult} loading={analyzing} completing={completing} onRetry={handleStep5} onComplete={handleComplete} />
       )}
     </PageContainer>
   );

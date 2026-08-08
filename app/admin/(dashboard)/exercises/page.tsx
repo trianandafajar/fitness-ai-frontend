@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { adminService } from "@/services/admin.service";
 import type { AdminExercise, ExerciseCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
-import { Plus, Pencil, Trash2, X, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, X, ImageIcon, Loader2 } from "lucide-react";
 
 interface ExerciseForm {
   name: string;
@@ -34,6 +34,7 @@ export default function AdminExercisesPage() {
   const [form, setForm] = useState<ExerciseForm>(EMPTY_FORM);
   const [muscleInput, setMuscleInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -144,13 +145,18 @@ export default function AdminExercisesPage() {
   }
 
   async function handleDelete(id: number, name: string) {
+    if (deletingId !== null) return;
     if (!confirm(`Delete "${name}"?`)) return;
+
+    setDeletingId(id);
     try {
       await adminService.deleteExercise(id);
       toast.success("Exercise deleted");
       load();
     } catch {
       toast.error("Failed to delete");
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -216,9 +222,10 @@ export default function AdminExercisesPage() {
                 </button>
                 <button
                   onClick={() => handleDelete(ex.id, ex.name)}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger"
+                  disabled={deletingId !== null}
+                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  <Trash2 size={16} />
+                  {deletingId === ex.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
                 </button>
               </div>
             </div>
