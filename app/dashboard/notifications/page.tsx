@@ -34,7 +34,7 @@ export default function NotificationsPage() {
           <button
             onClick={markAllAsRead}
             disabled={markingAll}
-            className="flex items-center gap-1.5 rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink-soft hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink-soft hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
           >
             {markingAll ? (
               <Loader2 size={16} className="animate-spin" />

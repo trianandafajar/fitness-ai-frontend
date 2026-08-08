@@ -147,7 +147,7 @@ export default function WeightLogsPage() {
         </div>
         <button
           onClick={openAdd}
-          className="flex items-center gap-1.5 rounded-xl bg-orange px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-deep"
+          className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-orange px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-deep"
         >
           <Plus size={16} /> Log Weight
         </button>

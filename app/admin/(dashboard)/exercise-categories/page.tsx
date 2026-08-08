@@ -120,7 +120,7 @@ export default function AdminExerciseCategoriesPage() {
         <h1 className="font-display text-xl font-bold">Exercise Categories</h1>
         <button
           onClick={openAdd}
-          className="flex items-center gap-1.5 rounded-xl bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-deep"
+          className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-deep"
         >
           <Plus size={16} />
           Add Category
