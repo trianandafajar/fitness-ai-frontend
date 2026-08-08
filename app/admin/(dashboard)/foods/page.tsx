@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { adminService } from "@/services/admin.service";
 import type { AdminFood, FoodCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
+import Pagination from "@/components/ui/Pagination";
 import { Plus, Pencil, Trash2, X, ImageIcon, Loader2 } from "lucide-react";
 
 interface FoodForm {
@@ -28,6 +29,8 @@ const EMPTY_FORM: FoodForm = {
   serving_unit: "",
 };
 
+const PER_PAGE = 15;
+
 export default function AdminFoodsPage() {
   const [foods, setFoods] = useState<AdminFood[]>([]);
   const [categories, setCategories] = useState<FoodCategory[]>([]);
@@ -41,22 +44,37 @@ export default function AdminFoodsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ lastPage: 1, total: 0, from: 0, to: 0 });
+
+  const loadCategories = useCallback(async () => {
+    try {
+      const catRes = await adminService.getAllFoodCategories();
+      setCategories(catRes.data.data);
+    } catch { }
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [foodRes, catRes] = await Promise.all([
-        adminService.getFoods(),
-        adminService.getFoodCategories(),
-      ]);
-      setFoods(foodRes.data.data);
-      setCategories(catRes.data.data);
+      const foodRes = await adminService.getFoods(page, PER_PAGE);
+      setFoods(foodRes.data.data.data);
+      setPagination({
+        lastPage: foodRes.data.data.last_page,
+        total: foodRes.data.data.total,
+        from: foodRes.data.data.from ?? 0,
+        to: foodRes.data.data.to ?? 0,
+      });
     } catch {
       toast.error("Failed to load foods");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
 
   useEffect(() => {
     load();
@@ -149,7 +167,11 @@ export default function AdminFoodsPage() {
     try {
       await adminService.deleteFood(id);
       toast.success("Food deleted");
-      load();
+      if (foods.length === 1 && page > 1) {
+        setPage(page - 1);
+      } else {
+        load();
+      }
     } catch {
       toast.error("Failed to delete");
     } finally {
@@ -176,57 +198,89 @@ export default function AdminFoodsPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-16 animate-pulse rounded-xl bg-white" />
-          ))}
+        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+          <div className="animate-pulse space-y-3 p-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-10 rounded-xl bg-surface" />
+            ))}
+          </div>
         </div>
       ) : foods.length === 0 ? (
         <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-ink-soft">
           No foods yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {foods.map((food) => (
-            <div
-              key={food.id}
-              className="flex items-center gap-3 rounded-xl border border-line bg-white p-3"
-            >
-              {food.image_url ? (
-                <img
-                  src={food.image_url}
-                  alt={food.name}
-                  className="h-14 w-14 shrink-0 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-surface">
-                  <ImageIcon size={20} className="text-ink-faint" />
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold text-ink">{food.name}</div>
-                <div className="text-[12px] text-ink-soft">
-                  {food.category} · {food.calories_per_100g} cal
-                </div>
-              </div>
-              <div className="flex shrink-0 items-center gap-1">
-                <button
-                  onClick={() => openEdit(food)}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
-                >
-                  <Pencil size={16} />
-                </button>
-                <button
-                  onClick={() => handleDelete(food.id, food.name)}
-                  disabled={deletingId !== null}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {deletingId === food.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+            <table className="w-full min-w-[760px] text-left text-sm">
+              <thead>
+                <tr className="border-b border-line bg-surface text-[11px] uppercase tracking-wide text-ink-soft">
+                  <th className="px-4 py-3 font-semibold">Food</th>
+                  <th className="px-4 py-3 font-semibold">Category</th>
+                  <th className="px-4 py-3 font-semibold">Calories</th>
+                  <th className="px-4 py-3 font-semibold">Protein</th>
+                  <th className="px-4 py-3 font-semibold">Carbs</th>
+                  <th className="px-4 py-3 font-semibold">Fat</th>
+                  <th className="px-4 py-3 font-semibold">Serving</th>
+                  <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {foods.map((food) => (
+                  <tr key={food.id} className="border-b border-line last:border-0">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {food.image_url ? (
+                          <img
+                            src={food.image_url}
+                            alt={food.name}
+                            className="h-10 w-10 shrink-0 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface">
+                            <ImageIcon size={16} className="text-ink-faint" />
+                          </div>
+                        )}
+                        <span className="font-semibold text-ink">{food.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-ink-soft">{food.category}</td>
+                    <td className="px-4 py-3 text-ink">{food.calories_per_100g} cal</td>
+                    <td className="px-4 py-3 text-ink-soft">{food.protein_per_100g}g</td>
+                    <td className="px-4 py-3 text-ink-soft">{food.carbs_per_100g}g</td>
+                    <td className="px-4 py-3 text-ink-soft">{food.fat_per_100g}g</td>
+                    <td className="px-4 py-3 text-ink-soft">{food.serving_unit ?? "—"}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => openEdit(food)}
+                          className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(food.id, food.name)}
+                          disabled={deletingId !== null}
+                          className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {deletingId === food.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination
+            page={page}
+            lastPage={pagination.lastPage}
+            total={pagination.total}
+            from={pagination.from}
+            to={pagination.to}
+            onPageChange={setPage}
+          />
+        </>
       )}
 
       {showForm && (

@@ -4,6 +4,16 @@ export interface AdminDashboardData {
   foods_count: number;
 }
 
+export interface Paginated<T> {
+  data: T[];
+  current_page: number;
+  last_page: number;
+  total: number;
+  per_page: number;
+  from: number | null;
+  to: number | null;
+}
+
 export interface AdminExercise {
   id: number;
   name: string;

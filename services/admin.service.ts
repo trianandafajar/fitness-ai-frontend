@@ -5,6 +5,7 @@ import type {
   AdminFood,
   ExerciseCategory,
   FoodCategory,
+  Paginated,
 } from "@/types/admin";
 
 export const adminService = {
@@ -12,8 +13,10 @@ export const adminService = {
     api.get<{ data: AdminDashboardData }>("/admin/dashboard"),
 
   // Exercises
-  getExercises: () =>
-    api.get<{ data: AdminExercise[] }>("/exercises"),
+  getExercises: (page = 1, perPage = 15) =>
+    api.get<{ data: Paginated<AdminExercise> }>("/exercises", {
+      params: { page, per_page: perPage },
+    }),
 
   createExercise: (data: Record<string, unknown>) => {
     const fd = new FormData();
@@ -54,8 +57,10 @@ export const adminService = {
     api.delete<{ message: string }>(`/admin/exercises/${id}`),
 
   // Foods
-  getFoods: () =>
-    api.get<{ data: AdminFood[] }>("/foods"),
+  getFoods: (page = 1, perPage = 15) =>
+    api.get<{ data: Paginated<AdminFood> }>("/foods", {
+      params: { page, per_page: perPage },
+    }),
 
   createFood: (data: Record<string, unknown>) => {
     const fd = new FormData();
@@ -92,7 +97,12 @@ export const adminService = {
     api.delete<{ message: string }>(`/admin/foods/${id}`),
 
   // Exercise Categories
-  getExerciseCategories: () =>
+  getExerciseCategories: (page = 1, perPage = 15) =>
+    api.get<{ data: Paginated<ExerciseCategory> }>("/exercise-categories", {
+      params: { page, per_page: perPage },
+    }),
+
+  getAllExerciseCategories: () =>
     api.get<{ data: ExerciseCategory[] }>("/exercise-categories"),
 
   createExerciseCategory: (data: { name: string; slug: string }) =>
@@ -105,7 +115,12 @@ export const adminService = {
     api.delete<{ message: string }>(`/admin/exercise-categories/${id}`),
 
   // Food Categories
-  getFoodCategories: () =>
+  getFoodCategories: (page = 1, perPage = 15) =>
+    api.get<{ data: Paginated<FoodCategory> }>("/food-categories", {
+      params: { page, per_page: perPage },
+    }),
+
+  getAllFoodCategories: () =>
     api.get<{ data: FoodCategory[] }>("/food-categories"),
 
   createFoodCategory: (data: { name: string; slug: string }) =>

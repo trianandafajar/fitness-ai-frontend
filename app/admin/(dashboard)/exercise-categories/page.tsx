@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { adminService } from "@/services/admin.service";
 import type { ExerciseCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
+import Pagination from "@/components/ui/Pagination";
 import { Plus, Pencil, Trash2, X, Loader2 } from "lucide-react";
 
 interface CategoryForm {
@@ -13,6 +14,8 @@ interface CategoryForm {
 
 const EMPTY_FORM: CategoryForm = { name: "", slug: "" };
 
+const PER_PAGE = 15;
+
 export default function AdminExerciseCategoriesPage() {
   const [categories, setCategories] = useState<ExerciseCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,18 +24,26 @@ export default function AdminExerciseCategoriesPage() {
   const [form, setForm] = useState<CategoryForm>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ lastPage: 1, total: 0, from: 0, to: 0 });
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await adminService.getExerciseCategories();
-      setCategories(res.data.data);
+      const res = await adminService.getExerciseCategories(page, PER_PAGE);
+      setCategories(res.data.data.data);
+      setPagination({
+        lastPage: res.data.data.last_page,
+        total: res.data.data.total,
+        from: res.data.data.from ?? 0,
+        to: res.data.data.to ?? 0,
+      });
     } catch {
       toast.error("Failed to load exercise categories");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
 
   useEffect(() => {
     load();
@@ -78,7 +89,11 @@ export default function AdminExerciseCategoriesPage() {
     try {
       await adminService.deleteExerciseCategory(id);
       toast.success("Category deleted");
-      load();
+      if (categories.length === 1 && page > 1) {
+        setPage(page - 1);
+      } else {
+        load();
+      }
     } catch {
       toast.error("Failed to delete");
     } finally {
@@ -103,44 +118,64 @@ export default function AdminExerciseCategoriesPage() {
       </div>
 
       {loading ? (
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-14 animate-pulse rounded-xl bg-white" />
-          ))}
+        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+          <div className="animate-pulse space-y-3 p-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-10 rounded-xl bg-surface" />
+            ))}
+          </div>
         </div>
       ) : categories.length === 0 ? (
         <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-ink-soft">
           No categories yet.
         </div>
       ) : (
-        <div className="space-y-2">
-          {categories.map((cat) => (
-            <div
-              key={cat.id}
-              className="flex items-center justify-between rounded-xl border border-line bg-white p-4"
-            >
-              <div>
-                <div className="text-sm font-semibold text-ink">{cat.name}</div>
-                <div className="text-[12px] text-ink-soft">{cat.slug}</div>
-              </div>
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={() => openEdit(cat)}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
-                >
-                  <Pencil size={16} />
-                </button>
-                <button
-                  onClick={() => handleDelete(cat.id, cat.name)}
-                  disabled={deletingId !== null}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {deletingId === cat.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-line bg-surface text-[11px] uppercase tracking-wide text-ink-soft">
+                  <th className="px-4 py-3 font-semibold">Name</th>
+                  <th className="px-4 py-3 font-semibold">Slug</th>
+                  <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {categories.map((cat) => (
+                  <tr key={cat.id} className="border-b border-line last:border-0">
+                    <td className="px-4 py-3 font-semibold text-ink">{cat.name}</td>
+                    <td className="px-4 py-3 text-ink-soft">{cat.slug}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => openEdit(cat)}
+                          className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(cat.id, cat.name)}
+                          disabled={deletingId !== null}
+                          className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {deletingId === cat.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination
+            page={page}
+            lastPage={pagination.lastPage}
+            total={pagination.total}
+            from={pagination.from}
+            to={pagination.to}
+            onPageChange={setPage}
+          />
+        </>
       )}
 
       {showForm && (

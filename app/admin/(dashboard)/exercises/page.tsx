@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { adminService } from "@/services/admin.service";
 import type { AdminExercise, ExerciseCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
+import Pagination from "@/components/ui/Pagination";
 import { Plus, Pencil, Trash2, X, ImageIcon, Loader2 } from "lucide-react";
 
 interface ExerciseForm {
@@ -24,6 +25,8 @@ const EMPTY_FORM: ExerciseForm = {
   description: "",
 };
 
+const PER_PAGE = 15;
+
 export default function AdminExercisesPage() {
   const [exercises, setExercises] = useState<AdminExercise[]>([]);
   const [categories, setCategories] = useState<ExerciseCategory[]>([]);
@@ -38,22 +41,37 @@ export default function AdminExercisesPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ lastPage: 1, total: 0, from: 0, to: 0 });
+
+  const loadCategories = useCallback(async () => {
+    try {
+      const catRes = await adminService.getAllExerciseCategories();
+      setCategories(catRes.data.data);
+    } catch { }
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const [exRes, catRes] = await Promise.all([
-        adminService.getExercises(),
-        adminService.getExerciseCategories(),
-      ]);
-      setExercises(exRes.data.data);
-      setCategories(catRes.data.data);
+      const exRes = await adminService.getExercises(page, PER_PAGE);
+      setExercises(exRes.data.data.data);
+      setPagination({
+        lastPage: exRes.data.data.last_page,
+        total: exRes.data.data.total,
+        from: exRes.data.data.from ?? 0,
+        to: exRes.data.data.to ?? 0,
+      });
     } catch {
       toast.error("Failed to load exercises");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [page]);
+
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
 
   useEffect(() => {
     load();
@@ -152,7 +170,11 @@ export default function AdminExercisesPage() {
     try {
       await adminService.deleteExercise(id);
       toast.success("Exercise deleted");
-      load();
+      if (exercises.length === 1 && page > 1) {
+        setPage(page - 1);
+      } else {
+        load();
+      }
     } catch {
       toast.error("Failed to delete");
     } finally {
@@ -179,58 +201,85 @@ export default function AdminExercisesPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-16 animate-pulse rounded-xl bg-white" />
-          ))}
+        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+          <div className="animate-pulse space-y-3 p-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-10 rounded-xl bg-surface" />
+            ))}
+          </div>
         </div>
       ) : exercises.length === 0 ? (
         <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-ink-soft">
           No exercises yet.
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {exercises.map((ex) => (
-            <div
-              key={ex.id}
-              className="flex items-center gap-3 rounded-xl border border-line bg-white p-3"
-            >
-              {ex.image_url ? (
-                <img
-                  src={ex.image_url}
-                  alt={ex.name}
-                  className="h-14 w-14 shrink-0 rounded-lg object-cover"
-                />
-              ) : (
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-surface">
-                  <ImageIcon size={20} className="text-ink-faint" />
-                </div>
-              )}
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-semibold text-ink">{ex.name}</div>
-                <div className="text-[12px] text-ink-soft">
-                  {ex.category}
-                  {ex.equipment ? ` · ${ex.equipment}` : ""}
-                </div>
-              </div>
-              <div className="flex shrink-0 items-center gap-1">
-                <button
-                  onClick={() => openEdit(ex)}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
-                >
-                  <Pencil size={16} />
-                </button>
-                <button
-                  onClick={() => handleDelete(ex.id, ex.name)}
-                  disabled={deletingId !== null}
-                  className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  {deletingId === ex.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <>
+          <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <thead>
+                <tr className="border-b border-line bg-surface text-[11px] uppercase tracking-wide text-ink-soft">
+                  <th className="px-4 py-3 font-semibold">Exercise</th>
+                  <th className="px-4 py-3 font-semibold">Category</th>
+                  <th className="px-4 py-3 font-semibold">Equipment</th>
+                  <th className="px-4 py-3 font-semibold">Target Muscles</th>
+                  <th className="px-4 py-3 text-right font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exercises.map((ex) => (
+                  <tr key={ex.id} className="border-b border-line last:border-0">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        {ex.image_url ? (
+                          <img
+                            src={ex.image_url}
+                            alt={ex.name}
+                            className="h-10 w-10 shrink-0 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-surface">
+                            <ImageIcon size={16} className="text-ink-faint" />
+                          </div>
+                        )}
+                        <span className="font-semibold text-ink">{ex.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-ink-soft">{ex.category}</td>
+                    <td className="px-4 py-3 text-ink-soft">{ex.equipment ?? "—"}</td>
+                    <td className="px-4 py-3 text-ink-soft">
+                      {ex.target_muscles?.join(", ") ?? "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => openEdit(ex)}
+                          className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(ex.id, ex.name)}
+                          disabled={deletingId !== null}
+                          className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
+                        >
+                          {deletingId === ex.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Pagination
+            page={page}
+            lastPage={pagination.lastPage}
+            total={pagination.total}
+            from={pagination.from}
+            to={pagination.to}
+            onPageChange={setPage}
+          />
+        </>
       )}
 
       {showForm && (
