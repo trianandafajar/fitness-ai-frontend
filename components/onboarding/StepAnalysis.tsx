@@ -190,7 +190,7 @@ export default function StepAnalysis({ aiResult, loading, completing, onRetry, o
                       <div key={`${day}-${ex?.id ?? item.text}-${i}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
                         {ex?.image_url || ex?.image ? (
                           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
-                            <img src={ex.image_url ?? ex.image} alt={ex.name} className="relative z-10 h-full w-full object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+                            <img src={ex.image_url ?? ex.image} alt={ex.name} className="relative z-10 h-full w-full bg-white object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
                             <Dumbbell className="absolute inset-0 z-0 m-auto h-5 w-5 text-orange-deep" />
                           </div>
                         ) : (
@@ -269,7 +269,7 @@ export default function StepAnalysis({ aiResult, loading, completing, onRetry, o
                       <div key={`${day}-${foodName}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
                         {fd?.image_url || fd?.image ? (
                           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
-                            <img src={fd.image_url ?? fd.image} alt={fd.name} className="relative z-10 h-full w-full object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
+                            <img src={fd.image_url ?? fd.image} alt={fd.name} className="relative z-10 h-full w-full bg-white object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
                             <Utensils className="absolute inset-0 z-0 m-auto h-5 w-5 text-orange-deep" />
                           </div>
                         ) : (

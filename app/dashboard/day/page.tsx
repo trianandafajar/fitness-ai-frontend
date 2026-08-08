@@ -192,7 +192,7 @@ function DayContent() {
                             <img
                               src={image}
                               alt={item.food}
-                              className="relative z-10 h-full w-full object-cover"
+                              className="relative z-10 h-full w-full bg-white object-cover"
                               loading="lazy"
                               onError={(event) => { event.currentTarget.style.display = "none"; }}
                             />

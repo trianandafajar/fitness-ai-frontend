@@ -37,7 +37,7 @@ export default function ExerciseList({ exercises, scheduleId }: ExerciseListProp
               <img
                 src={ex.image_url ?? ex.image ?? ""}
                 alt={ex.name}
-                className="relative z-10 h-full w-full object-cover"
+                className="relative z-10 h-full w-full bg-white object-cover"
                 loading="lazy"
                 onError={(event) => { event.currentTarget.style.display = "none"; }}
               />

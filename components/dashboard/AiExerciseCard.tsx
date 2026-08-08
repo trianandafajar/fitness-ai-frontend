@@ -11,7 +11,7 @@ export default function AiExerciseCard({ item }: Props) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3">
       {ex?.image ? (
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-surface">
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white">
           <img
             src={ex.image}
             alt={ex.name}

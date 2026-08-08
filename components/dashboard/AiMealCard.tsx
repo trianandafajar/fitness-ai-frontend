@@ -11,7 +11,7 @@ export default function AiMealCard({ item }: Props) {
   return (
     <div className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3">
       {fd?.image ? (
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-surface">
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white">
           <img
             src={fd.image}
             alt={fd.name}
