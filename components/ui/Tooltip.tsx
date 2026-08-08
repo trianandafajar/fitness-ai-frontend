@@ -123,9 +123,9 @@ const Tooltip = ({ label, children, side = "bottom" }: TooltipProps) => {
             className={`
               pointer-events-none fixed z-[9999]
               ${transformClasses[side]}
-              whitespace-nowrap rounded-md bg-ink
+              hidden whitespace-nowrap rounded-md bg-ink
               px-2.5 py-1.5 text-xs font-medium text-white
-              shadow-md
+              shadow-md sm:block
             `}
           >
             {label}
