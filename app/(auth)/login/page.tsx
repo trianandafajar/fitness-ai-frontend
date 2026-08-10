@@ -7,9 +7,9 @@ import { isAxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Field from "@/components/ui/Field";
-import { ButtonPrimary } from "@/components/ui/Button";
+import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { Divider, SocialRow } from "@/components/auth/SocialAuth";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Zap } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const Player = dynamic(
@@ -52,6 +52,19 @@ export default function LoginPage() {
             } else {
                 setError("Connection error. Please check your network.");
             }
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function handleAdminLogin() {
+        setError("");
+        setLoading(true);
+        try {
+            const res = await login("admin@fitness.ai", "password");
+            router.push(res.user.is_admin ? "/admin" : "/onboarding");
+        } catch (err) {
+            setError("Admin login failed. Please check the admin account.");
         } finally {
             setLoading(false);
         }
@@ -135,6 +148,16 @@ export default function LoginPage() {
                     {loading ? "Signing in..." : "Log in"}
                 </ButtonPrimary>
             </form>
+
+            <div className="my-3 flex items-center gap-2">
+                <div className="h-px flex-1 bg-line" />
+                <span className="text-xs font-medium uppercase tracking-wide text-ink-soft">or</span>
+                <div className="h-px flex-1 bg-line" />
+            </div>
+
+            <ButtonSecondary type="button" disabled={loading} onClick={handleAdminLogin}>
+                Login as Admin
+            </ButtonSecondary>
 
             {/* <Divider text="or continue with" />
             <SocialRow /> */}
