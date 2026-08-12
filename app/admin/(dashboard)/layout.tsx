@@ -4,6 +4,8 @@ import { ReactNode, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
+import { Modal, ModalFooter, ModalHeader, ModalTitle } from "@/components/ui/Modal";
+import { AlertTriangle } from "lucide-react";
 import { LayoutDashboard, Dumbbell, Apple, FolderOpen, LogOut, Loader2 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -19,6 +21,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
   async function handleLogout() {
@@ -28,6 +31,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       router.push("/admin/login");
     } finally {
       setLoggingOut(false);
+      setShowLogoutModal(false);
     }
   }
 
@@ -39,16 +43,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             FitnessAI <span className="text-orange">Admin</span>
           </Link>
           <button
-            onClick={handleLogout}
-            disabled={loggingOut}
-            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={() => setShowLogoutModal(true)}
+            className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:bg-surface hover:text-ink"
           >
-            {loggingOut ? (
-              <Loader2 size={16} className="animate-spin" />
-            ) : (
-              <LogOut size={16} />
-            )}
-            {loggingOut ? "Logging out..." : "Logout"}
+            <LogOut size={16} />
+            Logout
           </button>
         </div>
       </header>
@@ -77,6 +76,42 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         <main className="flex-1 py-2">{children}</main>
       </div>
+
+      <Modal open={showLogoutModal} onOpenChange={setShowLogoutModal}>
+        <ModalHeader className="items-center text-center">
+          <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+            <AlertTriangle size={24} />
+          </div>
+          <ModalTitle className="font-display text-xl">Logout?</ModalTitle>
+          <p className="max-w-sm text-sm leading-6 text-ink-soft">
+            You will be signed out of your account.
+          </p>
+        </ModalHeader>
+        <ModalFooter>
+          <div className="grid grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              onClick={() => setShowLogoutModal(false)}
+              className="w-full rounded-xl border-[1.5px] border-line bg-white px-4 py-3 text-sm font-semibold text-ink transition hover:border-ink-faint"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => void handleLogout()}
+              disabled={loggingOut}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loggingOut ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <LogOut size={16} />
+              )}
+              {loggingOut ? "Logging out..." : "Logout"}
+            </button>
+          </div>
+        </ModalFooter>
+      </Modal>
     </div>
   );
 }

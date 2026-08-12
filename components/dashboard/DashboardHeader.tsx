@@ -10,6 +10,7 @@ import NotificationDropdown from "./NotificationDropdown";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
 import { dashboardNotificationsStore } from "@/stores/dashboard-notifications.store";
 import Tooltip from "@/components/ui/Tooltip";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 import { getGreeting, getInitials } from "@/lib/utils";
 
 
@@ -18,6 +19,7 @@ export default function DashboardHeader() {
   const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification, busyId, markingAll } =
     useDashboardNotifications();
   const router = useRouter();
+  const confirm = useConfirm();
   const [open, setOpen] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
   const [showNotif, setShowNotif] = useState(false);
@@ -61,6 +63,13 @@ export default function DashboardHeader() {
   }, [fetchStreak]);
 
   const handleLogout = useCallback(async () => {
+    const confirmed = await confirm({
+      title: "Logout?",
+      description: "You will be signed out of your account.",
+      confirmText: "Logout",
+    });
+    if (!confirmed) return;
+
     dashboardNotificationsStore.reset();
     setLoggingOut(true);
     try {
@@ -69,7 +78,7 @@ export default function DashboardHeader() {
     } finally {
       setLoggingOut(false);
     }
-  }, [logout, router]);
+  }, [logout, router, confirm]);
 
   return (
     <div className="sticky top-0 z-40 flex w-full items-center justify-between rounded-b-2xl bg-white p-4 shadow-sm">
