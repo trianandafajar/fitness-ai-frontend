@@ -33,7 +33,7 @@ export default function LoginPage() {
         setError("");
         setLoading(true);
         try {
-            const res = await login(identifier, password);
+            const res = await login(identifier, password, rememberMe);
             router.push(res.user.is_admin ? "/admin" : "/onboarding");
         } catch (err) {
             if (isAxiosError(err) && err.response) {

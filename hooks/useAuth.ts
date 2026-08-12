@@ -39,9 +39,9 @@ export function useAuth() {
     return response;
   }, []);
 
-  const login = useCallback(async (email: string, password: string) => {
-    const response = await authService.login({ email, password });
-    setToken(response.token);
+  const login = useCallback(async (email: string, password: string, remember: boolean = false) => {
+    const response = await authService.login({ email, password, remember });
+    setToken(response.token, remember);
     authStore.setState({
       user: response.user,
       isAuthenticated: true,

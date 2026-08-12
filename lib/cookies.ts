@@ -5,13 +5,15 @@ const TOKEN_KEY = "access_token";
 const PROFILE_KEY = "profile_completed";
 const ADMIN_KEY = "is_admin";
 
+const REMEMBER_DAYS = 30;
+
 export function getToken(): string | undefined {
   return Cookies.get(TOKEN_KEY);
 }
 
-export function setToken(token: string): void {
+export function setToken(token: string, remember: boolean = false): void {
   Cookies.set(TOKEN_KEY, token, {
-    expires: 7,
+    expires: remember ? REMEMBER_DAYS : undefined,
     secure: NODE_ENV === "production",
     sameSite: "lax",
   });
