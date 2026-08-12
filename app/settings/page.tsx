@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, User, Ruler, Dumbbell, Heart, Scale, Activity, Zap, Feather, Target } from "lucide-react";
+import { Save, ArrowLeft, User, Ruler, Dumbbell, Heart, Scale, Activity, Zap, Feather, Target, KeyRound, Loader2, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { profileService } from "@/services/profile.service";
+import { toast } from "@/components/ui/Toast";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import Segmented from "@/components/ui/Segmented";
@@ -77,6 +78,12 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [emailMode, setEmailMode] = useState<"idle" | "enter" | "verify">("idle");
+  const [newEmail, setNewEmail] = useState("");
+  const [code, setCode] = useState("");
+  const [emailBusy, setEmailBusy] = useState(false);
+  const [cooldown, setCooldown] = useState(0);
+  const cooldownTimer = useRef<number | null>(null);
   const [form, setForm] = useState<FormData>({
     name: "", email: "", date_of_birth: "", gender: "", height_cm: "", weight_kg: "",
     fitness_goal: "", activity_level: "", goal_weight_kg: "", dietary_preferences: [],
@@ -102,6 +109,99 @@ export default function SettingsPage() {
   function update(patch: Partial<FormData>) {
     setForm((prev) => ({ ...prev, ...patch }));
   }
+
+  const clearCooldownTimer = useCallback(() => {
+    if (cooldownTimer.current !== null) {
+      window.clearInterval(cooldownTimer.current);
+      cooldownTimer.current = null;
+    }
+  }, []);
+
+  const startCooldown = useCallback((seconds: number) => {
+    clearCooldownTimer();
+    setCooldown(seconds);
+    if (seconds <= 0) return;
+    cooldownTimer.current = window.setInterval(() => {
+      setCooldown((prev) => {
+        if (prev <= 1) {
+          clearCooldownTimer();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }, [clearCooldownTimer]);
+
+  useEffect(() => {
+    return () => clearCooldownTimer();
+  }, [clearCooldownTimer]);
+
+  const handleStartEmailChange = useCallback(async () => {
+    const value = newEmail.trim();
+    if (!value) {
+      toast.error("Enter your new email address first");
+      return;
+    }
+
+    setEmailBusy(true);
+    setError("");
+    try {
+      const res = await profileService.initiateEmailChange(value);
+      setEmailMode("verify");
+      setCode("");
+      startCooldown(res.resend_after ?? 60);
+      toast.success("Verification code sent", { description: `Check ${value} for a 6-digit code.` });
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } })?.response?.data;
+      const desc = msg?.errors?.new_email?.[0] ?? msg?.message ?? "Could not send the code.";
+      toast.error("Failed to send code", { description: desc });
+    } finally {
+      setEmailBusy(false);
+    }
+  }, [newEmail, startCooldown]);
+
+  const handleResendCode = useCallback(() => {
+    void handleStartEmailChange();
+  }, [handleStartEmailChange]);
+
+  const handleVerifyEmail = useCallback(async () => {
+    if (!code.trim()) {
+      toast.error("Enter the verification code");
+      return;
+    }
+    setEmailBusy(true);
+    setError("");
+    try {
+      await profileService.verifyEmailChange(code.trim());
+      setEmailMode("idle");
+      setNewEmail("");
+      setCode("");
+      clearCooldownTimer();
+      await fetchUser();
+      setSuccess(true);
+      toast.success("Email changed successfully");
+      window.setTimeout(() => setSuccess(false), 3000);
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } })?.response?.data;
+      const desc = msg?.errors?.code?.[0] ?? msg?.message ?? "Verification failed.";
+      toast.error("Verification failed", { description: desc });
+    } finally {
+      setEmailBusy(false);
+    }
+  }, [code, clearCooldownTimer, fetchUser]);
+
+  const handleCancelEmailChange = useCallback(async () => {
+    setEmailBusy(true);
+    try {
+      await profileService.cancelEmailChange();
+    } catch { } finally {
+      setEmailBusy(false);
+      setEmailMode("idle");
+      setNewEmail("");
+      setCode("");
+      clearCooldownTimer();
+    }
+  }, [clearCooldownTimer]);
 
   async function handleSave() {
     setSaving(true);
@@ -167,7 +267,107 @@ export default function SettingsPage() {
           </div>
           <div className="grid grid-cols-1 gap-x-4">
             <Field id="name" label="Full name" type="text" value={form.name} onChange={(e) => update({ name: e.target.value })} />
-            <Field id="email" label="Email" type="email" value={form.email} readOnly />
+
+            <div>
+              <label className="mb-1.75 block text-[13px] font-semibold text-ink">Email</label>
+
+              {emailMode === "idle" && (
+                <div className="flex items-center gap-2">
+                  <input
+                    id="email"
+                    type="email"
+                    value={form.email}
+                    readOnly
+                    className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setEmailMode("enter")}
+                    className="shrink-0 rounded-[10px] border-[1.5px] border-orange/30 px-3.5 py-3.25 text-[13px] font-semibold text-orange-deep transition hover:bg-orange-tint"
+                  >
+                    Change
+                  </button>
+                </div>
+              )}
+
+              {emailMode === "enter" && (
+                <div className="space-y-2.5">
+                  <input
+                    type="email"
+                    value={newEmail}
+                    onChange={(e) => setNewEmail(e.target.value)}
+                    placeholder="Enter new email address"
+                    className="w-full rounded-[10px] border-[1.5px] border-line bg-white px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange"
+                  />
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => void handleStartEmailChange()}
+                      disabled={emailBusy}
+                      className="flex items-center justify-center gap-1.5 rounded-[10px] bg-orange px-3.5 py-2.5 text-[13px] font-semibold text-white transition hover:bg-orange-deep disabled:opacity-50"
+                    >
+                      {emailBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
+                      Send code
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setEmailMode("idle"); setNewEmail(""); }}
+                      disabled={emailBusy}
+                      className="rounded-[10px] px-3.5 py-2.5 text-[13px] font-semibold text-ink-soft transition hover:text-ink disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {emailMode === "verify" && (
+                <div className="space-y-2.5">
+                  <div className="rounded-[10px] bg-orange-tint/60 px-3.5 py-2.5 text-[13px] text-ink">
+                    A 6-digit code was sent to <span className="font-semibold">{newEmail}</span>. Enter it below to confirm the change.
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={code}
+                      onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+                      placeholder="6-digit code"
+                      className="w-full rounded-[10px] border-[1.5px] border-line bg-white px-3.5 py-3.25 font-mono text-[14.5px] tracking-widest text-ink outline-none transition-colors placeholder:tracking-normal placeholder:text-ink-faint focus:border-orange"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => void handleVerifyEmail()}
+                      disabled={emailBusy || code.length !== 6}
+                      className="flex shrink-0 items-center justify-center gap-1.5 rounded-[10px] bg-orange px-3.5 py-3.25 text-[13px] font-semibold text-white transition hover:bg-orange-deep disabled:opacity-50"
+                    >
+                      {emailBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                      Verify
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleResendCode}
+                      disabled={emailBusy || cooldown > 0}
+                      className="text-[12.5px] font-semibold text-orange-deep transition hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+                    </button>
+                    <span className="text-ink-faint">·</span>
+                    <button
+                      type="button"
+                      onClick={() => void handleCancelEmailChange()}
+                      disabled={emailBusy}
+                      className="text-[12.5px] font-semibold text-ink-soft transition hover:text-ink disabled:opacity-50"
+                    >
+                      Cancel change
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </section>
 
