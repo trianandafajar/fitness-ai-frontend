@@ -31,7 +31,7 @@ function VerifyEmailForm() {
     const [resendAfter, setResendAfter] = useState(0);
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-    const submittedRef = useRef(false);
+    const submittedRef = useRef<string>("");
 
     useEffect(() => {
         if (!email) return;
@@ -81,11 +81,14 @@ function VerifyEmailForm() {
     );
 
     useEffect(() => {
-        if (code.length === 6 && !loading && !done && !submittedRef.current) {
-            submittedRef.current = true;
+        if (code.length !== 6) {
+            submittedRef.current = "";
+            return;
+        }
+        if (!loading && !done && code !== submittedRef.current) {
+            submittedRef.current = code;
             void handleSubmit();
         }
-        if (code.length !== 6) submittedRef.current = false;
     }, [code, loading, done, handleSubmit]);
 
     function setDigit(index: number, value: string) {
