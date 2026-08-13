@@ -3,7 +3,6 @@ import { NODE_ENV } from "@/lib/app-config";
 
 const TOKEN_KEY = "access_token";
 const PROFILE_KEY = "profile_completed";
-const ADMIN_KEY = "is_admin";
 
 const REMEMBER_DAYS = 30;
 
@@ -22,7 +21,6 @@ export function setToken(token: string, remember: boolean = false): void {
 export function removeToken(): void {
   Cookies.remove(TOKEN_KEY);
   Cookies.remove(PROFILE_KEY);
-  Cookies.remove(ADMIN_KEY);
 }
 
 export function getProfileCompleted(): boolean {
@@ -39,20 +37,4 @@ export function setProfileCompleted(): void {
 
 export function removeProfileCompleted(): void {
   Cookies.remove(PROFILE_KEY);
-}
-
-export function getIsAdmin(): boolean {
-  return Cookies.get(ADMIN_KEY) === "true";
-}
-
-export function setIsAdmin(): void {
-  Cookies.set(ADMIN_KEY, "true", {
-    expires: 7,
-    secure: NODE_ENV === "production",
-    sameSite: "lax",
-  });
-}
-
-export function removeIsAdmin(): void {
-  Cookies.remove(ADMIN_KEY);
 }

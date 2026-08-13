@@ -8,8 +8,6 @@ import {
   removeToken,
   setProfileCompleted,
   removeProfileCompleted,
-  setIsAdmin,
-  removeIsAdmin,
 } from "@/lib/cookies";
 
 export function useAuth() {
@@ -30,11 +28,6 @@ export function useAuth() {
       setProfileCompleted();
     } else {
       removeProfileCompleted();
-    }
-    if (response.user?.is_admin) {
-      setIsAdmin();
-    } else {
-      removeIsAdmin();
     }
     return response;
   }, []);
@@ -99,7 +92,6 @@ export function useAuth() {
   const logout = useCallback(async () => {
     await authService.logout();
     removeToken();
-    removeIsAdmin();
     authStore.reset();
   }, []);
 
