@@ -211,20 +211,20 @@ export default function SettingsPage() {
     const body: Record<string, unknown> = {};
 
     if (form.name !== user?.name) body.name = form.name;
-    if (form.date_of_birth) body.date_of_birth = form.date_of_birth;
-    if (form.gender) body.gender = form.gender;
-    if (form.height_cm) body.height_cm = parseFloat(form.height_cm);
-    if (form.weight_kg) body.weight_kg = parseFloat(form.weight_kg);
-    if (form.fitness_goal) body.fitness_goal = form.fitness_goal;
-    if (form.activity_level) body.activity_level = form.activity_level;
-    if (form.goal_weight_kg) body.goal_weight_kg = parseFloat(form.goal_weight_kg);
-    if (form.dietary_preferences.length) body.dietary_preferences = form.dietary_preferences;
-    if (form.dietary_restrictions.length) body.dietary_restrictions = form.dietary_restrictions;
-    if (form.allergies.length) body.allergies = form.allergies;
-    if (form.medical_conditions) body.medical_conditions = form.medical_conditions;
-    if (form.exercise_frequency) body.exercise_frequency = form.exercise_frequency;
-    if (form.exercise_types.length) body.exercise_types = form.exercise_types;
-    if (form.injuries) body.injuries = form.injuries;
+    body.date_of_birth = form.date_of_birth || null;
+    body.gender = form.gender || null;
+    body.height_cm = form.height_cm ? parseFloat(form.height_cm) : null;
+    body.weight_kg = form.weight_kg ? parseFloat(form.weight_kg) : null;
+    body.fitness_goal = form.fitness_goal || null;
+    body.activity_level = form.activity_level || null;
+    body.goal_weight_kg = form.goal_weight_kg ? parseFloat(form.goal_weight_kg) : null;
+    body.dietary_preferences = form.dietary_preferences;
+    body.dietary_restrictions = form.dietary_restrictions;
+    body.allergies = form.allergies;
+    body.medical_conditions = form.medical_conditions || null;
+    body.exercise_frequency = form.exercise_frequency || null;
+    body.exercise_types = form.exercise_types;
+    body.injuries = form.injuries || null;
 
     try {
       await profileService.update(body);
