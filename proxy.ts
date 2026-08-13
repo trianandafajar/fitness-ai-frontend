@@ -6,7 +6,7 @@ const ADMIN_LOGIN = "/admin/login";
 const ONBOARDING_ROUTE = "/onboarding";
 const AFTER_LOGIN_ROUTE = "/dashboard";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("access_token")?.value;
   const profileCompleted = request.cookies.get("profile_completed")?.value === "true";
