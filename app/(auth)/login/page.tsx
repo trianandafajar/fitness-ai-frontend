@@ -5,11 +5,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { isAxiosError } from "axios";
 import { useAuth } from "@/hooks/useAuth";
+import { getProfileCompleted } from "@/lib/cookies";
 import AuthLayout from "@/components/auth/AuthLayout";
 import Field from "@/components/ui/Field";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { Divider, SocialRow } from "@/components/auth/SocialAuth";
-import { Eye, EyeOff, Zap } from "lucide-react";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const Player = dynamic(
@@ -23,7 +24,8 @@ export default function LoginPage() {
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [busy, setBusy] = useState<"signin" | "admin" | "demo" | null>(null);
+    const isBusy = busy !== null;
     const [error, setError] = useState("");
 
     const [showPassword, setShowPassword] = useState(false);
@@ -31,10 +33,10 @@ export default function LoginPage() {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setError("");
-        setLoading(true);
+        setBusy("signin");
         try {
             const res = await login(identifier, password, rememberMe);
-            router.push(res.user.is_admin ? "/admin" : "/onboarding");
+            router.push(redirectAfterLogin(res.user.is_admin));
         } catch (err) {
             if (isAxiosError(err) && err.response) {
                 const data = err.response.data;
@@ -53,20 +55,38 @@ export default function LoginPage() {
                 setError("Connection error. Please check your network.");
             }
         } finally {
-            setLoading(false);
+            setBusy(null);
         }
+    }
+
+    function redirectAfterLogin(isAdmin: boolean): string {
+        if (isAdmin) return "/admin";
+        return getProfileCompleted() ? "/dashboard" : "/onboarding";
     }
 
     async function handleAdminLogin() {
         setError("");
-        setLoading(true);
+        setBusy("admin");
         try {
             const res = await login("admin@fitness.ai", "password");
-            router.push(res.user.is_admin ? "/admin" : "/onboarding");
+            router.push(redirectAfterLogin(res.user.is_admin));
         } catch (err) {
             setError("Admin login failed. Please check the admin account.");
         } finally {
-            setLoading(false);
+            setBusy(null);
+        }
+    }
+
+    async function handleDemoLogin() {
+        setError("");
+        setBusy("demo");
+        try {
+            const res = await login("demo@fitness.ai", "password");
+            router.push(redirectAfterLogin(res.user.is_admin));
+        } catch (err) {
+            setError("Demo login failed. Please run the demo seeder first.");
+        } finally {
+            setBusy(null);
         }
     }
 
@@ -104,6 +124,7 @@ export default function LoginPage() {
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     required
+                    disabled={isBusy}
                 />
                 <Field
                     id="password"
@@ -114,11 +135,13 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    disabled={isBusy}
                     rightElement={
                         <button
                             type="button"
                             onClick={() => setShowPassword(!showPassword)}
-                            className="flex items-center"
+                            disabled={isBusy}
+                            className="flex items-center disabled:opacity-50"
                             tabIndex={-1}
                         >
                             {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -132,7 +155,8 @@ export default function LoginPage() {
                             type="checkbox"
                             checked={rememberMe}
                             onChange={(e) => setRememberMe(e.target.checked)}
-                            className="h-3.5 w-3.5 accent-orange"
+                            disabled={isBusy}
+                            className="h-3.5 w-3.5 accent-orange disabled:opacity-50"
                         />
                         Remember me
                     </label>
@@ -144,8 +168,8 @@ export default function LoginPage() {
                     </Link>
                 </div>
 
-                <ButtonPrimary type="submit" disabled={loading}>
-                    {loading ? "Signing in..." : "Log in"}
+                <ButtonPrimary type="submit" disabled={isBusy}>
+                    {busy === "signin" ? "Signing in..." : "Log in"}
                 </ButtonPrimary>
             </form>
 
@@ -155,9 +179,27 @@ export default function LoginPage() {
                 <div className="h-px flex-1 bg-line" />
             </div>
 
-            <ButtonSecondary type="button" disabled={loading} onClick={handleAdminLogin}>
-                Login as Admin
-            </ButtonSecondary>
+            <div className="flex gap-2">
+                <ButtonSecondary type="button" disabled={isBusy} onClick={handleAdminLogin}>
+                    {busy === "admin" ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" /> Logging in...
+                        </span>
+                    ) : (
+                        "Login as Admin"
+                    )}
+                </ButtonSecondary>
+
+                <ButtonSecondary type="button" disabled={isBusy} onClick={handleDemoLogin}>
+                    {busy === "demo" ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <Loader2 className="h-4 w-4 animate-spin" /> Logging in...
+                        </span>
+                    ) : (
+                        "Login as Demo User"
+                    )}
+                </ButtonSecondary>
+            </div>
 
             {/* <Divider text="or continue with" />
             <SocialRow /> */}
