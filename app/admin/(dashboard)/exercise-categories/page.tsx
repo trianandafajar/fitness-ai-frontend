@@ -5,6 +5,7 @@ import { adminService } from "@/services/admin.service";
 import type { ExerciseCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
 import Pagination from "@/components/ui/Pagination";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 import { Plus, Pencil, Trash2, X, Loader2, Search } from "lucide-react";
 
 interface CategoryForm {
@@ -28,6 +29,7 @@ export default function AdminExerciseCategoriesPage() {
   const [pagination, setPagination] = useState({ lastPage: 1, total: 0, from: 0, to: 0 });
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
+  const confirm = useConfirm();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -93,7 +95,13 @@ export default function AdminExerciseCategoriesPage() {
 
   async function handleDelete(id: number, name: string) {
     if (deletingId !== null) return;
-    if (!confirm(`Delete category "${name}"?`)) return;
+
+    const confirmed = await confirm({
+      title: "Delete Category?",
+      description: `"${name}" will be permanently deleted. This action cannot be undone.`,
+      confirmText: "Delete",
+    });
+    if (!confirmed) return;
 
     setDeletingId(id);
     try {

@@ -5,6 +5,7 @@ import { adminService } from "@/services/admin.service";
 import type { AdminFood, FoodCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
 import Pagination from "@/components/ui/Pagination";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 import { Plus, Pencil, Trash2, X, ImageIcon, Loader2, Search, ChevronDown } from "lucide-react";
 
 interface FoodForm {
@@ -49,6 +50,7 @@ export default function AdminFoodsPage() {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const confirm = useConfirm();
 
   const loadCategories = useCallback(async () => {
     try {
@@ -175,7 +177,13 @@ export default function AdminFoodsPage() {
 
   async function handleDelete(id: number, name: string) {
     if (deletingId !== null) return;
-    if (!confirm(`Delete "${name}"?`)) return;
+
+    const confirmed = await confirm({
+      title: "Delete Food?",
+      description: `"${name}" will be permanently deleted. This action cannot be undone.`,
+      confirmText: "Delete",
+    });
+    if (!confirmed) return;
 
     setDeletingId(id);
     try {
@@ -454,8 +462,8 @@ export default function AdminFoodsPage() {
                     onDragLeave={() => setDragging(false)}
                     onDrop={handleDrop}
                     className={`flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed py-8 text-sm transition ${dragging
-                        ? "border-orange bg-orange/5 text-orange-deep"
-                        : "border-line text-ink-soft hover:border-orange/50 hover:text-orange-deep"
+                      ? "border-orange bg-orange/5 text-orange-deep"
+                      : "border-line text-ink-soft hover:border-orange/50 hover:text-orange-deep"
                       }`}
                   >
                     <ImageIcon size={20} />

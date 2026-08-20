@@ -5,6 +5,7 @@ import { adminService } from "@/services/admin.service";
 import type { AdminExercise, ExerciseCategory } from "@/types/admin";
 import { toast } from "@/components/ui/Toast";
 import Pagination from "@/components/ui/Pagination";
+import { useConfirm } from "@/components/ui/ConfirmDrawer";
 import { Plus, Pencil, Trash2, X, ImageIcon, Loader2, Search, ChevronDown } from "lucide-react";
 
 interface ExerciseForm {
@@ -46,6 +47,7 @@ export default function AdminExercisesPage() {
   const [search, setSearch] = useState("");
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const confirm = useConfirm();
 
   const loadCategories = useCallback(async () => {
     try {
@@ -178,7 +180,13 @@ export default function AdminExercisesPage() {
 
   async function handleDelete(id: number, name: string) {
     if (deletingId !== null) return;
-    if (!confirm(`Delete "${name}"?`)) return;
+
+    const confirmed = await confirm({
+      title: "Delete Exercise?",
+      description: `"${name}" will be permanently deleted. This action cannot be undone.`,
+      confirmText: "Delete",
+    });
+    if (!confirmed) return;
 
     setDeletingId(id);
     try {
