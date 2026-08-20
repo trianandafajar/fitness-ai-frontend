@@ -15,6 +15,14 @@ interface CategoryForm {
 
 const EMPTY_FORM: CategoryForm = { name: "", slug: "" };
 
+function slugify(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 const PER_PAGE = 15;
 
 export default function AdminFoodCategoriesPage() {
@@ -23,6 +31,7 @@ export default function AdminFoodCategoriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<CategoryForm>(EMPTY_FORM);
+  const [slugTouched, setSlugTouched] = useState(false);
   const [saving, setSaving] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [page, setPage] = useState(1);
@@ -64,12 +73,14 @@ export default function AdminFoodCategoriesPage() {
   function openAdd() {
     setEditingId(null);
     setForm(EMPTY_FORM);
+    setSlugTouched(false);
     setShowForm(true);
   }
 
   function openEdit(cat: FoodCategory) {
     setEditingId(cat.id);
     setForm({ name: cat.name, slug: cat.slug });
+    setSlugTouched(cat.slug !== slugify(cat.name));
     setShowForm(true);
   }
 
@@ -234,7 +245,10 @@ export default function AdminFoodCategoriesPage() {
                 <label className="mb-1.5 block text-[13px] font-semibold text-ink">Name</label>
                 <input
                   value={form.name}
-                  onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                  onChange={(e) => {
+                    const name = e.target.value;
+                    setForm((f) => ({ ...f, name, slug: slugTouched ? f.slug : slugify(name) }));
+                  }}
                   className={inputClass}
                   required
                 />
@@ -243,7 +257,10 @@ export default function AdminFoodCategoriesPage() {
                 <label className="mb-1.5 block text-[13px] font-semibold text-ink">Slug</label>
                 <input
                   value={form.slug}
-                  onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+                  onChange={(e) => {
+                    setSlugTouched(true);
+                    setForm((f) => ({ ...f, slug: e.target.value }));
+                  }}
                   className={inputClass}
                   required
                 />
