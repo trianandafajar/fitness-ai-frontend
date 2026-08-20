@@ -203,11 +203,11 @@ export default function AdminExercisesPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="font-display text-xl font-bold">Exercises</h1>
         <button
           onClick={openAdd}
-          className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-deep"
+          className="flex w-full items-center justify-center gap-1.5 whitespace-nowrap rounded-xl bg-orange px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-deep sm:w-auto"
         >
           <Plus size={16} />
           Add Exercise
@@ -235,11 +235,11 @@ export default function AdminExercisesPage() {
             </button>
           )}
         </div>
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <select
             value={categoryId}
             onChange={(e) => { setCategoryId(e.target.value); setPage(1); }}
-            className="appearance-none rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-3 pr-9 text-sm outline-none transition focus:border-orange"
+            className="w-full appearance-none rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-3 pr-9 text-sm outline-none transition focus:border-orange"
           >
             <option value="">All Categories</option>
             {categories.map((c) => (
@@ -264,7 +264,7 @@ export default function AdminExercisesPage() {
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+          <div className="hidden overflow-x-auto rounded-2xl border border-line bg-white lg:block">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="border-b border-line bg-surface text-[11px] uppercase tracking-wide text-ink-soft">
@@ -321,6 +321,53 @@ export default function AdminExercisesPage() {
               </tbody>
             </table>
           </div>
+
+          <div className="space-y-2 lg:hidden">
+            {exercises.map((ex) => (
+              <div key={ex.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3">
+                {ex.image_url ? (
+                  <img src={ex.image_url} alt={ex.name} className="h-12 w-12 shrink-0 rounded-xl object-cover" />
+                ) : (
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-surface">
+                    <ImageIcon size={18} className="text-ink-faint" />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-[14px] font-semibold text-ink">{ex.name}</div>
+                  <div className="mt-0.5 text-[12px] text-ink-soft">
+                    {ex.category}
+                    {ex.equipment ? ` · ${ex.equipment}` : ""}
+                  </div>
+                  {ex.target_muscles && ex.target_muscles.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {ex.target_muscles.map((m) => (
+                        <span key={m} className="rounded-md bg-orange-tint px-1.5 py-0.5 text-[10px] font-medium text-orange-deep">
+                          {m}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex shrink-0 flex-col gap-1">
+                  <button
+                    onClick={() => openEdit(ex)}
+                    aria-label={`Edit ${ex.name}`}
+                    className="rounded-lg p-2 text-ink-soft hover:bg-surface hover:text-ink"
+                  >
+                    <Pencil size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDelete(ex.id, ex.name)}
+                    disabled={deletingId !== null}
+                    aria-label={`Delete ${ex.name}`}
+                    className="rounded-lg p-2 text-ink-soft hover:bg-danger/5 hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    {deletingId === ex.id ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
           <Pagination
             page={page}
             lastPage={pagination.lastPage}
@@ -334,7 +381,7 @@ export default function AdminExercisesPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-6 sm:rounded-2xl">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-4 sm:rounded-2xl sm:p-6">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="font-display text-lg font-bold">
                 {editingId ? "Edit Exercise" : "Add Exercise"}
@@ -355,7 +402,7 @@ export default function AdminExercisesPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div>
                   <label className="mb-1.5 block text-[13px] font-semibold text-ink">Category</label>
                   <select

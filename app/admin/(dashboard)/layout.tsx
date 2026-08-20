@@ -5,7 +5,14 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Modal, ModalFooter, ModalHeader, ModalTitle } from "@/components/ui/Modal";
-import { AlertTriangle } from "lucide-react";
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/Drawer";
+import { AlertTriangle, Menu, X } from "lucide-react";
 import { LayoutDashboard, Dumbbell, Apple, FolderOpen, LogOut, Loader2 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -23,6 +30,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const { logout } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
+  const [showMobileNav, setShowMobileNav] = useState(false);
 
   async function handleLogout() {
     setLoggingOut(true);
@@ -35,13 +43,41 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
     }
   }
 
+  const navLinks = (onClick?: () => void) =>
+    NAV_ITEMS.map((item) => {
+      const active = pathname === item.href;
+      return (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={onClick}
+          className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active
+            ? "bg-orange/10 text-orange-deep"
+            : "text-ink-soft hover:bg-surface hover:text-ink"
+            }`}
+        >
+          <item.icon size={18} />
+          {item.label}
+        </Link>
+      );
+    });
+
   return (
     <div className="min-h-screen bg-surface">
       <header className="sticky top-0 z-30 border-b border-line bg-white">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <Link href="/admin" className="font-display text-base font-bold text-ink">
-            FitnessAI <span className="text-orange">Admin</span>
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowMobileNav(true)}
+              aria-label="Open navigation menu"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-ink-soft transition hover:bg-surface hover:text-ink md:hidden"
+            >
+              <Menu size={20} />
+            </button>
+            <Link href="/admin" className="font-display text-base font-bold text-ink">
+              FitnessAI <span className="text-orange">Admin</span>
+            </Link>
+          </div>
           <button
             onClick={() => setShowLogoutModal(true)}
             className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:bg-surface hover:text-ink"
@@ -54,28 +90,32 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       <div className="mx-auto flex max-w-5xl gap-6 p-4">
         <aside className="sticky top-14 hidden h-fit w-48 shrink-0 md:block">
-          <nav className="space-y-1">
-            {NAV_ITEMS.map((item) => {
-              const active = pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active
-                      ? "bg-orange/10 text-orange-deep"
-                      : "text-ink-soft hover:bg-surface hover:text-ink"
-                    }`}
-                >
-                  <item.icon size={18} />
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
+          <nav className="space-y-1">{navLinks()}</nav>
         </aside>
 
         <main className="flex-1 py-2">{children}</main>
       </div>
+
+      <Drawer open={showMobileNav} onOpenChange={setShowMobileNav} side="left" dismissible>
+        <DrawerContent showHandle={false}>
+          <DrawerHeader className="flex-row items-center justify-between border-b border-line">
+            <DrawerTitle className="font-display text-base font-bold">
+              FitnessAI <span className="text-orange">Admin</span>
+            </DrawerTitle>
+            <button
+              type="button"
+              onClick={() => setShowMobileNav(false)}
+              aria-label="Close navigation menu"
+              className="rounded-lg p-1.5 text-ink-soft transition hover:bg-surface hover:text-ink"
+            >
+              <X size={18} />
+            </button>
+          </DrawerHeader>
+          <DrawerBody className="pt-4">
+            <nav className="space-y-1">{navLinks(() => setShowMobileNav(false))}</nav>
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
 
       <Modal open={showLogoutModal} onOpenChange={setShowLogoutModal}>
         <ModalHeader className="items-center text-center">
