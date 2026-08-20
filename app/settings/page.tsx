@@ -2,11 +2,15 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Save, ArrowLeft, User, Ruler, Dumbbell, Heart, Scale, Activity, Zap, Feather, Target, KeyRound, Loader2, Check } from "lucide-react";
+import { Save, ArrowLeft, User, Ruler, Dumbbell, Heart, Scale, Activity, Zap, Feather, Target, KeyRound, Loader2, Check, Trash2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { profileService } from "@/services/profile.service";
+import { authService } from "@/services/auth.service";
 import { toast } from "@/components/ui/Toast";
 import Field from "@/components/ui/Field";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerBody, DrawerFooter } from "@/components/ui/Drawer";
+import { removeToken } from "@/lib/cookies";
+import { authStore } from "@/stores/auth.store";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import Segmented from "@/components/ui/Segmented";
 import { Chip, ChipGroup } from "@/components/ui/Chip";
@@ -84,6 +88,9 @@ export default function SettingsPage() {
   const [emailBusy, setEmailBusy] = useState(false);
   const [cooldown, setCooldown] = useState(0);
   const cooldownTimer = useRef<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
   const [form, setForm] = useState<FormData>({
     name: "", email: "", date_of_birth: "", gender: "", height_cm: "", weight_kg: "",
     fitness_goal: "", activity_level: "", goal_weight_kg: "", dietary_preferences: [],
@@ -236,6 +243,30 @@ export default function SettingsPage() {
       setError(msg);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleDeleteAccount() {
+    if (deleting) return;
+
+    if (!deletePassword.trim()) {
+      toast.error("Enter your password to continue");
+      return;
+    }
+
+    setDeleting(true);
+    try {
+      await authService.deleteAccount(deletePassword.trim());
+      removeToken();
+      authStore.reset();
+      toast.success("Account deleted");
+      router.replace("/login");
+    } catch (e: unknown) {
+      const resp = e as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } };
+      const msg = resp?.response?.data?.errors?.password?.[0] ?? resp?.response?.data?.message ?? "Failed to delete account";
+      toast.error("Failed to delete account", { description: msg });
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -502,7 +533,78 @@ export default function SettingsPage() {
             )}
           </ButtonPrimary>
         </div>
+
+        {/* Danger Zone */}
+        <section className="rounded-2xl border border-danger/30 bg-white p-5">
+          <div className="mb-2 flex items-center gap-2">
+            <Trash2 className="h-5 w-5 text-danger" />
+            <h2 className="font-display text-base font-bold text-ink">Danger Zone</h2>
+          </div>
+          <p className="mb-4 text-[13.5px] leading-5 text-ink-soft">
+            Deleting your account will permanently remove your profile, schedules, logs, and all associated data. This action cannot be undone.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setDeletePassword("");
+              setDeleteOpen(true);
+            }}
+            className="flex items-center justify-center gap-1.5 rounded-[10px] bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600"
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete Account
+          </button>
+        </section>
       </div>
+
+      <Drawer open={deleteOpen} onOpenChange={setDeleteOpen} side="bottom">
+        <DrawerContent>
+          <DrawerHeader className="items-center px-5 pb-4 pt-3 text-center">
+            <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+              <Trash2 size={24} />
+            </div>
+
+            <DrawerTitle className="font-display text-xl">Delete Account?</DrawerTitle>
+
+            <p className="max-w-sm text-sm leading-6 text-ink-soft">
+              This will permanently delete your account and all associated data. Enter your password to confirm.
+            </p>
+          </DrawerHeader>
+
+          <DrawerBody>
+            <Field
+              id="delete-password"
+              label="Password"
+              type="password"
+              autoComplete="current-password"
+              value={deletePassword}
+              onChange={(e) => setDeletePassword(e.target.value)}
+              placeholder="Enter your current password"
+            />
+          </DrawerBody>
+
+          <DrawerFooter>
+            <div className="grid grid-cols-2 gap-2.5">
+              <ButtonSecondary
+                type="button"
+                onClick={() => setDeleteOpen(false)}
+                className="w-full py-3 text-sm"
+              >
+                Cancel
+              </ButtonSecondary>
+
+              <button
+                type="button"
+                onClick={() => void handleDeleteAccount()}
+                disabled={deleting}
+                className="flex w-full items-center justify-center rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-50"
+              >
+                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+              </button>
+            </div>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </>
   );
 }

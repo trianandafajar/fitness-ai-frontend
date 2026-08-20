@@ -64,4 +64,11 @@ export const authService = {
     const { data } = await api.post<LogoutResponse>("/auth/logout");
     return data;
   },
+
+  async deleteAccount(password: string): Promise<MessageResponse> {
+    const { data } = await api.delete<MessageResponse>("/auth/account", {
+      data: { password },
+    });
+    return data;
+  },
 };
