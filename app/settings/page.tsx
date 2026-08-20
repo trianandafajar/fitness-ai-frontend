@@ -143,6 +143,19 @@ export default function SettingsPage() {
     return () => clearCooldownTimer();
   }, [clearCooldownTimer]);
 
+  useEffect(() => {
+    if (!user || emailMode !== "idle") return;
+    profileService
+      .getEmailChangeStatus()
+      .then((status) => {
+        if (!status.pending) return;
+        setNewEmail(status.new_email ?? "");
+        setEmailMode("verify");
+        startCooldown(status.resend_after ?? 0);
+      })
+      .catch(() => {});
+  }, [user, emailMode, startCooldown]);
+
   const handleStartEmailChange = useCallback(async () => {
     const value = newEmail.trim();
     if (!value) {
@@ -159,8 +172,13 @@ export default function SettingsPage() {
       startCooldown(res.resend_after ?? 60);
       toast.success("Verification code sent", { description: `Check ${value} for a 6-digit code.` });
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } })?.response?.data;
+      const resp = err as { response?: { data?: { message?: string; errors?: Record<string, string[]>; retry_after?: number } } };
+      const msg = resp?.response?.data;
       const desc = msg?.errors?.new_email?.[0] ?? msg?.message ?? "Could not send the code.";
+      if (typeof msg?.retry_after === "number") {
+        setEmailMode("verify");
+        startCooldown(msg.retry_after);
+      }
       toast.error("Failed to send code", { description: desc });
     } finally {
       setEmailBusy(false);
