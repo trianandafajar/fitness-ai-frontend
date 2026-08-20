@@ -205,7 +205,7 @@ export default function AdminExercisesPage() {
   }
 
   const inputClass =
-    "w-full rounded-xl border-[1.5px] border-line bg-surface px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-orange focus:bg-white";
+    "w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white";
 
   const showImagePreview = preview ?? editingImage;
 
@@ -492,7 +492,7 @@ export default function AdminExercisesPage() {
                     onChange={(e) => setMuscleInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMuscle(); } }}
                     placeholder="Type and press Enter"
-                    className="flex-1 rounded-xl border-[1.5px] border-line bg-surface px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-orange focus:bg-white"
+                    className="flex-1 rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white"
                   />
                   <button type="button" onClick={addMuscle} className="rounded-xl border border-line px-3 text-sm font-medium hover:bg-surface">
                     Add
@@ -518,7 +518,7 @@ export default function AdminExercisesPage() {
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                   rows={3}
-                  className="w-full rounded-xl border-[1.5px] border-line bg-surface px-3.5 py-3 text-[14.5px] text-ink outline-none focus:border-orange focus:bg-white resize-none"
+                  className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white resize-none"
                 />
               </div>
 
