@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { isAxiosError } from "axios";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Check } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { APP_NAME } from "@/lib/app-config";
 import AuthLayout from "@/components/auth/AuthLayout";
@@ -39,6 +39,7 @@ export default function RegisterPage() {
     }
 
     const strength = getPasswordStrength(password);
+    const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -155,6 +156,17 @@ export default function RegisterPage() {
                         </button>
                     }
                 />
+                {confirmPassword.length > 0 && (
+                    <p className={`-mt-2.5 mb-4.5 flex items-center gap-1.5 text-[12.5px] font-medium ${passwordsMatch ? "text-green-600" : "text-danger"}`}>
+                        {passwordsMatch ? (
+                            <>
+                                <Check size={13} strokeWidth={3} /> Passwords match
+                            </>
+                        ) : (
+                            "Passwords don't match"
+                        )}
+                    </p>
+                )}
 
                 <div className="mb-5.5 flex items-start gap-2.25">
                     <input
@@ -177,7 +189,7 @@ export default function RegisterPage() {
                     </label>
                 </div>
 
-                <ButtonPrimary type="submit" disabled={!agreed || loading} className="disabled:cursor-not-allowed disabled:opacity-50">
+                <ButtonPrimary type="submit" disabled={!agreed || loading || (confirmPassword.length > 0 && !passwordsMatch)} className="disabled:cursor-not-allowed disabled:opacity-50">
                     {loading ? "Creating account..." : "Sign Up"}
                 </ButtonPrimary>
             </form>
