@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, X, Clock, Loader2 } from "lucide-react";
 import { ButtonPrimary, ButtonSecondary } from "@/components/ui/Button";
 import { mealScheduleService } from "@/services/meal-schedules.service";
 import type { MealSchedule } from "@/types/dashboard";
+import { toast } from "@/components/ui/Toast";
 import {
   Drawer,
   DrawerBody,
@@ -147,7 +148,10 @@ export default function MealSchedulesPage() {
 
   async function handleSave() {
     const items = form.items.filter((i) => i.food.trim());
-    if (items.length === 0) return;
+    if (items.length === 0) {
+      toast.error("Validation error", { description: "Please add at least one food item." });
+      return;
+    }
 
     const payload = {
       day_of_week: selectedDay,
@@ -164,13 +168,19 @@ export default function MealSchedulesPage() {
     try {
       if (editingId) {
         await mealScheduleService.update(editingId, payload);
+        toast.success("Meal schedule updated", { description: "Your changes have been saved." });
       } else {
         await mealScheduleService.create(payload);
+        toast.success("Meal schedule created", { description: "New meal schedule added successfully." });
       }
       setShowModal(false);
       setLoading(true);
       await fetchSchedules();
-    } catch { } finally {
+    } catch (err: unknown) {
+      const responseError = err as { response?: { data?: { message?: string } } };
+      const msg = responseError.response?.data?.message ?? "Failed to save meal schedule.";
+      toast.error("Error", { description: msg });
+    } finally {
       setSaving(false);
     }
   }
@@ -193,9 +203,14 @@ export default function MealSchedulesPage() {
 
     try {
       await mealScheduleService.remove(id);
+      toast.success("Meal schedule deleted", { description: "Schedule removed successfully." });
       setLoading(true);
       await fetchSchedules();
-    } catch { } finally {
+    } catch (err: unknown) {
+      const responseError = err as { response?: { data?: { message?: string } } };
+      const msg = responseError.response?.data?.message ?? "Failed to delete meal schedule.";
+      toast.error("Error", { description: msg });
+    } finally {
       setDeletingId(null);
     }
   }
