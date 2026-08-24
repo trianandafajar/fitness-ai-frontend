@@ -105,39 +105,42 @@ function OnboardingForm() {
   }
 
   async function handleStep1() {
-    clearError();
     try {
       await submitStep1(data);
       next();
-    } catch { }
+    } catch {
+      // Error already set by submitStep1, keep user on current step
+    }
   }
 
   async function handleStep2() {
-    clearError();
     try {
       await submitStep2(data);
       next();
-    } catch { }
+    } catch {
+      // Error already set by submitStep2, keep user on current step
+    }
   }
 
   async function handleStep3() {
-    clearError();
     try {
       await submitStep3(data);
       next();
-    } catch { }
+    } catch {
+      // Error already set by submitStep3, keep user on current step
+    }
   }
 
   async function handleStep4() {
-    clearError();
     try {
       await submitStep4(data);
       next();
-    } catch { }
+    } catch {
+      // Error already set by submitStep4, keep user on current step
+    }
   }
 
   async function handleStep5() {
-    clearError();
     setAnalyzing(true);
     try {
       await submitStep5();
@@ -148,7 +151,6 @@ function OnboardingForm() {
   }
 
   async function handleComplete() {
-    clearError();
     setCompleting(true);
     try {
       await completeOnboarding();
@@ -175,7 +177,7 @@ function OnboardingForm() {
         <StepBodyGoal data={data} update={update} onNext={handleStep4} onBack={back} loading={loading} error={error} />
       )}
       {step === 5 && (
-        <StepAnalysis aiResult={aiResult} loading={analyzing} completing={completing} onRetry={handleStep5} onComplete={handleComplete} />
+        <StepAnalysis aiResult={aiResult} loading={analyzing} completing={completing} error={error} onRetry={handleStep5} onComplete={handleComplete} />
       )}
     </PageContainer>
   );

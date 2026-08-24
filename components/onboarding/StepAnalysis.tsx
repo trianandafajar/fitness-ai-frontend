@@ -12,6 +12,7 @@ interface Props {
   aiResult: AiAnalysis | null;
   loading: boolean;
   completing: boolean;
+  error?: string;
   onRetry: () => void;
   onComplete: () => void;
 }
@@ -63,7 +64,7 @@ function findFoodSuggestion(items: EnrichedFood[], foodName: string) {
   return items.find((item) => item.food?.name.toLowerCase() === normalizedName);
 }
 
-export default function StepAnalysis({ aiResult, loading, completing, onRetry, onComplete }: Props) {
+export default function StepAnalysis({ aiResult, loading, completing, error, onRetry, onComplete }: Props) {
   const router = useRouter();
   const [mealSchedules, setMealSchedules] = useState<MealSchedule[]>([]);
 
@@ -307,6 +308,12 @@ export default function StepAnalysis({ aiResult, loading, completing, onRetry, o
       )}
       {typeof aiResult.meal_suggestions === "string" && aiResult.meal_suggestions && (
         <p className="mb-5 text-sm leading-relaxed text-ink-soft">{aiResult.meal_suggestions}</p>
+      )}
+
+      {error && (
+        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm font-medium text-red-600">
+          {error}
+        </div>
       )}
 
       <div className="mt-auto pt-1 mb-6">
