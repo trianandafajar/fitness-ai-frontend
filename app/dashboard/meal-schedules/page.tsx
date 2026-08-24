@@ -262,14 +262,18 @@ export default function MealSchedulesPage() {
         <div className="space-y-3">
           {MEAL_TIMES.map((mealTime) => {
             const schedule = schedulesForDay(selectedDay).find((s) => s.meal_time === mealTime);
+            const handleCardClick = () => schedule ? openEdit(schedule) : openAdd(selectedDay, mealTime);
+
             return (
               <div
                 key={mealTime}
-                onClick={() => schedule ? openEdit(schedule) : openAdd(selectedDay, mealTime)}
-                className="cursor-pointer rounded-2xl border border-line bg-white p-4 transition-colors hover:border-orange/50"
+                className="rounded-2xl border border-line bg-white transition-colors hover:border-orange/50 overflow-hidden"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
+                <div className="flex items-center justify-between p-4">
+                  <div
+                    onClick={handleCardClick}
+                    className="flex flex-1 items-center gap-2.5 cursor-pointer"
+                  >
                     <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-orange-tint text-sm font-bold text-orange-deep">
                       {MEAL_LABELS[mealTime][0]}
                     </div>
@@ -288,13 +292,13 @@ export default function MealSchedulesPage() {
                       <>
                         <span className="text-xs text-ink-faint">{schedule.items.length} item{schedule.items.length > 1 ? "s" : ""}</span>
                         <button
-                          onClick={(e) => { e.stopPropagation(); openEdit(schedule); }}
+                          onClick={() => openEdit(schedule)}
                           className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-ink"
                         >
                           <Pencil size={15} />
                         </button>
                         <button
-                          onClick={(e) => { e.stopPropagation(); handleDelete(schedule.id); }}
+                          onClick={() => handleDelete(schedule.id)}
                           disabled={deletingId !== null}
                           className="rounded-lg p-1.5 text-ink-soft hover:bg-surface hover:text-danger disabled:cursor-not-allowed disabled:opacity-40"
                         >
@@ -302,7 +306,10 @@ export default function MealSchedulesPage() {
                         </button>
                       </>
                     ) : (
-                      <div className="flex items-center gap-1 text-xs text-ink-faint">
+                      <div
+                        onClick={handleCardClick}
+                        className="flex items-center gap-1 text-xs text-ink-faint cursor-pointer"
+                      >
                         <Plus size={14} /> Add
                       </div>
                     )}
@@ -310,7 +317,10 @@ export default function MealSchedulesPage() {
                 </div>
 
                 {schedule && schedule.items.length > 0 && (
-                  <div className="mt-2.5 flex flex-wrap gap-1.5">
+                  <div
+                    onClick={handleCardClick}
+                    className="mx-4 mb-4 mt-0 flex flex-wrap gap-1.5 cursor-pointer"
+                  >
                     {schedule.items.map((item, i) => (
                       <span key={i} className="rounded-lg bg-surface px-2 py-0.5 text-xs text-ink">
                         {item.food}
@@ -429,17 +439,17 @@ export default function MealSchedulesPage() {
           </DrawerBody>
 
           <DrawerFooter className="flex-row">
-              <ButtonSecondary type="button" onClick={() => setShowModal(false)} className="flex-1 py-2.75 text-[13.5px]">
-                Cancel
-              </ButtonSecondary>
-              <ButtonPrimary
-                type="button"
-                onClick={handleSave}
-                disabled={saving || form.items.every((i) => !i.food.trim())}
-                className="flex-1 py-2.75 text-[13.5px]"
-              >
-                {saving ? "Saving..." : editingId ? "Update" : "Add Schedule"}
-              </ButtonPrimary>
+            <ButtonSecondary type="button" onClick={() => setShowModal(false)} className="flex-1 py-2.75 text-[13.5px]">
+              Cancel
+            </ButtonSecondary>
+            <ButtonPrimary
+              type="button"
+              onClick={handleSave}
+              disabled={saving || form.items.every((i) => !i.food.trim())}
+              className="flex-1 py-2.75 text-[13.5px]"
+            >
+              {saving ? "Saving..." : editingId ? "Update" : "Add Schedule"}
+            </ButtonPrimary>
           </DrawerFooter>
         </DrawerContent>
       </Drawer>
