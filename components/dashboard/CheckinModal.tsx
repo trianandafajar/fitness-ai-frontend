@@ -37,6 +37,7 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
 
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
+  const [locationError, setLocationError] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [cameraLoading, setCameraLoading] = useState(false);
@@ -200,31 +201,35 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
     }
   }, [latitude, longitude, photo, closeCamera, onSuccess]);
 
-  useEffect(() => {
-    if (!("geolocation" in navigator)) return;
+  const handleGeolocation = useCallback((position: GeolocationPosition) => {
+    setLatitude(position.coords.latitude.toFixed(6));
+    setLongitude(position.coords.longitude.toFixed(6));
+  }, []);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setLatitude(position.coords.latitude.toFixed(6));
-        setLongitude(position.coords.longitude.toFixed(6));
-      },
-      () => {},
-    );
+  const handleGeolocationError = useCallback((err: GeolocationPositionError) => {
+    setLocationError(err.code === 1 ? "Location permission denied" : "Unable to retrieve location");
   }, []);
 
   useEffect(() => {
-    const cameraStart = window.setTimeout(() => {
-      void handleOpenCamera();
-    }, 0);
+    if (!("geolocation" in navigator)) {
+      return;
+    }
 
+    navigator.geolocation.getCurrentPosition(handleGeolocation, handleGeolocationError, { timeout: 10000, maximumAge: 60000 });
+  }, [handleGeolocation, handleGeolocationError]);
+
+  const retryLocation = useCallback(() => {
+    setLocationError("");
+    navigator.geolocation.getCurrentPosition(handleGeolocation, handleGeolocationError, { timeout: 10000, maximumAge: 60000 });
+  }, [handleGeolocation, handleGeolocationError]);
+
+  useEffect(() => {
     return () => {
-      window.clearTimeout(cameraStart);
       cameraRequestRef.current += 1;
-
       stopCamera(streamRef.current);
       streamRef.current = null;
     };
-  }, [handleOpenCamera]);
+  }, []);
 
   useEffect(() => {
     if (!photoPreview) return;
@@ -379,10 +384,21 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
           </div>
 
           <div>
-            <label className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-ink">
-              <MapPin size={14} />
-              Location
-              <span className="font-normal text-ink-soft">(Optional)</span>
+            <label className="mb-1.5 flex items-center justify-between text-[13px] font-semibold text-ink">
+              <span className="flex items-center gap-1.5">
+                <MapPin size={14} />
+                Location
+                <span className="font-normal text-ink-soft">(Optional)</span>
+              </span>
+                {locationError && (
+                  <button
+                    type="button"
+                    onClick={retryLocation}
+                    className="text-[11px] font-normal text-orange-deep hover:underline"
+                  >
+                    Retry location
+                  </button>
+                )}
             </label>
 
             {latitude && longitude ? (
@@ -391,7 +407,7 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
               </div>
             ) : (
               <div className="rounded-xl bg-surface px-3.5 py-2.5 text-sm text-ink-soft">
-                Location unavailable
+                {locationError ? locationError : "Location unavailable"}
               </div>
             )}
           </div>
