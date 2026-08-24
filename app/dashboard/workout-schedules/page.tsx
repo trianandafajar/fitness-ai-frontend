@@ -320,6 +320,13 @@ export default function WorkoutSchedulesPage() {
                           onChange={(e) => updateExercise(ex.key, "reps", e.target.value)}
                           className="rounded-xl border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
+                        <textarea
+                          placeholder="Notes (optional)"
+                          value={ex.notes}
+                          onChange={(e) => updateExercise(ex.key, "notes", e.target.value)}
+                          rows={2}
+                          className="col-span-2 resize-none rounded-xl border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                        />
                       </div>
                     </div>
                   ))}
