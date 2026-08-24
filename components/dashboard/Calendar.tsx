@@ -316,23 +316,6 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
             <span className="calendar-loading-line block h-full w-1/3 rounded-full bg-orange" />
           </div>
         )}
-
-        <style>{`
-          .fitness-calendar .calendar-loading-line {
-            animation: calendar-loading-line 1.2s ease-in-out infinite;
-          }
-          @keyframes calendar-loading-line {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(330%); }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .fitness-calendar .calendar-loading-line {
-              animation: none;
-              opacity: 0.7;
-              transform: translateX(0);
-            }
-          }
-        `}</style>
       </div>
     </>
   );
