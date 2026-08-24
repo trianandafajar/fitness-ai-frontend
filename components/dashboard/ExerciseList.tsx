@@ -26,35 +26,49 @@ export default function ExerciseList({ exercises, scheduleId }: ExerciseListProp
 
   return (
     <div className="space-y-2">
-      {exercises.map((ex, i) => (
-        <Link
-          key={i}
-          href={scheduleId != null ? `/dashboard/exercises/${scheduleId}/${i}` : "/dashboard/workout-schedules"}
-          className="flex items-center gap-3 rounded-xl border border-line bg-white p-3 transition-colors hover:border-orange"
-        >
-          {ex.image_url || ex.image ? (
-            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
-              <img
-                src={ex.image_url ?? ex.image ?? ""}
-                alt={ex.name}
-                className="relative z-10 h-full w-full bg-white object-cover"
-                loading="lazy"
-                onError={(event) => { event.currentTarget.style.display = "none"; }}
-              />
-              <Dumbbell className="absolute inset-0 z-0 m-auto h-5 w-5 text-orange-deep" />
+      {exercises.map((ex, i) => {
+        const content = (
+          <>
+            {ex.image_url || ex.image ? (
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
+                <img
+                  src={ex.image_url ?? ex.image ?? ""}
+                  alt={ex.name}
+                  className="relative z-10 h-full w-full bg-white object-cover"
+                  loading="lazy"
+                  onError={(event) => { event.currentTarget.style.display = "none"; }}
+                />
+                <Dumbbell className="absolute inset-0 z-0 m-auto h-5 w-5 text-orange-deep" />
+              </div>
+            ) : (
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
+                <Dumbbell className="h-5 w-5 text-orange-deep" />
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="text-[13.5px] font-semibold text-ink">{ex.name}</div>
+              <div className="font-mono text-[12px] text-ink-soft">{formatMeta(ex)}</div>
             </div>
-          ) : (
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-orange-tint">
-              <Dumbbell className="h-5 w-5 text-orange-deep" />
-            </div>
-          )}
-          <div className="min-w-0 flex-1">
-            <div className="text-[13.5px] font-semibold text-ink">{ex.name}</div>
-            <div className="font-mono text-[12px] text-ink-soft">{formatMeta(ex)}</div>
+            {scheduleId != null && <IconChevronRight className="h-4 w-4 shrink-0 text-ink-faint" />}
+          </>
+        );
+
+        const rowClass = "flex items-center gap-3 rounded-xl border border-line bg-white p-3" + (scheduleId != null ? " transition-colors hover:border-orange" : "");
+
+        return scheduleId != null ? (
+          <Link
+            key={i}
+            href={`/dashboard/exercises/${scheduleId}/${i}`}
+            className={rowClass}
+          >
+            {content}
+          </Link>
+        ) : (
+          <div key={i} className={rowClass}>
+            {content}
           </div>
-          <IconChevronRight className="h-4 w-4 shrink-0 text-ink-faint" />
-        </Link>
-      ))}
+        );
+      })}
     </div>
   );
 }
