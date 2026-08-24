@@ -71,7 +71,7 @@ export const ConfirmProvider = ({ children }: ConfirmProviderProps) => {
       <Drawer open={open} onOpenChange={handleOpenChange} side="bottom">
         <DrawerContent>
           <DrawerHeader className="items-center px-6 pb-5 pt-3 text-center">
-            <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+            <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-danger/10 text-danger">
               <AlertTriangle size={24} />
             </div>
 
@@ -97,7 +97,7 @@ export const ConfirmProvider = ({ children }: ConfirmProviderProps) => {
               <button
                 type="button"
                 onClick={() => resolveConfirm(true)}
-                className="flex w-full items-center justify-center rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600"
+                className="flex w-full items-center justify-center rounded-xl bg-danger px-4 py-3 text-sm font-semibold text-white transition hover:bg-danger/90"
               >
                 {options.confirmText ?? "Delete"}
               </button>

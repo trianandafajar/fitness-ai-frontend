@@ -9,6 +9,8 @@
   --color-ink-faint: #9CA3AF;
   --color-line: #E5E7EB;
   --color-surface: #F9FAFB;
+  --color-danger: #EF4444;
+  --color-success: #22C55E;
   --font-display: var(--font-space-grotesk);
   --font-sans: var(--font-inter);
   --font-mono: var(--font-ibm-plex-mono);

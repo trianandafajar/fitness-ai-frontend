@@ -13,7 +13,7 @@ const PERIODS = [
 
 function statusColor(status: string) {
   const s = status?.toLowerCase() ?? "";
-  if (s.includes("excellent")) return "bg-green-100 text-green-700";
+  if (s.includes("excellent")) return "bg-success/10 text-success";
   if (s.includes("good")) return "bg-orange-tint text-orange-deep";
   if (s.includes("needs_attention")) return "bg-amber-100 text-amber-700";
   return "bg-surface text-ink-soft";

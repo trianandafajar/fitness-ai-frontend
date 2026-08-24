@@ -36,7 +36,7 @@ export default function AdminDashboardPage() {
     ? [
         { label: "Users", value: data.users_count, icon: Users, color: "bg-blue-50 text-blue-600" },
         { label: "Exercises", value: data.exercises_count, icon: Dumbbell, color: "bg-orange-tint text-orange-deep" },
-        { label: "Foods", value: data.foods_count, icon: Apple, color: "bg-green-50 text-green-600" },
+        { label: "Foods", value: data.foods_count, icon: Apple, color: "bg-success/10 text-success" },
       ]
     : [];
 
@@ -52,7 +52,7 @@ export default function AdminDashboardPage() {
         </div>
       ) : error ? (
         <div className="flex flex-col items-center rounded-2xl border border-line bg-white p-10 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger">
             <AlertTriangle size={24} />
           </div>
           <h2 className="mb-1 font-display text-lg font-bold text-ink">Failed to load dashboard</h2>

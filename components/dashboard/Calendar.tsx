@@ -169,7 +169,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
 
     if (day?.status === "streak") {
       classes.push(
-        "border-green-200 bg-green-200 text-green-800 hover:bg-green-100"
+        "border-success/30 bg-success/20 text-success hover:bg-success/10"
       );
     } else if (day?.status === "not_started") {
       classes.push(
@@ -206,7 +206,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
     if (day?.status === "not_started") {
       classes.push("text-orange-deep/35");
     } else if (day?.status === "streak") {
-      classes.push(" text-green-700");
+      classes.push(" text-success");
     } else if (day?.status === "failed") {
       classes.push(" text-white");
     } else {

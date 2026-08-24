@@ -12,9 +12,9 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_COLOR: Record<string, string> = {
-  verified: "bg-green-100 text-green-700",
+  verified: "bg-success/10 text-success",
   pending: "bg-amber-100 text-amber-700",
-  missed: "bg-red-100 text-red-600",
+  missed: "bg-danger/10 text-danger",
 };
 
 export default function AttendancesPage() {

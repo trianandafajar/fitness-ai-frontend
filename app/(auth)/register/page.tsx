@@ -33,8 +33,8 @@ export default function RegisterPage() {
         const hasSpecial = /[^A-Za-z0-9]/.test(pw);
         const types = [hasUpper, hasLower, hasDigit, hasSpecial].filter(Boolean).length;
 
-        if (pw.length < 6) return { label: "Weak", level: 1, bar: "bg-red-500", text: "text-red-500" };
-        if (pw.length >= 8 && types >= 3) return { label: "Strong", level: 3, bar: "bg-green-500", text: "text-green-600" };
+        if (pw.length < 6) return { label: "Weak", level: 1, bar: "bg-danger", text: "text-danger" };
+        if (pw.length >= 8 && types >= 3) return { label: "Strong", level: 3, bar: "bg-success", text: "text-success" };
         return { label: "Medium", level: 2, bar: "bg-orange-500", text: "text-orange-600" };
     }
 
@@ -157,7 +157,7 @@ export default function RegisterPage() {
                     }
                 />
                 {confirmPassword.length > 0 && (
-                    <p className={`-mt-2.5 mb-4.5 flex items-center gap-1.5 text-[12.5px] font-medium ${passwordsMatch ? "text-green-600" : "text-danger"}`}>
+                    <p className={`-mt-2.5 mb-4.5 flex items-center gap-1.5 text-[12.5px] font-medium ${passwordsMatch ? "text-success" : "text-danger"}`}>
                         {passwordsMatch ? (
                             <>
                                 <Check size={13} strokeWidth={3} /> Passwords match

@@ -119,7 +119,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       <Modal open={showLogoutModal} onOpenChange={setShowLogoutModal}>
         <ModalHeader className="items-center text-center">
-          <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+          <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-danger/10 text-danger">
             <AlertTriangle size={24} />
           </div>
           <ModalTitle className="font-display text-xl">Logout?</ModalTitle>
@@ -140,7 +140,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               type="button"
               onClick={() => void handleLogout()}
               disabled={loggingOut}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-danger px-4 py-3 text-sm font-semibold text-white transition hover:bg-danger/90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loggingOut ? (
                 <Loader2 size={16} className="animate-spin" />

@@ -87,7 +87,7 @@ export default function TodayPlanCard({ schedule, attendanceToday, loading, onCh
 
         <div className="mt-4 flex gap-2.5">
           {hasAttended ? (
-            <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-50 py-2.75 text-[13.5px] font-semibold text-green-700">
+            <div className="flex w-full items-center justify-center gap-2 rounded-xl bg-success/10 py-2.75 text-[13.5px] font-semibold text-success">
               <CheckIcon />
               Checked in
             </div>

@@ -300,9 +300,9 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {success && (
-        <div className="mb-4 rounded-[10px] border border-green-500/30 bg-green-500/5 px-4 py-3 text-[13px] font-medium text-green-600">Profile updated successfully</div>
-      )}
+        {success && (
+          <div className="mb-4 rounded-[10px] border border-success/30 bg-success/10 px-4 py-3 text-[13px] font-medium text-success">Profile updated successfully</div>
+        )}
       {error && (
         <div className="mb-4 rounded-[10px] border border-danger/30 bg-danger/5 px-4 py-3 text-[13px] font-medium text-danger">{error}</div>
       )}
@@ -567,7 +567,7 @@ export default function SettingsPage() {
               setDeletePassword("");
               setDeleteOpen(true);
             }}
-            className="flex items-center justify-center gap-1.5 rounded-[10px] bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600"
+            className="flex items-center justify-center gap-1.5 rounded-[10px] bg-danger px-4 py-3 text-sm font-semibold text-white transition hover:bg-danger/90"
           >
             <Trash2 className="h-4 w-4" />
             Delete Account
@@ -578,7 +578,7 @@ export default function SettingsPage() {
       <Drawer open={deleteOpen} onOpenChange={setDeleteOpen} side="bottom">
         <DrawerContent>
           <DrawerHeader className="items-center px-5 pb-4 pt-3 text-center">
-            <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-red-50 text-red-500">
+            <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-danger/10 text-danger">
               <Trash2 size={24} />
             </div>
 
@@ -613,11 +613,11 @@ export default function SettingsPage() {
 
               <button
                 type="button"
-                onClick={() => void handleDeleteAccount()}
-                disabled={deleting}
-                className="flex w-full items-center justify-center rounded-xl bg-red-500 px-4 py-3 text-sm font-semibold text-white transition hover:bg-red-600 disabled:opacity-50"
+                onClick={handleDeleteAccount}
+                disabled={deleting || !deletePassword}
+                className="flex w-full items-center justify-center rounded-xl bg-danger px-4 py-3 text-sm font-semibold text-white transition hover:bg-danger/90 disabled:opacity-50"
               >
-                {deleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Delete"}
+                {deleting ? "Deleting..." : "Delete Account"}
               </button>
             </div>
           </DrawerFooter>

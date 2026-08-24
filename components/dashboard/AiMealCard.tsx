@@ -36,7 +36,7 @@ export default function AiMealCard({ item }: Props) {
               </span>
             )}
             {fd.category && (
-              <span className="rounded-md bg-green-50 px-2 py-0.5 text-[11px] font-medium text-green-600">
+              <span className="rounded-md bg-success/10 px-2 py-0.5 text-[11px] font-medium text-success">
                 {fd.category}
               </span>
             )}

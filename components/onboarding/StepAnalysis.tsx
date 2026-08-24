@@ -311,7 +311,7 @@ export default function StepAnalysis({ aiResult, loading, completing, error, onR
       )}
 
       {error && (
-        <div className="mb-4 rounded-lg bg-red-50 p-3 text-sm font-medium text-red-600">
+        <div className="mb-4 rounded-lg bg-danger/10 p-3 text-sm font-medium text-danger">
           {error}
         </div>
       )}
