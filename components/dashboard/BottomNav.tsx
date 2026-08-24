@@ -20,13 +20,14 @@ export default function BottomNav() {
               key={href}
               href={href}
               aria-label={label}
-              className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors ${
+              className={`flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 transition-colors ${
                 active
                   ? "bg-orange text-white"
                   : "text-ink-faint hover:text-ink-soft"
               }`}
             >
               <Icon className="h-5 w-5" />
+              <span className="text-[10px] font-medium leading-none">{label}</span>
             </Link>
           );
         })}
