@@ -144,13 +144,13 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
 
   const movePrevious = useCallback(() => {
     setLoading(true);
-    setViewStart(addDays(viewStart, -DAYS_PER_VIEW));
-  }, [viewStart]);
+    setViewStart((prev) => addDays(prev, -DAYS_PER_VIEW));
+  }, []);
 
   const moveNext = useCallback(() => {
     setLoading(true);
-    setViewStart(addDays(viewStart, DAYS_PER_VIEW));
-  }, [viewStart]);
+    setViewStart((prev) => addDays(prev, DAYS_PER_VIEW));
+  }, []);
 
   const goToToday = useCallback(() => {
     if (isTodayRange) return;
