@@ -123,7 +123,7 @@ function DayContent() {
   const dayLabel = dayOfWeek.charAt(0).toUpperCase() + dayOfWeek.slice(1);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 pb-32">
       <div className="flex items-center gap-3">
         <button
           onClick={() => router.push("/dashboard")}
@@ -226,7 +226,7 @@ function DayContent() {
           </div>
 
           {isToday && (
-            <div className="sticky bottom-24">
+            <div className="sticky bottom-24 z-20">
               {checkedIn ? (
                 <div className="flex items-center justify-center gap-2 rounded-2xl bg-green-50 py-3.5 text-sm font-semibold text-green-700">
                   <ClipboardCheck size={18} />
