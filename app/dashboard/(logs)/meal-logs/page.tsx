@@ -70,7 +70,7 @@ export default function MealLogsPage() {
     try {
       const res = await mealLogService.getToday();
       setData(res.data);
-      setLogs(res.data.logs ?? []);
+      setLogs(res.data?.logs ?? []);
     } catch { } finally {
       setLoading(false);
     }

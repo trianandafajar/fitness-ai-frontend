@@ -21,7 +21,7 @@ export default function ExerciseDetailPage({
     workoutScheduleService
       .getAll()
       .then((res) => {
-        const found = res.data.find(
+        const found = (res.data ?? []).find(
           (s: WorkoutSchedule) => s.id === Number(scheduleId),
         );
         setSchedule(found ?? null);

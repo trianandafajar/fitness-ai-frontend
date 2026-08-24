@@ -52,8 +52,8 @@ export default function DashboardPage() {
       attendanceService.getToday(),
     ]);
 
-    if (scheduleResult.status === "fulfilled") setSchedules(scheduleResult.value.data);
-    if (attendanceResult.status === "fulfilled") setAttendance(attendanceResult.value.data);
+    if (scheduleResult.status === "fulfilled") setSchedules(scheduleResult.value.data ?? []);
+    if (attendanceResult.status === "fulfilled") setAttendance(attendanceResult.value.data ?? null);
 
     setOverviewLoading(false);
   }, []);

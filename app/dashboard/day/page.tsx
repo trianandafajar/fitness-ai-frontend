@@ -88,7 +88,7 @@ function DayContent() {
     setLoading(true);
     try {
       const response = await daysService.get(rawDate);
-      const { workouts: nextWorkouts, meals: nextMeals, attendance: nextAttendance } = response.data.data;
+      const { workouts: nextWorkouts = [], meals: nextMeals = [], attendance: nextAttendance = null } = response.data.data ?? {};
 
       setWorkouts(nextWorkouts);
       setMeals(nextMeals);
