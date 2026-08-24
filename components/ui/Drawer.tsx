@@ -32,6 +32,22 @@ const DrawerContext = createContext<DrawerContextValue | null>(null);
 const cx = (...classes: Array<string | false | null | undefined>) =>
   classes.filter(Boolean).join(" ");
 
+let scrollLockCount = 0;
+
+const lockScroll = () => {
+  if (scrollLockCount === 0) {
+    document.body.style.overflow = "hidden";
+  }
+  scrollLockCount++;
+};
+
+const unlockScroll = () => {
+  scrollLockCount = Math.max(0, scrollLockCount - 1);
+  if (scrollLockCount === 0) {
+    document.body.style.overflow = "";
+  }
+};
+
 const useDrawer = () => {
   const context = useContext(DrawerContext);
 
@@ -172,7 +188,7 @@ export const DrawerContent = ({
       previousFocusRef.current =
         document.activeElement as HTMLElement;
 
-      document.body.style.overflow = "hidden";
+      lockScroll();
 
       firstFrame = requestAnimationFrame(() => {
         secondFrame = requestAnimationFrame(() => {
@@ -184,7 +200,7 @@ export const DrawerContent = ({
       setVisible(false);
       setDragOffset(0);
 
-      document.body.style.overflow = "";
+      unlockScroll();
 
       timeout = window.setTimeout(() => {
         setPresent(false);
@@ -201,7 +217,7 @@ export const DrawerContent = ({
 
   useEffect(() => {
     return () => {
-      document.body.style.overflow = "";
+      unlockScroll();
     };
   }, []);
 
