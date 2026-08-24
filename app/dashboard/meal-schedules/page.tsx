@@ -99,11 +99,7 @@ export default function MealSchedulesPage() {
   }, []);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => {
-      void fetchSchedules();
-    }, 0);
-
-    return () => window.clearTimeout(initialLoad);
+    void fetchSchedules();
   }, [fetchSchedules]);
 
   function schedulesForDay(day: string) {

@@ -62,11 +62,7 @@ export default function WorkoutSchedulesPage() {
   }, []);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => {
-      void fetchSchedules();
-    }, 0);
-
-    return () => window.clearTimeout(initialLoad);
+    void fetchSchedules();
   }, [fetchSchedules]);
 
   const today = new Date();

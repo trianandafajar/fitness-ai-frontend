@@ -99,11 +99,7 @@ function DayContent() {
   }, [rawDate]);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => {
-      void fetchData();
-    }, 0);
-
-    return () => window.clearTimeout(initialLoad);
+    void fetchData();
   }, [fetchData]);
 
   function handleCheckin() {

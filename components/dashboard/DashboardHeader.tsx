@@ -46,11 +46,7 @@ export default function DashboardHeader() {
   }, []);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => {
-      void fetchStreak();
-    }, 0);
-
-    return () => window.clearTimeout(initialLoad);
+    void fetchStreak();
   }, [fetchStreak]);
 
   useEffect(() => {

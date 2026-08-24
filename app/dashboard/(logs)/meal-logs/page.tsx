@@ -77,11 +77,7 @@ export default function MealLogsPage() {
   }, []);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => {
-      void fetchLogs();
-    }, 0);
-
-    return () => window.clearTimeout(initialLoad);
+    void fetchLogs();
   }, [fetchLogs]);
   function openAdd() {
     setEditingId(null);

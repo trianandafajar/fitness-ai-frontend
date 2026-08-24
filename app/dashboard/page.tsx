@@ -73,18 +73,9 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
-    const initialLoad = window.setTimeout(() => {
-      void loadOverview(false);
-      void loadSummary(false);
-      // void loadRecommendations(false);
-    }, 0);
-
-    return () => window.clearTimeout(initialLoad);
-  }, [
-    loadOverview, 
-    // loadRecommendations, 
-    loadSummary
-  ]);
+    void loadOverview(false);
+    void loadSummary(false);
+  }, [loadOverview, loadSummary]);
 
   const handleCheckin = useCallback((schedule: WorkoutSchedule) => {
     setSelectedSchedule(schedule);
