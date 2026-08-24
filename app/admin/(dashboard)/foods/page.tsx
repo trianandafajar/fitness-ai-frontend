@@ -189,8 +189,12 @@ export default function AdminFoodsPage() {
     try {
       await adminService.deleteFood(id);
       toast.success("Food deleted");
-      if (foods.length === 1 && page > 1) {
-        setPage(page - 1);
+      
+      const newTotal = pagination.total - 1;
+      const lastPageAfterDelete = Math.max(1, Math.ceil(newTotal / PER_PAGE));
+      
+      if (page > lastPageAfterDelete) {
+        setPage(lastPageAfterDelete);
       } else {
         load();
       }
