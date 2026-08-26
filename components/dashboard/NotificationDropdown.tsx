@@ -71,54 +71,55 @@ export default function NotificationDropdown({
         {notifications.length === 0 ? (
           <div className="px-4 py-8 text-center text-sm text-ink-soft">No notifications yet.</div>
         ) : (
-          notifications.slice(0, 5).map((n) => (
-              <Link
-                href={`/dashboard/schedule${n.data.schedule_id ? `?schedule=${n.data.schedule_id}` : ""}`}
-                onClick={() => {
-                  if (!n.read_at) onMarkAsRead(n.id);
-                  onClose();
-                }}
-                className={`flex w-full gap-1 transition-colors hover:bg-surface ${
-                  !n.read_at ? "bg-orange-tint/25" : ""
-                }`}
-              >
-                <div
-                  className="flex min-w-0 flex-1 gap-3 px-4 py-3 text-left cursor-pointer"
-                >
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-tint text-orange-deep">
-                    <Dumbbell size={14} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-[13px] font-semibold text-ink">{n.data.message}</div>
-                    <div className="mt-0.5 text-[11px] text-ink-soft">
-                      {getNotificationDescription(n)}
-                    </div>
-                    {n.data.scheduled_time && (
-                      <div className="mt-1 flex items-center gap-1 text-xs text-ink-soft">
-                        <Clock size={11} /> {n.data.scheduled_time.slice(0, 5)}
-                        {n.data.day_of_week && ` - ${n.data.day_of_week}`}
-                      </div>
-                    )}
-                    <div className="mt-0.5 text-[10px] text-ink-faint">{formatTimeAgo(n.created_at)}</div>
-                  </div>
-                  {!n.read_at && (
-                    <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange" />
-                  )}
-                </div>
-              </Link>
-              <button
-                type="button"
-                aria-label="Dismiss notification"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  void onDelete(n.id);
-                }}
-                disabled={busyId === n.id}
-                className="self-start mt-2 mr-2 rounded-lg p-1.5 text-ink-faint transition hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                {busyId === n.id ? <Loader2 size={14} className="animate-spin" /> : <X size={14} />}
-              </button>
-          ))
+           notifications.slice(0, 5).map((n) => (
+             <div
+               key={n.id}
+               className={`flex w-full gap-1 transition-colors hover:bg-surface ${
+                 !n.read_at ? "bg-orange-tint/20" : ""
+               }`}
+             >
+               <Link
+                 href={`/dashboard/schedule${n.data.schedule_id ? `?schedule=${n.data.schedule_id}` : ""}`}
+                 onClick={() => {
+                   if (!n.read_at) onMarkAsRead(n.id);
+                   onClose();
+                 }}
+                 className="flex min-w-0 flex-1 gap-3 px-4 py-3 text-left disabled:cursor-not-allowed"
+               >
+                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-tint text-orange-deep">
+                   <Dumbbell size={14} />
+                 </div>
+                 <div className="flex-1 min-w-0">
+                   <div className="text-[13px] font-semibold text-ink">{n.data.message}</div>
+                   <div className="mt-0.5 text-[11px] text-ink-soft">
+                     {getNotificationDescription(n)}
+                   </div>
+                   {n.data.scheduled_time && (
+                     <div className="mt-1 flex items-center gap-1 text-xs text-ink-soft">
+                       <Clock size={11} /> {n.data.scheduled_time.slice(0, 5)}
+                       {n.data.day_of_week && ` - ${n.data.day_of_week}`}
+                     </div>
+                   )}
+                   <div className="mt-0.5 text-[10px] text-ink-faint">{formatTimeAgo(n.created_at)}</div>
+                 </div>
+                 {!n.read_at && (
+                   <div className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-orange" />
+                 )}
+               </Link>
+               <button
+                 type="button"
+                 aria-label="Dismiss notification"
+                 onClick={(e) => {
+                   e.stopPropagation();
+                   void onDelete(n.id);
+                 }}
+                 disabled={busyId === n.id}
+                 className="self-start mt-2 mr-2 rounded-lg p-1.5 text-ink-faint transition hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
+               >
+                 {busyId === n.id ? <Loader2 size={14} className="animate-spin" /> : <X size={14} />}
+               </button>
+             </div>
+           ))
         )}
       </div>
 
