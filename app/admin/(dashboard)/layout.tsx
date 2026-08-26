@@ -12,11 +12,12 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/Drawer";
-import { AlertTriangle, Menu, X } from "lucide-react";
+import { AlertTriangle, Menu, Users, X } from "lucide-react";
 import { LayoutDashboard, Dumbbell, Apple, FolderOpen, LogOut, Loader2 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/users-management", label: "Users Management", icon: Users },
   { href: "/admin/exercise-categories", label: "Ex. Categories", icon: FolderOpen },
   { href: "/admin/food-categories", label: "Food Categories", icon: FolderOpen },
   { href: "/admin/exercises", label: "Exercises", icon: Dumbbell },

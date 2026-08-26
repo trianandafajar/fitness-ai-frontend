@@ -40,6 +40,20 @@ export interface AdminFood {
   serving_unit: string | null;
 }
 
+export interface AdminUser {
+  id: number;
+  name: string;
+  email: string;
+  is_admin: boolean;
+  email_verified_at: string | null;
+  created_at: string;
+  profile: {
+    height_cm: number | null;
+    weight_kg: number | null;
+    fitness_goal: string | null;
+  } | null;
+}
+
 export interface ExerciseCategory {
   id: number;
   name: string;

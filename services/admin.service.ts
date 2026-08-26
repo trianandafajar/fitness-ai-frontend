@@ -3,6 +3,7 @@ import type {
   AdminDashboardData,
   AdminExercise,
   AdminFood,
+  AdminUser,
   ExerciseCategory,
   FoodCategory,
   Paginated,
@@ -139,4 +140,26 @@ export const adminService = {
 
   deleteFoodCategory: (id: number) =>
     api.delete<{ message: string }>(`/admin/food-categories/${id}`),
+
+  // Users Management
+  getUsers: (
+    page = 1,
+    perPage = 15,
+    params: { search?: string; is_admin?: boolean; email_verified?: boolean } = {},
+  ) =>
+    api.get<{ data: Paginated<AdminUser> }>("/admin/users", {
+      params: { page, per_page: perPage, ...params },
+    }),
+
+  getUserDetail: (id: number) =>
+    api.get<{ data: AdminUser }>(`/admin/users/${id}`),
+
+  createUser: (data: Record<string, unknown>) =>
+    api.post<{ message: string; data: AdminUser }>("/admin/users", data),
+
+  updateUser: (id: number, data: Record<string, unknown>) =>
+    api.put<{ message: string; data: AdminUser }>(`/admin/users/${id}`, data),
+
+  deleteUser: (id: number) =>
+    api.delete<{ message: string }>(`/admin/users/${id}`),
 };
