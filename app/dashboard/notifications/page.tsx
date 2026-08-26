@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Bell, Clock, Check, Dumbbell, Trash2, Loader2 } from "lucide-react";
 import { useDashboardNotifications } from "@/hooks/useDashboardNotifications";
 import { getNotificationDescription } from "@/components/dashboard/useNotifications";
@@ -63,10 +64,11 @@ export default function NotificationsPage() {
       ) : (
         <div className="space-y-2">
           {notifications.map((n) => (
-            <div
+            <Link
               key={n.id}
+              href={`/dashboard/schedule${n.data.schedule_id ? `?schedule=${n.data.schedule_id}` : ""}`}
               onClick={() => !n.read_at && busyId !== n.id && markAsRead(n.id)}
-              className={`rounded-2xl border border-line bg-white p-4 transition-colors ${
+              className={`block rounded-2xl border border-line bg-white p-4 transition-colors ${
                 !n.read_at
                   ? "cursor-pointer border-orange/30 bg-orange-tint/10 hover:bg-orange-tint/20"
                   : ""
@@ -99,6 +101,7 @@ export default function NotificationsPage() {
                       {n.read_at && (
                         <button
                           onClick={(e) => {
+                            e.preventDefault();
                             e.stopPropagation();
                             markAsRead(n.id);
                           }}
@@ -112,6 +115,7 @@ export default function NotificationsPage() {
                         type="button"
                         aria-label="Delete notification"
                         onClick={(e) => {
+                          e.preventDefault();
                           e.stopPropagation();
                           void removeNotification(n.id);
                         }}
@@ -146,7 +150,7 @@ export default function NotificationsPage() {
                   )}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}
