@@ -222,7 +222,7 @@ function DayContent() {
           </div>
 
           {isToday && (
-            <div className="sticky bottom-24 z-20 pb-32">
+            <div className="pb-32">
               {checkedIn ? (
                 <div className="flex items-center justify-center gap-2 rounded-2xl bg-success/10 py-3.5 text-sm font-semibold text-success">
                   <ClipboardCheck size={18} />
