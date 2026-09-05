@@ -55,17 +55,17 @@ export default function MobileHeroCard({ schedule, checkedIn, onCheckin }: Mobil
       <div className="relative z-5 mt-5 flex items-center justify-between">
         <div className="flex flex-wrap items-center gap-2">
           {schedule.scheduled_time && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-3 py-1 text-[11.5px] font-semibold backdrop-blur-sm">
-              <Timer className="h-3.5 w-3.5" />
-              <span>{timeLabel}</span>
-            </span>
+<span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-3 py-1 text-[11.5px] font-semibold backdrop-blur-sm">
+  <Timer className="h-3.5 w-3.5" />
+  <span>{timeLabel}</span>
+</span>
           )}
 
           {checkedIn && (
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-3 py-1 text-[11.5px] font-semibold backdrop-blur-sm">
-              <Check className="h-3.5 w-3.5" />
-              <span>Checked in</span>
-            </span>
+<span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-3 py-1 text-[11.5px] font-semibold backdrop-blur-sm">
+  <Check className="h-3.5 w-3.5" />
+  <span>Checked in</span>
+</span>
           )}
         </div>
         {!checkedIn && (

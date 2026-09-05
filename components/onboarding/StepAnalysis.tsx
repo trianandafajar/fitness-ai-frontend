@@ -161,7 +161,7 @@ export default function StepAnalysis({ aiResult, loading, completing, error, onR
 
       {/* Workout Plan banner */}
       {aiResult.workout_plan && (
-        <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-line bg-white p-3.5">
+        <div className="mb-5 flex items-center gap-2.5 rounded-xl border border-line bg-card p-3.5">
           <CalendarDays className="h-5 w-5 text-orange-deep" />
           <div>
             <div className="text-[11px] font-bold uppercase tracking-wide text-ink-soft">Workout Plan</div>
@@ -188,7 +188,7 @@ export default function StepAnalysis({ aiResult, loading, completing, error, onR
                   {items.map((item, i) => {
                     const ex = item.exercise;
                     return (
-                      <div key={`${day}-${ex?.id ?? item.text}-${i}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                      <div key={`${day}-${ex?.id ?? item.text}-${i}`} className="flex items-center gap-3 rounded-xl border border-line bg-card p-3">
                         {ex?.image_url || ex?.image ? (
                           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
                             <img src={ex.image_url ?? ex.image} alt={ex.name} className="relative z-10 h-full w-full bg-white object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />
@@ -267,7 +267,7 @@ export default function StepAnalysis({ aiResult, loading, completing, error, onR
                   </div>
                   <div className="space-y-2 border-l border-orange/20 pl-3">
                     {Array.from(foodMap.entries()).map(([foodName, { fd, badges }]) => (
-                      <div key={`${day}-${foodName}`} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                      <div key={`${day}-${foodName}`} className="flex items-center gap-3 rounded-xl border border-line bg-card p-3">
                         {fd?.image_url || fd?.image ? (
                           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
                             <img src={fd.image_url ?? fd.image} alt={fd.name} className="relative z-10 h-full w-full bg-white object-cover" loading="lazy" onError={(event) => { event.currentTarget.style.display = "none"; }} />

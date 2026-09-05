@@ -25,7 +25,7 @@ export default function AddChipInput({ onAdd, placeholder = "Add custom..." }: A
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && handleAdd()}
         placeholder={placeholder}
-        className="flex-1 rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-2.25 text-[13.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white"
+        className="flex-1 rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-2.25 text-[13.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card"
       />
       <button
         type="button"

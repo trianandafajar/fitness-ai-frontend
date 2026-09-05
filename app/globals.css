@@ -1,14 +1,16 @@
 @import "tailwindcss";
 
 @theme {
-  --color-orange: #FF5A1F;
-  --color-orange-deep: #D9440A;
-  --color-orange-tint: #FFF0EB;
+  --color-orange: #84CC16;
+  --color-orange-deep: #65A30D;
+  --color-orange-tint: #F7FEE7;
+  --color-accent: #F97316;
   --color-ink: #17181C;
   --color-ink-soft: #6B7280;
   --color-ink-faint: #9CA3AF;
   --color-line: #E5E7EB;
   --color-surface: #F9FAFB;
+  --color-card: #FFFFFF;
   --color-danger: #EF4444;
   --color-success: #22C55E;
   --font-display: var(--font-space-grotesk);

@@ -9,9 +9,9 @@ export default function AiExerciseCard({ item }: Props) {
   const ex = item.exercise;
 
   return (
-    <div className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3">
+    <div className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3">
       {ex?.image ? (
-        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white">
+        <div className="h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-card">
           <img
             src={ex.image}
             alt={ex.name}

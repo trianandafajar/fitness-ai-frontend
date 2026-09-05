@@ -81,7 +81,7 @@ export default function KpiHistoryPage() {
             onClick={() => setWeeks(p.weeks)}
             className={`rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors ${weeks === p.weeks
               ? "bg-orange text-white"
-              : "border border-line bg-white text-ink-soft hover:border-orange/50"
+              : "border border-line bg-card text-ink-soft hover:border-orange/50"
               }`}
           >
             {p.label}
@@ -107,21 +107,21 @@ export default function KpiHistoryPage() {
         <>
           {/* Summary Cards */}
           <div className="mb-5 grid grid-cols-3 gap-3">
-            <div className="rounded-2xl border border-line bg-white p-4 text-center">
+            <div className="rounded-2xl border border-line bg-card p-4 text-center">
               <div className="text-[11px] font-medium text-ink-soft">Latest Score</div>
               <div className="mt-1 font-display text-2xl font-bold text-ink">{latest?.overall_score ?? "—"}</div>
               <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${latest ? statusColor(latest.status) : ""}`}>
                 {latest ? statusLabel(latest.status) : "—"}
               </span>
             </div>
-            <div className="rounded-2xl border border-line bg-white p-4 text-center">
+            <div className="rounded-2xl border border-line bg-card p-4 text-center">
               <div className="text-[11px] font-medium text-ink-soft">Best Score</div>
               <div className="mt-1 font-display text-2xl font-bold text-ink">{bestRecord?.overall_score ?? "—"}</div>
               <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${bestRecord ? statusColor(bestRecord.status) : ""}`}>
                 {bestRecord ? statusLabel(bestRecord.status) : "—"}
               </span>
             </div>
-            <div className="rounded-2xl border border-line bg-white p-4 text-center">
+            <div className="rounded-2xl border border-line bg-card p-4 text-center">
               <div className="text-[11px] font-medium text-ink-soft">Average</div>
               <div className="mt-1 font-display text-2xl font-bold text-ink">{avgScore}</div>
               <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${statusColor(avgScore >= 85 ? "excellent" : avgScore >= 70 ? "good" : avgScore >= 50 ? "needs_attention" : "critical")}`}>
@@ -131,7 +131,7 @@ export default function KpiHistoryPage() {
           </div>
 
           {/* Bar Chart */}
-          <div className="mb-5 rounded-2xl border border-line bg-white p-5.5">
+          <div className="mb-5 rounded-2xl border border-line bg-card p-5.5">
             <div className="mb-4 text-[13px] font-bold uppercase tracking-wide text-ink-soft">Overall Score Trend</div>
             <div className="flex items-end gap-2" style={{ height: 160 }}>
               {allScores.map((r) => (
@@ -159,7 +159,7 @@ export default function KpiHistoryPage() {
           {/* Detail List */}
           <div className="space-y-2.5">
             {records.map((r) => (
-              <div key={r.id} className="rounded-2xl border border-line bg-white p-4">
+              <div key={r.id} className="rounded-2xl border border-line bg-card p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
                     <div className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold ${statusColor(r.status)}`}>

@@ -169,7 +169,7 @@ export default function WeightLogsPage() {
       ) : (
         <>
           {/* Latest Weight Card */}
-          <div className="mb-5 rounded-2xl border border-line bg-white p-5">
+          <div className="mb-5 rounded-2xl border border-line bg-card p-5">
             <div className="mb-1 text-xs font-medium text-ink-soft">Current Weight</div>
             <div className="flex items-end gap-3">
               <div className="font-display text-4xl font-bold text-ink">
@@ -208,7 +208,7 @@ export default function WeightLogsPage() {
               return (
                 <div
                   key={log.id}
-                  className="flex items-center gap-3 rounded-xl border border-line bg-white px-4 py-3"
+                  className="flex items-center gap-3 rounded-xl border border-line bg-card px-4 py-3"
                 >
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-tint text-sm font-bold text-orange-deep">
                     {log.weight_kg}
@@ -266,7 +266,7 @@ export default function WeightLogsPage() {
                   value={form.recorded_at}
                   disabled={!!editingId}
                   onChange={(e) => setForm((f) => ({ ...f, recorded_at: e.target.value }))}
-                  className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange disabled:cursor-not-allowed disabled:opacity-60"
                 />
                 {editingId && (
                   <p className="mt-1 text-xs text-ink-faint">Date cannot be changed (weekly entry).</p>
@@ -286,7 +286,7 @@ export default function WeightLogsPage() {
                   value={form.weight_kg}
                   onChange={(e) => setForm((f) => ({ ...f, weight_kg: e.target.value }))}
                   placeholder="e.g. 68.5"
-                  className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                  className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                 />
               </div>
 
@@ -297,7 +297,7 @@ export default function WeightLogsPage() {
                   onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))}
                   placeholder="Optional notes..."
                   rows={3}
-                  className="w-full resize-none rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                  className="w-full resize-none rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                 />
               </div>
             </div>

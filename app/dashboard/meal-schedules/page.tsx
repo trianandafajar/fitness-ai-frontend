@@ -239,7 +239,7 @@ export default function MealSchedulesPage() {
               onClick={() => handleDayClick(day)}
               className={`shrink-0 rounded-xl px-3.5 py-2 text-sm font-semibold transition-colors ${isActive
                 ? "bg-orange text-white"
-                : "border border-line bg-white text-ink-soft hover:border-orange/50"
+                : "border border-line bg-card text-ink-soft hover:border-orange/50"
                 } ${isToday && !isActive ? "ring-2 ring-orange/30" : ""}`}
             >
               {DAY_LABELS[day]}
@@ -263,7 +263,7 @@ export default function MealSchedulesPage() {
             return (
               <div
                 key={mealTime}
-                className="rounded-2xl border border-line bg-white transition-colors hover:border-orange/50 overflow-hidden"
+                className="rounded-2xl border border-line bg-card transition-colors hover:border-orange/50 overflow-hidden"
               >
                 <div className="flex items-center justify-between p-4">
                   <div
@@ -379,7 +379,7 @@ export default function MealSchedulesPage() {
                   type="time"
                   value={form.time}
                   onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
-                  className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                  className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                 />
               </div>
 
@@ -411,20 +411,20 @@ export default function MealSchedulesPage() {
                           value={item.food}
                           onChange={(e) => updateItem(idx, "food", e.target.value)}
                           placeholder="Food name"
-                          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                          className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
                         <input
                           type="text"
                           value={item.portion}
                           onChange={(e) => updateItem(idx, "portion", e.target.value)}
                           placeholder="Portion (e.g. 1 cup)"
-                          className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                          className="w-full rounded-lg border border-line bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
                         <textarea
                           value={item.notes}
                           onChange={(e) => updateItem(idx, "notes", e.target.value)}
                           placeholder="Notes"
-                          className="w-full resize-none rounded-lg border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                          className="w-full resize-none rounded-lg border border-line bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
                       </div>
                     </div>

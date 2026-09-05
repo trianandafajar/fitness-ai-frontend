@@ -309,7 +309,7 @@ export default function SettingsPage() {
 
       <div className="space-y-8">
         {/* Account Info */}
-        <section className="rounded-2xl border border-line bg-white p-5">
+        <section className="rounded-2xl border border-line bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <User className="h-5 w-5 text-ink-soft" />
             <h2 className="font-display text-base font-bold text-ink">Account</h2>
@@ -327,7 +327,7 @@ export default function SettingsPage() {
                     type="email"
                     value={form.email}
                     readOnly
-                    className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white"
+                    className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card"
                   />
                   <button
                     type="button"
@@ -346,7 +346,7 @@ export default function SettingsPage() {
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
                     placeholder="Enter new email address"
-                    className="w-full rounded-[10px] border-[1.5px] border-line bg-white px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange"
+                    className="w-full rounded-[10px] border-[1.5px] border-line bg-card px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange"
                   />
                   <div className="flex items-center gap-2">
                     <button
@@ -383,7 +383,7 @@ export default function SettingsPage() {
                       value={code}
                       onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
                       placeholder="6-digit code"
-                      className="w-full rounded-[10px] border-[1.5px] border-line bg-white px-3.5 py-3.25 font-mono text-[14.5px] tracking-widest text-ink outline-none transition-colors placeholder:tracking-normal placeholder:text-ink-faint focus:border-orange"
+                      className="w-full rounded-[10px] border-[1.5px] border-line bg-card px-3.5 py-3.25 font-mono text-[14.5px] tracking-widest text-ink outline-none transition-colors placeholder:tracking-normal placeholder:text-ink-faint focus:border-orange"
                     />
                     <button
                       type="button"
@@ -421,7 +421,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Body Measurements */}
-        <section className="rounded-2xl border border-line bg-white p-5">
+        <section className="rounded-2xl border border-line bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <Ruler className="h-5 w-5 text-ink-soft" />
             <h2 className="font-display text-base font-bold text-ink">Body Measurements</h2>
@@ -433,7 +433,7 @@ export default function SettingsPage() {
           <div className="mb-4">
             <label className="mb-1.75 block text-[13px] font-semibold text-ink">Date of Birth</label>
             <input id="dob" type="date" value={form.date_of_birth} onChange={(e) => update({ date_of_birth: e.target.value })}
-              className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white" />
+              className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card" />
           </div>
           <div className="grid grid-cols-1 gap-x-4 sm:grid-cols-3">
             <Field id="height" label="Height (cm)" type="number" placeholder="170" value={form.height_cm} onChange={(e) => update({ height_cm: e.target.value })} />
@@ -443,7 +443,7 @@ export default function SettingsPage() {
         </section>
 
         {/* Fitness */}
-        <section className="rounded-2xl border border-line bg-white p-5">
+        <section className="rounded-2xl border border-line bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <Dumbbell className="h-5 w-5 text-ink-soft" />
             <h2 className="font-display text-base font-bold text-ink">Fitness</h2>
@@ -467,7 +467,7 @@ export default function SettingsPage() {
           <div className="mb-5 grid grid-cols-3 gap-2">
             {ACTIVITY_OPTIONS.map((opt) => (
               <button key={opt.value} type="button" onClick={() => update({ activity_level: opt.value })}
-                className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${form.activity_level === opt.value ? "border-orange bg-orange text-white" : "border-line bg-white text-ink-soft hover:border-ink-faint"}`}>
+                className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${form.activity_level === opt.value ? "border-orange bg-orange text-white" : "border-line bg-card text-ink-soft hover:border-ink-faint"}`}>
                 {opt.label}
               </button>
             ))}
@@ -495,11 +495,11 @@ export default function SettingsPage() {
           <textarea id="injuries" placeholder="e.g. lower back pain, knee injury, shoulder issues"
             value={form.injuries} onChange={(e) => update({ injuries: e.target.value })}
             rows={3}
-            className="mb-4.5 w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white resize-none" />
+            className="mb-4.5 w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card resize-none" />
         </section>
 
         {/* Health & Diet */}
-        <section className="rounded-2xl border border-line bg-white p-5">
+        <section className="rounded-2xl border border-line bg-card p-5">
           <div className="mb-4 flex items-center gap-2">
             <Heart className="h-5 w-5 text-ink-soft" />
             <h2 className="font-display text-base font-bold text-ink">Health & Diet</h2>
@@ -553,7 +553,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Danger Zone */}
-        <section className="rounded-2xl border border-danger/30 bg-white p-5">
+        <section className="rounded-2xl border border-danger/30 bg-card p-5">
           <div className="mb-2 flex items-center gap-2">
             <Trash2 className="h-5 w-5 text-danger" />
             <h2 className="font-display text-base font-bold text-ink">Danger Zone</h2>

@@ -30,7 +30,7 @@ export function DashboardRecommendationsSkeleton() {
       <SkeletonBlock className="mb-3 h-5 w-56 rounded" />
       <div className="space-y-2">
         {[1, 2].map((item) => (
-          <div key={item} className="animate-pulse rounded-2xl border border-line bg-white p-3">
+          <div key={item} className="animate-pulse rounded-2xl border border-line bg-card p-3">
             <div className="flex items-center gap-3">
               <div className="h-14 w-14 shrink-0 rounded-xl bg-surface" />
               <div className="min-w-0 flex-1 space-y-2">

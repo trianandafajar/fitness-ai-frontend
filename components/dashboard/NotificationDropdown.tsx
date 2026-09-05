@@ -43,7 +43,7 @@ export default function NotificationDropdown({
   return (
     <div
       ref={ref}
-      className="absolute right-6 top-full z-50 mt-2 w-80 rounded-2xl border border-line bg-white shadow-lg"
+      className="absolute right-6 top-full z-50 mt-2 w-80 rounded-2xl border border-line bg-card shadow-lg"
     >
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">

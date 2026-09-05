@@ -15,7 +15,7 @@ export function ButtonSecondary({ className = "", ...props }: ButtonProps) {
     return (
         <button
             {...props}
-            className={`w-full rounded-[10px] border-[1.5px] border-line bg-white px-3.25 py-3.25 font-sans text-[14px] font-semibold text-ink transition-colors hover:border-ink-faint disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+            className={`w-full rounded-[10px] border-[1.5px] border-line bg-card px-3.25 py-3.25 font-sans text-[14px] font-semibold text-ink transition-colors hover:border-ink-faint disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
         />
     );
 }

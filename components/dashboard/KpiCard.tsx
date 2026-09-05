@@ -13,7 +13,7 @@ interface KpiCardProps {
 export default function KpiCard({ rows, streak }: KpiCardProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-2xl border border-line bg-white p-[22px]">
+      <div className="rounded-2xl border border-line bg-card p-[22px]">
         <div className="mb-1 text-[13px] font-bold uppercase tracking-wide text-ink-soft">
           This Week&apos;s KPIs
         </div>
@@ -25,7 +25,7 @@ export default function KpiCard({ rows, streak }: KpiCardProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-line bg-white p-[22px]">
+    <div className="rounded-2xl border border-line bg-card p-[22px]">
       <div className="mb-4 text-[13px] font-bold uppercase tracking-wide text-ink-soft">
         This Week&apos;s KPIs
       </div>

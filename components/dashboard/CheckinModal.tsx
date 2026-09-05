@@ -268,7 +268,7 @@ export default function CheckinModal({ schedule, onClose, onSuccess }: CheckinMo
           </div>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {schedule.exercises.map((ex) => (
-              <span key={ex.name} className="rounded-lg bg-white/70 px-2 py-0.5 text-xs font-medium text-ink">
+              <span key={ex.name} className="rounded-lg bg-card/70 px-2 py-0.5 text-xs font-medium text-ink">
                 {ex.name}{ex.sets ? ` ${ex.sets}×${ex.reps ?? ""}` : ""}
               </span>
             ))}

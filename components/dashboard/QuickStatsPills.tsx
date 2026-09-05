@@ -16,7 +16,7 @@ export default function QuickStatsPills({ items }: QuickStatsPillsProps) {
           key={item.label}
           className={`rounded-2xl border p-4 ${item.accent
               ? "border-orange/30 bg-orange-tint"
-              : "border-line bg-white"
+              : "border-line bg-card"
             }`}
         >
           <div className="text-[10.5px] font-semibold uppercase tracking-wide text-ink-soft">

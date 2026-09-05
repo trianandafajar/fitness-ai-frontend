@@ -135,7 +135,7 @@ export default function AdminFoodCategoriesPage() {
   }
 
   const inputClass =
-    "w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white";
+    "w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card";
 
   return (
     <div>
@@ -157,7 +157,7 @@ export default function AdminFoodCategoriesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search categories..."
-          className="w-full rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
+          className="w-full rounded-xl border-[1.5px] border-line bg-card py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
         />
         {search && (
           <button
@@ -172,7 +172,7 @@ export default function AdminFoodCategoriesPage() {
       </div>
 
       {loading ? (
-        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+        <div className="overflow-hidden rounded-2xl border border-line bg-card">
           <div className="animate-pulse space-y-3 p-4">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-10 rounded-xl bg-surface" />
@@ -180,12 +180,12 @@ export default function AdminFoodCategoriesPage() {
           </div>
         </div>
       ) : categories.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-ink-soft">
+        <div className="rounded-2xl border border-line bg-card p-8 text-center text-sm text-ink-soft">
           No categories yet.
         </div>
       ) : (
         <>
-          <div className="overflow-x-auto rounded-2xl border border-line bg-white">
+          <div className="overflow-x-auto rounded-2xl border border-line bg-card">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-line bg-surface text-[11px] uppercase tracking-wide text-ink-soft">
@@ -234,7 +234,7 @@ export default function AdminFoodCategoriesPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
-          <div className="w-full max-w-lg rounded-t-2xl bg-white p-6 sm:rounded-2xl">
+          <div className="w-full max-w-lg rounded-t-2xl bg-card p-6 sm:rounded-2xl">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="font-display text-lg font-bold">
                 {editingId ? "Edit Category" : "Add Category"}

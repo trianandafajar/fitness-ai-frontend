@@ -60,7 +60,7 @@ export default function AttendancesPage() {
             return (
               <div
                 key={att.id}
-                className="rounded-2xl border border-line bg-white p-4"
+                className="rounded-2xl border border-line bg-card p-4"
               >
                 <div className="flex items-start justify-between">
                   <div>

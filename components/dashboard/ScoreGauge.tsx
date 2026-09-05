@@ -19,7 +19,7 @@ export default function ScoreGauge({ score, status, note }: ScoreGaugeProps) {
   const offset = ARC_LENGTH - ARC_LENGTH * (Math.min(Math.max(displayScore, 0), 100) / 100);
 
   return (
-    <div className="flex h-full flex-col items-center rounded-2xl border border-line bg-white p-5.5 text-center">
+    <div className="flex h-full flex-col items-center rounded-2xl border border-line bg-card p-5.5 text-center">
       <div className="mb-4 self-start text-[13px] font-bold uppercase tracking-wide text-ink-soft">
         Overall Score
       </div>

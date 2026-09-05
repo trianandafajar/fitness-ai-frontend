@@ -68,7 +68,7 @@ export default function StepBodyGoal({ data, update, onNext, onBack, loading, er
             onClick={() => update({ activityLevel: opt.value })}
             className={`rounded-[10px] border-[1.5px] px-3 py-2.5 text-center text-[13px] font-semibold transition-colors ${data.activityLevel === opt.value
               ? "border-orange bg-orange text-white"
-              : "border-line bg-white text-ink-soft hover:border-ink-faint"
+              : "border-line bg-card text-ink-soft hover:border-ink-faint"
               }`}
           >
             {opt.label}

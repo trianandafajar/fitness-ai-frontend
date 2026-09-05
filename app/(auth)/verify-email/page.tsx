@@ -225,7 +225,7 @@ function VerifyEmailForm() {
                             onChange={(e) => setDigit(i, e.target.value.replace(/\D/g, ""))}
                             onKeyDown={(e) => handleKeyDown(e, i)}
                             onPaste={handlePaste}
-                            className="h-12 w-full rounded-[12px] border-[1.5px] border-line bg-surface text-center font-sans text-xl font-semibold text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white"
+                            className="h-12 w-full rounded-[12px] border-[1.5px] border-line bg-surface text-center font-sans text-xl font-semibold text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card"
                         />
                     ))}
                 </div>

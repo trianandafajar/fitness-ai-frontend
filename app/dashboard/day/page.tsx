@@ -167,7 +167,7 @@ function DayContent() {
               <span>Meals</span>
             </div>
             {dayMeals.length === 0 ? (
-              <div className="rounded-2xl border border-line bg-white p-5">
+              <div className="rounded-2xl border border-line bg-card p-5">
                 <div className="text-sm text-ink-soft">No meal schedules for {dayLabel}.</div>
               </div>
             ) : (
@@ -182,13 +182,13 @@ function DayContent() {
                     const image = item.image_url ?? item.image;
 
                     return (
-                      <div key={key} className="flex items-center gap-3 rounded-xl border border-line bg-white p-3">
+                      <div key={key} className="flex items-center gap-3 rounded-xl border border-line bg-card p-3">
                         {image ? (
                           <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-orange-tint">
                             <img
                               src={image}
                               alt={item.food}
-                              className="relative z-10 h-full w-full bg-white object-cover"
+                              className="relative z-10 h-full w-full bg-card object-cover"
                               loading="lazy"
                               onError={(event) => { event.currentTarget.style.display = "none"; }}
                             />

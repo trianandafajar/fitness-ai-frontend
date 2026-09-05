@@ -44,7 +44,7 @@ function CalendarSkeleton() {
         <div className="motion-reduce:animate-none animate-pulse h-5 w-20 rounded-full bg-surface" />
       </div>
       <div
-        className="bg-white pt-4"
+        className="bg-card pt-4"
         aria-label="Loading calendar"
         role="status"
       >
@@ -236,7 +236,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
         <div className="font-display text-base font-bold">Calendar</div>
       </div>
       <div
-        className="fitness-calendar relative  bg-white"
+        className="fitness-calendar relative  bg-card"
         aria-busy={loading}
       >
         <div className="mb-4 flex items-center border border-line rounded-xl p-4 justify-between px-4">
@@ -261,7 +261,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
               type="button"
               onClick={movePrevious}
               aria-label="Show previous sixteen days"
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-white text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-card text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
             >
               <ChevronLeft size={18} />
             </button>
@@ -269,7 +269,7 @@ export default function CalendarView({ refreshKey = 0 }: CalendarViewProps) {
               type="button"
               onClick={moveNext}
               aria-label="Show next sixteen days"
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-white text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-card text-ink-soft shadow-sm transition hover:border-orange/30 hover:text-orange-deep focus:outline-none focus:ring-2 focus:ring-orange/30"
             >
               <ChevronRight size={18} />
             </button>

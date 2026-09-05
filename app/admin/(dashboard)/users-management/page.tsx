@@ -186,7 +186,7 @@ export default function AdminUsersPage() {
   }
 
   const inputClass =
-    "w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white";
+    "w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card";
 
   return (
     <div>
@@ -209,7 +209,7 @@ export default function AdminUsersPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by name or email..."
-            className="w-full rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
+            className="w-full rounded-xl border-[1.5px] border-line bg-card py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
           />
           {search && (
             <button
@@ -228,7 +228,7 @@ export default function AdminUsersPage() {
             setFilterVerified(e.target.value);
             setPage(1);
           }}
-          className="w-full rounded-xl border-[1.5px] border-line bg-white py-2.5 px-3 text-sm outline-none transition focus:border-orange sm:w-auto"
+          className="w-full rounded-xl border-[1.5px] border-line bg-card py-2.5 px-3 text-sm outline-none transition focus:border-orange sm:w-auto"
         >
           <option value="">All Users</option>
           <option value="verified">Email Verified</option>
@@ -237,7 +237,7 @@ export default function AdminUsersPage() {
       </div>
 
       {loading ? (
-        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+        <div className="overflow-hidden rounded-2xl border border-line bg-card">
           <div className="animate-pulse space-y-3 p-4">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-10 rounded-xl bg-surface" />
@@ -245,12 +245,12 @@ export default function AdminUsersPage() {
           </div>
         </div>
       ) : users.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-ink-soft">
+        <div className="rounded-2xl border border-line bg-card p-8 text-center text-sm text-ink-soft">
           No users yet.
         </div>
       ) : (
         <>
-          <div className="hidden overflow-x-auto rounded-2xl border border-line bg-white lg:block">
+          <div className="hidden overflow-x-auto rounded-2xl border border-line bg-card lg:block">
             <table className="w-full text-left text-sm">
               <thead>
                 <tr className="border-b border-line bg-surface text-[11px] uppercase tracking-wide text-ink-soft">
@@ -313,7 +313,7 @@ export default function AdminUsersPage() {
 
           <div className="space-y-2 lg:hidden">
             {users.map((user) => (
-              <div key={user.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3">
+              <div key={user.id} className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3">
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-semibold text-ink">{user.name}</div>
                   <div className="mt-0.5 text-xs text-ink-soft">{user.email}</div>
@@ -373,7 +373,7 @@ export default function AdminUsersPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
-          <div className="w-full max-w-lg rounded-t-2xl bg-white p-6 sm:rounded-2xl">
+          <div className="w-full max-w-lg rounded-t-2xl bg-card p-6 sm:rounded-2xl">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="font-display text-lg font-bold">
                 {editingId ? "Edit User" : "Add New User"}
@@ -476,7 +476,7 @@ export default function AdminUsersPage() {
 
       {showDetail && selectedUser && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
-          <div className="w-full max-w-lg rounded-t-2xl bg-white p-6 sm:rounded-2xl">
+          <div className="w-full max-w-lg rounded-t-2xl bg-card p-6 sm:rounded-2xl">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="font-display text-lg font-bold">User Details</h2>
               <button onClick={() => setShowDetail(false)} className="rounded-lg p-1.5 hover:bg-surface">

@@ -47,11 +47,11 @@ export default function AdminDashboardPage() {
       {loading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-2xl bg-white" />
+            <div key={i} className="h-28 animate-pulse rounded-2xl bg-card" />
           ))}
         </div>
       ) : error ? (
-        <div className="flex flex-col items-center rounded-2xl border border-line bg-white p-10 text-center">
+        <div className="flex flex-col items-center rounded-2xl border border-line bg-card p-10 text-center">
           <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-danger/10 text-danger">
             <AlertTriangle size={24} />
           </div>
@@ -77,7 +77,7 @@ export default function AdminDashboardPage() {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-2xl border border-line bg-white p-5"
+              className="rounded-2xl border border-line bg-card p-5"
             >
               <div className="flex items-center justify-between">
                 <div>

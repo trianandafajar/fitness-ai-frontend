@@ -35,7 +35,7 @@ export default function NotificationsPage() {
           <button
             onClick={markAllAsRead}
             disabled={markingAll}
-            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink-soft hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl border border-line bg-card px-4 py-2.5 text-sm font-semibold text-ink-soft hover:bg-surface hover:text-ink disabled:cursor-not-allowed disabled:opacity-50"
           >
             {markingAll ? (
               <Loader2 size={16} className="animate-spin" />
@@ -68,7 +68,7 @@ export default function NotificationsPage() {
               key={n.id}
               href={`/dashboard/schedule${n.data.schedule_id ? `?schedule=${n.data.schedule_id}` : ""}`}
               onClick={() => !n.read_at && busyId !== n.id && markAsRead(n.id)}
-              className={`block rounded-2xl border border-line bg-white p-4 transition-colors ${
+              className={`block rounded-2xl border border-line bg-card p-4 transition-colors ${
                 !n.read_at
                   ? "cursor-pointer border-orange/30 bg-orange-tint/10 hover:bg-orange-tint/20"
                   : ""

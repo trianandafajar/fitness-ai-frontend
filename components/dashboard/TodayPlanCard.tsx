@@ -25,7 +25,7 @@ export default function TodayPlanCard({ schedule, attendanceToday, loading, onCh
 
   if (loading) {
     return (
-      <div className="animate-pulse rounded-2xl border border-line bg-white p-5.5">
+      <div className="animate-pulse rounded-2xl border border-line bg-card p-5.5">
         <div className="mb-3.5 h-4 w-24 rounded bg-surface" />
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
@@ -38,7 +38,7 @@ export default function TodayPlanCard({ schedule, attendanceToday, loading, onCh
 
   if (!schedule) {
     return (
-      <div className="rounded-2xl border border-line bg-white p-5.5">
+      <div className="rounded-2xl border border-line bg-card p-5.5">
         <div className="mb-1 text-[13px] font-bold uppercase tracking-wide text-ink-soft">
           Today&apos;s Plan
         </div>
@@ -58,7 +58,7 @@ export default function TodayPlanCard({ schedule, attendanceToday, loading, onCh
 
   return (
     <>
-      <div className="rounded-2xl border border-line bg-white p-5.5">
+      <div className="rounded-2xl border border-line bg-card p-5.5">
         <div className="mb-3.5 flex items-center justify-between">
           <div className="text-[13px] font-bold uppercase tracking-wide text-ink-soft">
             Today&apos;s Plan

@@ -125,7 +125,7 @@ export const Modal = ({
             if (event.key === "Escape") close();
           }}
           className={cx(
-            "relative w-full max-w-sm rounded-3xl bg-white shadow-[0_0_40px_rgba(0,0,0,0.15)]",
+            "relative w-full max-w-sm rounded-3xl bg-card shadow-[0_0_40px_rgba(0,0,0,0.15)]",
             "outline-none transition-all duration-200 ease-out",
             visible
               ? "translate-y-0 opacity-100"

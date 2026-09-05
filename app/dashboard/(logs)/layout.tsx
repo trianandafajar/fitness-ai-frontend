@@ -16,7 +16,7 @@ export default function LogsLayout({ children }: { children: React.ReactNode }) 
 
   return (
     <>
-      <div className="sticky top-20 z-30 -mx-6 mb-6 bg-white px-6 py-2">
+      <div className="sticky top-20 z-30 -mx-6 mb-6 bg-card px-6 py-2">
         <div className="flex rounded-xl bg-surface p-1">
         {LOG_TABS.map((tab) => {
           const active = tab.href === activeHref;

@@ -267,7 +267,7 @@ export default function WorkoutSchedulesPage() {
                   type="time"
                   value={form.scheduled_time}
                   onChange={(e) => setForm((f) => ({ ...f, scheduled_time: e.target.value }))}
-                  className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                  className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                 />
               </div>
 
@@ -298,7 +298,7 @@ export default function WorkoutSchedulesPage() {
                           placeholder="Exercise name"
                           value={ex.name}
                           onChange={(e) => updateExercise(ex.key, "name", e.target.value)}
-                          className="col-span-2 rounded-xl border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                          className="col-span-2 rounded-xl border border-line bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
                         <input
                           placeholder="Sets"
@@ -306,7 +306,7 @@ export default function WorkoutSchedulesPage() {
                           min="1"
                           value={ex.sets}
                           onChange={(e) => updateExercise(ex.key, "sets", e.target.value)}
-                          className="rounded-xl border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                          className="rounded-xl border border-line bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
                         <input
                           placeholder="Reps"
@@ -314,14 +314,14 @@ export default function WorkoutSchedulesPage() {
                           min="1"
                           value={ex.reps}
                           onChange={(e) => updateExercise(ex.key, "reps", e.target.value)}
-                          className="rounded-xl border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                          className="rounded-xl border border-line bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
                         <textarea
                           placeholder="Notes (optional)"
                           value={ex.notes}
                           onChange={(e) => updateExercise(ex.key, "notes", e.target.value)}
                           rows={2}
-                          className="col-span-2 resize-none rounded-xl border border-line bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                          className="col-span-2 resize-none rounded-xl border border-line bg-card px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                         />
                       </div>
                     </div>
@@ -375,7 +375,7 @@ function DayCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border bg-white p-4 transition-colors ${isToday ? "border-orange/40 bg-orange-tint/30" : "border-line"
+      className={`rounded-2xl border bg-card p-4 transition-colors ${isToday ? "border-orange/40 bg-orange-tint/30" : "border-line"
         }`}
     >
       <div className="flex items-center justify-between">

@@ -209,7 +209,7 @@ export default function AdminExercisesPage() {
   }
 
   const inputClass =
-    "w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white";
+    "w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card";
 
   const showImagePreview = preview ?? editingImage;
 
@@ -234,7 +234,7 @@ export default function AdminExercisesPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search exercises..."
-            className="w-full rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
+            className="w-full rounded-xl border-[1.5px] border-line bg-card py-2.5 pl-9 pr-9 text-sm outline-none transition focus:border-orange [&::-webkit-search-cancel-button]:hidden"
           />
           {search && (
             <button
@@ -251,7 +251,7 @@ export default function AdminExercisesPage() {
           <select
             value={categoryId}
             onChange={(e) => { setCategoryId(e.target.value); setPage(1); }}
-            className="w-full appearance-none rounded-xl border-[1.5px] border-line bg-white py-2.5 pl-3 pr-9 text-sm outline-none transition focus:border-orange"
+            className="w-full appearance-none rounded-xl border-[1.5px] border-line bg-card py-2.5 pl-3 pr-9 text-sm outline-none transition focus:border-orange"
           >
             <option value="">All Categories</option>
             {categories.map((c) => (
@@ -263,7 +263,7 @@ export default function AdminExercisesPage() {
       </div>
 
       {loading ? (
-        <div className="overflow-hidden rounded-2xl border border-line bg-white">
+        <div className="overflow-hidden rounded-2xl border border-line bg-card">
           <div className="animate-pulse space-y-3 p-4">
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="h-10 rounded-xl bg-surface" />
@@ -271,12 +271,12 @@ export default function AdminExercisesPage() {
           </div>
         </div>
       ) : exercises.length === 0 ? (
-        <div className="rounded-2xl border border-line bg-white p-8 text-center text-sm text-ink-soft">
+        <div className="rounded-2xl border border-line bg-card p-8 text-center text-sm text-ink-soft">
           No exercises yet.
         </div>
       ) : (
         <>
-          <div className="hidden overflow-x-auto rounded-2xl border border-line bg-white lg:block">
+          <div className="hidden overflow-x-auto rounded-2xl border border-line bg-card lg:block">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="border-b border-line bg-surface text-[11px] uppercase tracking-wide text-ink-soft">
@@ -336,7 +336,7 @@ export default function AdminExercisesPage() {
 
           <div className="space-y-2 lg:hidden">
             {exercises.map((ex) => (
-              <div key={ex.id} className="flex items-center gap-3 rounded-2xl border border-line bg-white p-3">
+              <div key={ex.id} className="flex items-center gap-3 rounded-2xl border border-line bg-card p-3">
                 {ex.image_url ? (
                   <img src={ex.image_url} alt={ex.name} className="h-12 w-12 shrink-0 rounded-xl object-cover" />
                 ) : (
@@ -393,7 +393,7 @@ export default function AdminExercisesPage() {
 
       {showForm && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 sm:items-center">
-          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl bg-white p-4 sm:rounded-2xl sm:p-6">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-t-2xl bg-card p-4 sm:rounded-2xl sm:p-6">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="font-display text-lg font-bold">
                 {editingId ? "Edit Exercise" : "Add Exercise"}
@@ -496,7 +496,7 @@ export default function AdminExercisesPage() {
                     onChange={(e) => setMuscleInput(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMuscle(); } }}
                     placeholder="Type and press Enter"
-                    className="flex-1 rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white"
+                    className="flex-1 rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card"
                   />
                   <button type="button" onClick={addMuscle} className="rounded-xl border border-line px-3 text-sm font-medium hover:bg-surface">
                     Add
@@ -522,7 +522,7 @@ export default function AdminExercisesPage() {
                   value={form.description}
                   onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                   rows={3}
-                  className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-white resize-none"
+                  className="w-full rounded-[10px] border-[1.5px] border-line bg-surface px-3.5 py-3.25 font-sans text-[14.5px] text-ink outline-none transition-colors placeholder:text-ink-faint focus:border-orange focus:bg-card resize-none"
                 />
               </div>
 

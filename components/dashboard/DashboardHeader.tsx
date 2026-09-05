@@ -77,7 +77,7 @@ export default function DashboardHeader() {
   }, [logout, router, confirm]);
 
   return (
-    <div className="sticky top-0 z-40 flex w-full items-center justify-between rounded-b-2xl bg-white p-4 shadow-sm">
+    <div className="sticky top-0 z-40 flex w-full items-center justify-between rounded-b-2xl bg-card p-4 shadow-sm">
       <div>
         <div className="text-[13px] text-ink-soft">{getGreeting()}</div>
         <Link href="/dashboard" className="font-display text-xl font-bold text-ink">
@@ -142,7 +142,7 @@ export default function DashboardHeader() {
           </Tooltip>
 
           {open && (
-            <div className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-line bg-white py-1 shadow-lg">
+            <div className="absolute right-0 top-full z-50 mt-2 w-44 rounded-xl border border-line bg-card py-1 shadow-lg">
               <Link
                 href="/settings"
                 onClick={() => setOpen(false)}

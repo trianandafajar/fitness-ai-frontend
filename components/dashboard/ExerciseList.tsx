@@ -18,7 +18,7 @@ function formatMeta(ex: Exercise): string {
 export default function ExerciseList({ exercises, scheduleId }: ExerciseListProps) {
   if (exercises.length === 0) {
     return (
-      <div className="rounded-2xl border border-line bg-white p-5">
+      <div className="rounded-2xl border border-line bg-card p-5">
         <div className="text-sm text-ink-soft">No exercises scheduled for today.</div>
       </div>
     );
@@ -53,7 +53,7 @@ export default function ExerciseList({ exercises, scheduleId }: ExerciseListProp
           </>
         );
 
-        const rowClass = "flex items-center gap-3 rounded-xl border border-line bg-white p-3" + (scheduleId != null ? " transition-colors hover:border-orange" : "");
+        const rowClass = "flex items-center gap-3 rounded-xl border border-line bg-card p-3" + (scheduleId != null ? " transition-colors hover:border-orange" : "");
 
         return scheduleId != null ? (
           <Link

@@ -157,7 +157,7 @@ export default function ExerciseDetailPage({
         <div className="mx-auto max-w-100 px-4.5">
           <Link
             href="/dashboard"
-            className="pointer-events-auto block w-full rounded-[14px] border border-line bg-white py-3.75 text-center text-[15px] font-bold text-ink transition-colors hover:border-ink-faint"
+            className="pointer-events-auto block w-full rounded-[14px] border border-line bg-card py-3.75 text-center text-[15px] font-bold text-ink transition-colors hover:border-ink-faint"
           >
             Back to Dashboard
           </Link>

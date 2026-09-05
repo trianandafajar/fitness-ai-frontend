@@ -68,7 +68,7 @@ export default function PrivacyPage() {
     return (
         <LegalPage title="Privacy Policy" updated="August 2026">
             {sections.map((section) => (
-                <section key={section.heading} className="rounded-2xl border border-line bg-white p-5">
+                <section key={section.heading} className="rounded-2xl border border-line bg-card p-5">
                     <h2 className="mb-2.5 font-display text-base font-bold text-ink">{section.heading}</h2>
                     {section.body.map((paragraph) => (
                         <p key={paragraph} className="mb-3 text-sm leading-relaxed text-ink-soft last:mb-0">

@@ -191,7 +191,7 @@ export default function MealLogsPage() {
               { label: "Carbs", value: data?.totals?.total_carbs_g ?? 0, unit: "g" },
               { label: "Fat", value: data?.totals?.total_fat_g ?? 0, unit: "g" },
             ].map((stat) => (
-              <div key={stat.label} className="rounded-xl border border-line bg-white p-3 text-center">
+              <div key={stat.label} className="rounded-xl border border-line bg-card p-3 text-center">
                 <div className="text-[11px] font-medium text-ink-soft">{stat.label}</div>
                 <div className="font-mono text-lg font-bold text-ink">{stat.value}</div>
                 <div className="text-[10px] text-ink-faint">{stat.unit}</div>
@@ -210,7 +210,7 @@ export default function MealLogsPage() {
               {logs.map((meal) => (
                 <div
                   key={meal.id}
-                  className="rounded-2xl border border-line bg-white p-4"
+                  className="rounded-2xl border border-line bg-card p-4"
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-2.5">
@@ -275,7 +275,7 @@ export default function MealLogsPage() {
                       onClick={() => updateField("meal_type", type)}
                       className={`flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-sm font-semibold transition-colors ${form.meal_type === type
                         ? "bg-orange text-white"
-                        : "border border-line bg-white text-ink-soft hover:border-orange/50"
+                        : "border border-line bg-card text-ink-soft hover:border-orange/50"
                         }`}>
                       <MealIcon type={type} size={16} />
                       {MEAL_LABELS[type]}
@@ -290,7 +290,7 @@ export default function MealLogsPage() {
                   type="datetime-local"
                   value={form.logged_at}
                   onChange={(e) => updateField("logged_at", e.target.value)}
-                  className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                  className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                 />
               </div>
 
@@ -311,7 +311,7 @@ export default function MealLogsPage() {
                       step="0.1"
                       value={form[field.key as keyof typeof form]}
                       onChange={(e) => updateField(field.key, e.target.value)}
-                      className="w-full rounded-xl border border-line bg-white px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
+                      className="w-full rounded-xl border border-line bg-card px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-orange"
                     />
                   </div>
                 ))}

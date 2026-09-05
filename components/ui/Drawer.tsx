@@ -389,7 +389,7 @@ export const DrawerContent = ({
           onKeyDown={handleKeyDown}
           style={getDragStyle()}
           className={cx(
-            "pointer-events-auto absolute flex flex-col bg-white",
+            "pointer-events-auto absolute flex flex-col bg-card",
             "shadow-[0_0_40px_rgba(0,0,0,0.15)]",
             "outline-none",
             "transition-transform duration-300 ease-out",

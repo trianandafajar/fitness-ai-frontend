@@ -24,7 +24,7 @@ export const Toaster = () => (
       duration: 4000,
       classNames: {
         toast:
-          "!min-h-0 !rounded-xl !border !px-3 !py-2.5 !shadow-md !gap-2",
+          "!min-h-0 !rounded-xl !border !px-3 !py-2.5 !shadow-md !gap-2 !bg-card !border-line !text-ink",
         title:
           "!text-[12.5px] !font-semibold !leading-4",
         description:

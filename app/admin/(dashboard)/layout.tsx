@@ -65,7 +65,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-surface">
-      <header className="sticky top-0 z-30 border-b border-line bg-white">
+      <header className="sticky top-0 z-30 border-b border-line bg-card">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
             <button
@@ -133,7 +133,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             <button
               type="button"
               onClick={() => setShowLogoutModal(false)}
-              className="w-full rounded-xl border-[1.5px] border-line bg-white px-4 py-3 text-sm font-semibold text-ink transition hover:border-ink-faint"
+              className="w-full rounded-xl border-[1.5px] border-line bg-card px-4 py-3 text-sm font-semibold text-ink transition hover:border-ink-faint"
             >
               Cancel
             </button>
