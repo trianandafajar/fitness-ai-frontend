@@ -9,13 +9,13 @@ const sections: { heading: string; body: string[] }[] = [
     {
         heading: "1. Acceptance of Terms",
         body: [
-            "By creating an account or using the FitnessAI service, you agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, you must not use the service.",
+            "By creating an account or using the Athletica service, you agree to be bound by these Terms & Conditions. If you do not agree with any part of these terms, you must not use the service.",
         ],
     },
     {
         heading: "2. Description of Service",
         body: [
-            "FitnessAI provides personalized fitness planning, workout and meal tracking, and progress insights. The service is intended for general fitness guidance and does not replace professional medical advice.",
+            "Athletica provides personalized fitness planning, workout and meal tracking, and progress insights. The service is intended for general fitness guidance and does not replace professional medical advice.",
         ],
     },
     {

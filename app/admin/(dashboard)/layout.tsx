@@ -76,7 +76,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               <Menu size={20} />
             </button>
             <Link href="/admin" className="font-display text-base font-bold text-ink">
-              FitnessAI <span className="text-orange">Admin</span>
+              Athletica <span className="text-orange">Admin</span>
             </Link>
           </div>
           <button
@@ -101,7 +101,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         <DrawerContent showHandle={false}>
           <DrawerHeader className="flex-row items-center justify-between border-b border-line">
             <DrawerTitle className="font-display text-base font-bold">
-              FitnessAI <span className="text-orange">Admin</span>
+              Athletica <span className="text-orange">Admin</span>
             </DrawerTitle>
             <button
               type="button"

@@ -5,7 +5,7 @@ const PUBLIC_ROUTES = ["/", "/login", "/register", "/verify-email", "/forgot-pas
 const ADMIN_LOGIN = "/admin/login";
 const ONBOARDING_ROUTE = "/onboarding";
 const AFTER_LOGIN_ROUTE = "/dashboard";
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.fitnessai.app";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.athletica.app";
 
 async function fetchUser(token: string): Promise<{ is_admin?: boolean } | null> {
   try {
