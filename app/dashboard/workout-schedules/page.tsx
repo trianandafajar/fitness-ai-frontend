@@ -132,10 +132,35 @@ export default function WorkoutSchedulesPage() {
         })),
     };
 
-    if (payload.exercises.length === 0) {
-      toast.error("Add at least one exercise", {
-        description: "A workout schedule needs an exercise before it can be saved.",
+      if (payload.exercises.length === 0) {
+      const confirmed = await confirm({
+        title: "Delete Workout Schedule?",
+        description:
+          "You are removing all exercises. This workout schedule will be permanently deleted. This action cannot be undone.",
+        confirmText: "Delete",
       });
+
+      if (!confirmed) {
+        setSaving(false);
+        return;
+      }
+
+      setSaving(true);
+      try {
+        await workoutScheduleService.remove(editingId!);
+        toast.success("Workout schedule deleted", {
+          description: "The workout schedule has been removed.",
+        });
+        setShowModal(false);
+        setLoading(true);
+        await fetchSchedules();
+      } catch {
+        toast.error("Failed to delete schedule", {
+          description: "Please try again.",
+        });
+      } finally {
+        setSaving(false);
+      }
       return;
     }
 
@@ -287,7 +312,7 @@ export default function WorkoutSchedulesPage() {
                     <div key={ex.key} className="rounded-xl border border-line p-3">
                       <div className="mb-2 flex items-center justify-between">
                         <span className="text-xs font-semibold text-ink-soft">Exercise {idx + 1}</span>
-                        {form.exercises.length > 1 && (
+                        {true && (
                           <button onClick={() => removeExerciseRow(ex.key)} className="text-ink-faint hover:text-danger">
                             <X size={14} />
                           </button>
@@ -342,7 +367,7 @@ export default function WorkoutSchedulesPage() {
               <ButtonPrimary
                 type="button"
                 onClick={handleSave}
-                disabled={saving || !form.exercises.some((e) => e.name.trim())}
+                disabled={saving}
                 className="flex-1 py-2.75 text-[13.5px]"
               >
                 {saving ? "Saving..." : editingId ? "Update" : "Create"}
